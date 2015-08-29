@@ -1,0 +1,61 @@
+{% extends "layout_template.html" %}
+
+{% import 'macros.html' as macros %}
+
+{% block title %}Login{% endblock title %}
+
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" href="static/style/user_login_style.css"/>
+{% endblock head %}
+
+{% block header %}{% endblock header %}
+{% block messages %}{{ super() }}{% endblock messages %}
+
+{% block content %}
+
+	<div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <div  class="masthead-brand"></div>
+                <span class="signup-btn btn btn-sm btn-default"><a href="/registration">Sign Up</a></span>
+            	
+            </div>
+          </div>
+
+          <div class="inner cover">
+            <h1 class="cover-heading">Welcome to the Triad Care Portal!</h1>
+            <form class="form-signin" action="" method="post" name="login">
+	            {{ form.hidden_tag() }}
+		        <label for="email" class="sr-only">Email</label>
+		        {{ form.email(class_="form-signin form-control inputField", placeholder="Email") }}
+		        {% for error in form.email.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        <label for="password" class="sr-only">Password</label>
+		        {{ form.password(class_="form-signin form-control inputField", placeholder="Password", type="password") }}
+		        {% for error in form.password.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        <p class="lead">
+					<input type="submit" class="btn btn-lg btn-default" value="Log In">
+            	</p>
+		    </form>
+            <p class="lead">Please log in to access the Health Risk Assessment<!--Triad Care is a new kind of Health Care Provider  that takes advantage of superb patient relations to craft a holistic health approach. Triad Care accomplishes this by managing everything from diet to drugs for each patient, <i>individually</i>-->.</p>
+            
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+	
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}

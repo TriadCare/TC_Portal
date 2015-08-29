@@ -1,0 +1,96 @@
+{% extends "layout_template.html" %}
+
+{% import 'macros.html' as macros %}
+
+{% block title %}Registration{% endblock title %}
+
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" href="static/style/user_login_style.css"/>
+{% endblock head %}
+
+{% block header %}{% endblock header %}
+{% block messages %}{{ super() }}{% endblock messages %}
+
+{% block content %}
+
+	<div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <div  class="masthead-brand"></div>
+              <span class="signup-btn btn btn-sm btn-default"><a href="/login">Log In</a></span>
+            </div>
+          </div>
+
+          <div class="inner cover">
+            <form class="form-signin" action="/registration" method="post" name="register">
+	            {{ form.hidden_tag() }}
+	            
+	            <label for="tcid" class="sr-only">TCID</label>
+		        {{ form.tcid(class_="form-signin form-control inputField", placeholder="TCID") }}
+	            {% for error in form.tcid.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        
+		        <label for="first_name" class="sr-only">First Name</label>
+		        {{ form.first_name(class_="form-signin form-control inputField", placeholder="First Name") }}
+		        {% for error in form.first_name.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        
+		        <label for="last_name" class="sr-only">Last Name</label>
+		        {{ form.last_name(class_="form-signin form-control inputField", placeholder="Last Name") }}
+		        {% for error in form.last_name.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        
+		        <label for="email" class="sr-only">Email</label>
+		        {{ form.email(class_="form-signin form-control inputField", placeholder="Email") }}
+		        {% for error in form.email.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        
+		        <label for="dob" class="sr-only">Date of Birth</label>
+		        {{ form.dob(class_="form-signin form-control inputField", placeholder="Date of Birth", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"yyyy-mm-dd", 'data-trigger':"focus", 'type':"text"}) }}
+		        {% for error in form.dob.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        
+		        <label for="password" class="sr-only">Password</label>
+		        {{ form.password(class_="form-signin form-control inputField", placeholder="Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Your password must contain at least 8 characters, one upper-case character, one lower-case character, and one special character (!, $, &, etc).", 'data-trigger':"focus"}) }}
+		        {% for error in form.password.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		        
+		        <label for="confirm_password" class="sr-only">Confirm Password</label>
+		        {{ form.confirm_password(class_="form-signin form-control inputField", placeholder="Confirm Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Must match Password", 'data-trigger':"focus"}) }}
+		        {% for error in form.confirm_password.errors %}
+		        	<span style="color: red;">[{{ error }}]</span>
+		        {% endfor %}
+		  		        
+		        <p class="lead">
+					<input type="submit" class="btn btn-lg btn-default" value="Register">
+            	</p>
+		    </form>
+            <p class="lead"></p>
+            
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+	
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}
+
+{% block script_section %}
+	<script src="../static/js/user_registration.js"></script>
+{% endblock script_section %}

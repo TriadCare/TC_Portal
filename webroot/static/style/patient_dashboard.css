@@ -1,0 +1,22 @@
+#header{
+	font-size: 22px;
+	color: rgb(0,120,185);
+	margin: 20px;
+}
+
+/* Custom default button */
+.btn-default{
+  text-shadow: none; /* Prevent inheritence from `body` */
+  border: 1px solid rgb(0,120,185);
+  background-color: rgba(0,120,185,0);
+}
+.btn-default:hover{
+	background-color: rgb(0,120,185);
+	border-color: rgb(0,120,185);
+}
+
+.signup-btn{
+	font-size: 14px;
+	border-color: rgb(255,255,255);
+	margin-top: 20px;
+}

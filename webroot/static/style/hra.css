@@ -1,0 +1,88 @@
+body
+{
+}
+
+.container
+{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.form-container
+{
+	background-color: gray;
+	padding: 15px;
+}
+
+.question-text
+{
+	text-align: left;
+	text-shadow: none;
+}
+
+.mc_answer_area
+{
+	text-align: left;
+	color: black;
+	text-shadow: none;
+}
+
+.question_grid
+{
+	
+}
+
+.grid_cell
+{
+	text-align: center;
+}
+
+.grid_radio
+{
+	
+}
+
+.input_number
+{
+	
+}
+
+.mc_radio
+{
+	font-size: 12px;
+}
+
+.mc_text
+{
+	font-size: 0.85em;
+}
+
+/* Custom default button */
+.btn-default{
+  text-shadow: none; /* Prevent inheritence from `body` */
+  border: 1px solid rgb(0,120,185);
+  background-color: rgb(0,120,185);
+}
+.btn-default:hover{
+	background-color: rgb(0,120,185);
+	border-color: rgb(0,120,185);
+}
+
+.hra-submit, .hra-submit:hover
+{
+	color: #fff;
+}
+
+#hra-logout
+{
+	margin-bottom: 10px;
+}
+#hra-logout > a
+{
+	color: #fff;
+}
+
+.tc-heading
+{
+	display: block;
+}
