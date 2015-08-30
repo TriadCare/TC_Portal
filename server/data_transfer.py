@@ -32,11 +32,11 @@ def add_user(userDict):
 		if len(exists) == 0 or exists[0][0] != userDict['dob']:
 			return False
 		#put the values into an array that will be passed into the prepared statement		
-		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], userDict['tcid']]
-		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s where tcid=%s", values)
+		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], userDict['tcid']]
+		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
 	except Exception as e:
 		#cursor.close()
-		return False
+		return e
 	#if no exceptions, commit the addition
 	conn.commit()
 	#cursor.close()
@@ -94,15 +94,15 @@ def store_hra_answers(tcid, hra_answers):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		valueCount = "%s, "
+		valueCount = "%s, %s, %s, "
 		columns = []
-		values = [tcid]
+		values = [get_user_with_tcid(tcid)['email'], dt.now(), tcid]
 		for answer in hra_answers:
 			valueCount += "%s, "
 			columns.append(answer)
 			values.append(hra_answers[answer])
 		valueCount = valueCount[:-2]
-		query = "insert into hra_answers (tcid, %s) values (" % ", ".join(columns)
+		query = "insert into hra_answers (USER_CREATED, DATE_CREATED, tcid, %s) values (" % ", ".join(columns)
 		query += valueCount + ")"
 		cursor.execute(query, values)
 	except Exception as e:
