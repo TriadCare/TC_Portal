@@ -5,35 +5,48 @@
 			[
 				{
 					"group": "Diet & Nutrition",
-					"questions": [4,5,6,7,8,9,10,11]
+					"questions": [6,"7_row_1","7_row_2","7_row_3",8,9,10,11,12,13],
+					"graded": true
 				},
 				{
 					"group": "Physical Activity",
-					"questions": [12,13,14]
+					"questions": [14,15,16],
+					"graded": true
 				},
 				{
 					"group": "Stress",
-					"questions": [15,16,17]
+					"questions": [17,18,19],
+					"graded": true
 				},
 				{
 					"group": "Tobacco",
-					"questions": [1,2,3]
+					"questions": [3,4,5],
+					"graded": true
 				},
 				{
 					"group": "Screening and Preventative Care",
-					"questions": [23]
+					"questions": [
+									"25_row_1","25_row_2","25_row_3","25_row_4",
+									"25_row_5","25_row_6","25_row_7","25_row_8",
+									"25_row_9","25_row_10","25_row_11",
+									"25_row_12","25_row_13"
+								],
+					"graded": true
 				},
 				{
 					"group": "Medication Management",
-					"questions": [18,19,20,21,22]
+					"questions": [20,21,22,23,24],
+					"graded": false
 				},
 				{
 					"group": "Chronic Conditions",
-					"questions": [24]
+					"questions": [26],
+					"graded": false
 				},
 				{
 					"group": "Self-Analysis",
-					"questions": [25,26,27,28]
+					"questions": [27,28,29,30],
+					"graded": false
 				}
 			]
 	},
@@ -242,11 +255,11 @@
 			[
 				{
 					"text": "I don't drink",
-					"value": "A"
+					"value": "A - I don't drink"
 				},
 				{
 					"text": "0-1",
-					"value": "A"
+					"value": "A - 0-1"
 				},
 				{
 					"text": "2-3",
@@ -576,55 +589,55 @@
 			[
 				{
 					"text": "Annual Physical",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Blood Pressure",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Cholesterol",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Colonoscopy (if >50yrs)",
-					"values": ["A","A","A","A","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Diabetes",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Dental Exam",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Eye Exam",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Skin Cancer",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Sexually Transmitted Diseases (if not in monogamous relationship)",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Mammogram (40 or older female)",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Pap Smear (female)",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Breast Exam by RN or MD (female)",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				},
 				{
 					"text": "Prostate (40 or over male)",
-					"values": ["A","B","C","D","F",null]
+					"values": ["A","B","C","D",null]
 				}
 			],
 			"blurb": "Routine check-ups, annual physical exams, and recommended health screenings can help identify risks before they become problems, or identify problems in the early stages, which improves the chances for treatment or cure.  Age, health, family history, and lifestyle choices affect the tests and screens that are recommended for you.  Prioritizing the recommended tests and screenings for your individual circumstances improves your chances for living a longer, healthier life."

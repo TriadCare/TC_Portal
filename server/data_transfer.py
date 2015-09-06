@@ -128,5 +128,40 @@ def get_hra_results(tcid):
 	except Exception as e:
 		return None
 	return None	
-			
 
+
+def get_hra_data(columns=[]):
+	conn = getConnection()
+	cursor = conn.cursor()
+	column_string = ""
+	for c in columns:
+		column_string += "%s, "
+	column_string = column_string[:-2]
+	query = "select %s from hra_answers" % ", ".join(columns)
+	try:
+		cursor.execute(query)
+		#build the return dict
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		return [desc, list(cursor.fetchall())]
+	except Exception as e:
+		return e
+	return None
+
+
+def get_all_hra_results():
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select * from hra_answers")
+		#build the return dict
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		results = [desc, list(cursor.fetchall())]
+		
+		return results
+	except Exception as e:
+		return None
+	return None

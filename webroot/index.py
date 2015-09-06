@@ -108,20 +108,18 @@ def renderHRA():
 	form = HRAForm()
 	if form.validate_on_submit():
 		hra_results = request.form.to_dict()
+		#assert app.debug == False
  		tc_security.process_hra_results(hra_results)
  		if tc_security.store_hra_results(current_user.get_id(),hra_results):
-			return render_template('hra_results.html')#, results=hra_results['score']) #'score' comes from process_hra_results
+			return redirect(url_for('hra_results'))
 		else:
 			flash('Submission failed, please contact your administrator.')
 			return redirect(url_for('logoutUser'))
 	else:
 		# check if the user has already taken the hra
 		results = tc_security.get_hra_results(current_user.get_id())
-		if results is not None: # if results exist, just return the results page
-			time_taken = None
-			if results['DATE_CREATED'] is not None:
-				time_taken = results['DATE_CREATED'].strftime("%m/%d/%Y")
-			return render_template('hra_results.html', time_taken=time_taken)#, results=tc_security.score_hra(results))
+		if results is not None: # if results exist, just redirect to the results page
+			return redirect(url_for('hra_results'))
 		#get HRA JSON data
 		hra_data = {}
 		#Make sure we are in the same directory as this file
@@ -137,6 +135,12 @@ def renderHRA():
 		return render_template('hra.html', user=current_user, hra_questions=hra_questions, form=form)
 
 
+#Route that displays the HRA Results. Requires login.
+@app.route('/hra_results', methods=['GET','POST'])
+@login_required
+def hra_results():
+	return render_template('hra_results.html', user_score=tc_security.get_hra_score(current_user.get_id()), tc_score=tc_security.get_tc_hra_score())
+	
 
 #callback used by Flask-Login to reload a user object from a userid in a session
 @login_manager.user_loader

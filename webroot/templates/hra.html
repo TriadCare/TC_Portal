@@ -30,7 +30,11 @@
 						<div class="panel-body mc_answer_area">
 							{% if question.type == "MULTIPLE_CHOICE" %}
 								{% for answer in question.answers %}
-									<input type="radio" name="question_{{ question_loop.index }}" class="mc_radio" value="{{ answer.text }}">
+									{% if answer.value != None %}
+										<input type="radio" name="question_{{ question_loop.index }}" class="mc_radio" value="{{ answer.value }}" data-grade="{{ answer.text }}">
+									{% else %}
+										<input type="radio" name="question_{{ question_loop.index }}" class="mc_radio" value="{{ answer.text }}" data-grade="{{ answer.value }}">
+									{% endif %}
 									<span class="mc_text">{{ answer.text|safe }}</span>
 									<br>
 								{% endfor %}
@@ -49,7 +53,11 @@
 										<tr>
 											<td>{{ row.text }}</td>
 											{% for i in range(0, table_width) %}
-												<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop.index }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}"></td>
+												{% if row['values'][i] != None %}
+													<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop.index }}_row_{{ row_loop.index }}" value="{{ row['values'][i] }}" data-text="{{ question.columns[i] }}"></td>
+												{% else %}
+													<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop.index }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}" data-text="{{ row['values'][i] }}"></td>
+												{% endif %}
 											{% endfor %}
 										</tr>
 									{% endfor %}

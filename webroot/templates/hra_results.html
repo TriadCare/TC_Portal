@@ -20,10 +20,10 @@
 	<div class="container">
 		<div class="tc-heading"><span class="signup-btn btn btn-sm btn-default" id="hra-logout"><a href="/logout">Log Out</a></spqn></div>
 		{% if time_taken %}
-			<div class="tc-heading"><h1>Thank You for taking our Health Risk Assessment on {{time_taken}}!<br>Your results are being processed.</h1></div>
-		{% else %}
-			<div class="tc-heading"><h1>Thank You for taking our Health Risk Assessment!<br>Your results are being processed.</h1></div>
-		{% endif %}
+        	<div class="tc-heading"><h1>Thank You for taking our Health Risk Assessment on {{time_taken}}!<br>Your results are being processed.</h1></div>
+        {% else %}
+            <div class="tc-heading"><h1>Thank You for taking our Health Risk Assessment!<br>Your results are being processed.</h1></div>
+        {% endif %}
     </div>
 	
 {% endblock content %}
