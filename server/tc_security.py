@@ -68,6 +68,8 @@ def get_hra_score(tcid=""):
 		
 		score = {}
 		
+		dont_score = 0  # Count the number of answers that shouldn't scored
+		
 		with open('../webroot/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
 			hra_data = json.load(hra_file)
 		
@@ -81,9 +83,14 @@ def get_hra_score(tcid=""):
 				for q in group['questions']:
 					q_name = "question_" + str(q)  # Build the question names from the meta
 					g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
+					if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
+						dont_score += 1
+						break
 					
 					data += grade_scores[g]  # Add the grade points together
-				data /= len(group['questions'])  # Divide to get the average for this section
+				
+				if data > 0:
+					data /= (len(group['questions'])-dont_score)  # Divide to get the average for this section
 				score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
 		
 		# Lastly, calculate the Overall Score
