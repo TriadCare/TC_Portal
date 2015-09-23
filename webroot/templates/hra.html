@@ -10,16 +10,20 @@
 {% endblock head %}
 
 {% block header %}
-	<div class="container">
+	<div class="container hra_top_bar">
 		{{ super() }}
-		<div class="tc-heading"><h1>Health Risk Assessment</h1></div>
+		<span id="hra_results_title"><h3>Health Risk Assessment</h3></span>
+		<div class="tc-heading">
+			<span class="signup-btn btn btn-sm btn-default" id="hra-logout">
+				<a href="/logout">Log Out</a>
+			</span>
+		</div>
 	</div>
 {% endblock header %}
 {% block messages %}{% endblock messages %}
 
 {% block content %}
 	<div class="container">
-		<span class="signup-btn btn btn-sm btn-default" id="hra-logout"><a href="/logout">Log Out</a></span>
 		<div class="form-container">
 			<form action="/hra" method="post" name="hra" enc-type="application/json">
 				{{ form.hidden_tag() }}

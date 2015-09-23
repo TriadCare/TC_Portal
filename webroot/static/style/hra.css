@@ -8,6 +8,11 @@ body
 	margin-bottom: 10px;
 }
 
+.hra_top_bar
+{
+	line-height: 70px;
+}
+
 .form-container
 {
 	background-color: gray;
@@ -58,12 +63,14 @@ body
 }
 
 /* Custom default button */
-.btn-default{
+.btn-default
+{
   text-shadow: none; /* Prevent inheritence from `body` */
   border: 1px solid rgb(0,120,185);
   background-color: rgb(0,120,185);
 }
-.btn-default:hover{
+.btn-default:hover
+{
 	background-color: rgb(0,120,185);
 	border-color: rgb(0,120,185);
 }
@@ -73,10 +80,8 @@ body
 	color: #fff;
 }
 
-#hra-logout
-{
-	margin-bottom: 10px;
-}
+#hra-logout{}
+
 #hra-logout > a
 {
 	color: #fff;
@@ -84,5 +89,132 @@ body
 
 .tc-heading
 {
-	display: block;
+    display: inline-block;
+    float: right;
+}
+
+
+/* Results Dashboard Styling */
+#hra_results_title
+{
+	float: left;
+}
+
+.hra_results_navbar
+{
+	background-color: rgb(247,247,247);
+    line-height: 70px;
+    border-bottom: 2px solid rgba(255,255,255,0.8);
+}
+
+#nav_bar_spacer
+{
+	width:100%;
+	height: 70px; /* Height of the bootstrap navbar */
+}
+
+.centered
+{
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.chart_container
+{
+	margin-top: 15px;
+	margin-bottom: 30px;
+}
+
+.graph_title
+{
+	font-size: 1.2em;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.section_title
+{
+	color: rgb(0,120,185);
+    background-color: rgb(220,220,220);
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.1em;
+}
+
+.question_blurb_container
+{
+	font-size: 0.8em;
+}
+
+.mc_grade, .grid_answer
+{
+	color: rgb(0,120,185);
+}
+
+.grid_text
+{
+	font-size: 1em;
+}
+@media (max-width: 700px) and (min-width: 475px)
+{
+	.grid_text
+	{
+		font-size: 0.8em;
+	}
+}
+@media (max-width: 475px)
+{
+	.grid_text
+	{
+		font-size: 0.65em;
+	}
+}
+
+#overall_score
+{
+	font-size: 2em;
+    position: absolute;
+    left: 0;
+    right: 0;
+    color: rgb(0,120,185);
+}
+
+#donutDiv
+{
+	position: relative;
+	width: 100%;
+	height: 25vh;
+	line-height: 25vh;
+}
+
+#barDiv
+{
+	width: 100%;
+	height: 45vh;
+}
+
+#scoreBarChart
+{
+	cursor: pointer;
+}
+
+#top-link-block
+{
+	cursor: pointer;
+}
+#top-link-block:hover
+{
+	color: rgb(0,120,185);
+}
+#top-link-block.affix-top
+{
+    position: absolute; /* allows it to "slide" up into view */
+    bottom: -82px; /* negative of the offset - height of link element */
+    left: 10px; /* padding from the left side of the window */
+}
+#top-link-block.affix
+{
+    position: fixed; /* keeps it on the bottom once in view */
+    bottom: 18px; /* height of link element */
+    left: 10px; /* padding from the left side of the window */
 }

@@ -1,5 +1,5 @@
 #import Flask and Flask extensions
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CsrfProtect
 
@@ -26,7 +26,7 @@ login_manager.session_protection = "strong"
 #import locals
 from forms import LoginForm
 from forms import RegistrationForm
-from forms import HRAForm
+from forms import EmptyForm
 from User import User
 
 
@@ -105,7 +105,7 @@ def logoutUser():
 @app.route('/hra', methods=['GET','POST'])
 @login_required
 def renderHRA():
-	form = HRAForm()
+	form = EmptyForm()
 	if form.validate_on_submit():
 		hra_results = request.form.to_dict()
 		#assert app.debug == False
@@ -132,14 +132,50 @@ def renderHRA():
 		hra_questions = hra_data['hra_questions']
 		
 		#passing the empty form in here for the csrf key implementation
-		return render_template('hra.html', user=current_user, hra_questions=hra_questions, form=form)
+		return render_template('hra.html', user=current_user, hra_questions=hra_questions, form=form) # Do I need the user in this template?
 
 
 #Route that displays the HRA Results. Requires login.
 @app.route('/hra_results', methods=['GET','POST'])
 @login_required
 def hra_results():
-	return render_template('hra_results.html', user_score=tc_security.get_hra_score(current_user.get_id()), tc_score=tc_security.get_tc_hra_score())
+	#get HRA JSON data (duped code from renderHRA,TODO: break this out to stay DRY
+	hra_data = {}
+	#Make sure we are in the same directory as this file
+	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	with open("hra.json") as hra_file:
+		hra_data = json.load(hra_file)
+	#parse out the meta survey groupings
+	hra_meta = hra_data['hra_meta']
+	#get the questions from the hra data
+	hra_questions = hra_data['hra_questions']
+	
+	return render_template('hra_results.html', 
+							hra_questions=hra_questions, 
+							hra_meta=hra_meta, 
+							user_answers=tc_security.get_hra_results(current_user.get_id()), 
+							form=EmptyForm())
+
+
+#Route that returns hra data for the current user. Requires login.
+@app.route('/hra_user_data', methods=['GET','POST'])
+@login_required
+def hra_user_data():
+	return jsonify(**tc_security.get_hra_score(current_user.get_id()))
+	
+	
+#Route that returns Triad Care hra data. Requires login.
+@app.route('/hra_tc_data', methods=['GET','POST'])
+@login_required
+def hra_tc_data():
+	return jsonify(**tc_security.get_tc_hra_score())
+	
+	
+#Route that returns hra data for the current user AND Triad Care. Requires login.
+@app.route('/hra_data', methods=['GET','POST'])
+@login_required
+def hra_data():
+	return jsonify(**{"userData": tc_security.get_hra_score(current_user.get_id()), "tcData": tc_security.get_tc_hra_score()})
 	
 
 #callback used by Flask-Login to reload a user object from a userid in a session

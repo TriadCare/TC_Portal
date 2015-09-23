@@ -63,35 +63,38 @@ def get_hra_results(tcid=""):
 #	}
 def get_hra_score(tcid=""):
 	
-	hra_results = get_hra_results(tcid)
-	
-	score = {}
-	
-	with open('../webroot/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
-		hra_data = json.load(hra_file)
-	
-	groupings = hra_data['hra_meta']['groupings']
-	
-	for group in groupings:
-		if group['graded']:
-			data = 0
-			# I need to get a score for each graded section.
-			
-			for q in group['questions']:
-				q_name = "question_" + str(q)  # Build the question names from the meta
-				g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
+	try:
+		hra_results = get_hra_results(tcid)
+		
+		score = {}
+		
+		with open('../webroot/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
+			hra_data = json.load(hra_file)
+		
+		groupings = hra_data['hra_meta']['groupings']
+		
+		for group in groupings:
+			if group['graded']:
+				data = 0
+				# I need to get a score for each graded section.
 				
-				data += grade_scores[g]  # Add the grade points together
-			data /= len(group['questions'])  # Divide to get the average for this section
-			score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
-	
-	# Lastly, calculate the Overall Score
-	overall_total = 0
-	for s in score.values():
-		overall_total += s
-	score["Overall"] = round(overall_total/len(score.values()),1)
-	
-	return score
+				for q in group['questions']:
+					q_name = "question_" + str(q)  # Build the question names from the meta
+					g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
+					
+					data += grade_scores[g]  # Add the grade points together
+				data /= len(group['questions'])  # Divide to get the average for this section
+				score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
+		
+		# Lastly, calculate the Overall Score
+		overall_total = 0
+		for s in score.values():
+			overall_total += s
+		score["Overall"] = round(overall_total/len(score.values()),1)
+		
+		return score
+	except Exception as e:
+		return {}
 
 
 # This function returns the average HRA scores for everyone who has taken the HRA

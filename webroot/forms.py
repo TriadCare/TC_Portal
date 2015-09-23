@@ -17,6 +17,6 @@ class RegistrationForm(Form):
 	confirm_password = StringField('confirm_password', validators=[DataRequired()])
 	email = EmailField('email', validators=[DataRequired()])
 	dob = DateField('dob', validators=[], format='%Y-%m-%d')
-	
-class HRAForm(Form):
+
+class EmptyForm(Form):
 	pass

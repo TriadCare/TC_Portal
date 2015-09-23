@@ -7,25 +7,143 @@
 {% block head %}
 	{{ super() }}
 	<link rel="stylesheet" href="static/style/hra.css"/>
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 {% endblock head %}
 
 {% block header %}
-	<div class="container">
+	<div class="container-fluid navbar-fixed-top hra_results_navbar">
 		{{ super() }}
+		<span id="hra_results_title"><h3>HRA Results</h3></span>
+		<div class="tc-heading">
+			<span class="signup-btn btn btn-sm btn-default" id="hra-logout">
+				<a href="/logout">Log Out</a>
+			</span>
+		</div>
 	</div>
 {% endblock header %}
 {% block messages %}{% endblock messages %}
 
 {% block content %}
 	<div class="container">
-		<div class="tc-heading"><span class="signup-btn btn btn-sm btn-default" id="hra-logout"><a href="/logout">Log Out</a></spqn></div>
-		{% if time_taken %}
-        	<div class="tc-heading"><h1>Thank You for taking our Health Risk Assessment on {{time_taken}}!<br>Your results are being processed.</h1></div>
-        {% else %}
-            <div class="tc-heading"><h1>Thank You for taking our Health Risk Assessment!<br>Your results are being processed.</h1></div>
-        {% endif %}
+		<div id="nav_bar_spacer"></div>
+		<div class="graph_title">Your Overall Score</div>
+		<div id="donutDiv" class="centered chart_container">
+			<div id="overall_score"></div>
+			<canvas id="scoreDonutChart" width="100%" height="100%"></canvas>
+		</div>
+		<div class="graph_title">Section Breakdown</div>
+		<div id="chart_legend"></div>
+		<div id="barDiv" class="centered chart_container">
+			<canvas id="scoreBarChart" width="100%" height="100%"></canvas>
+		</div>	
     </div>
+    
+    <div id="questionnaireBreakdownContainer" class="container">
+	    <div class="graph_title">Questionnaire Breakdown</div>
+	    {% for question in hra_questions %}
+			{% set question_loop = loop.index %}
+				
+			{% if question_loop == 3 %}
+				<div id="Tobacco" class="section_title">Tobacco Section</div>
+			{% elif question_loop == 6 %}
+				<div id="Diet & Nutrition" class="section_title">Diet & Nutrition Section</div>
+			{% elif question_loop == 14 %}
+				<div id="Physical Activity" class="section_title">Physical Activity Section</div>
+			{% elif question_loop == 17 %}
+				<div id="Stress" class="section_title">Stress Section</div>
+			{% elif question_loop == 20 %}
+				<div id="Medication Management" class="section_title">Medication Management Section</div>
+			{% elif question_loop == 25 %}
+				<div id="Preventative Care" class="section_title">Screening & Preventative Care Section</div>
+			{% elif question_loop == 26 %}
+				<div id="Chronic Conditions" class="section_title">Chronic Conditions Section</div>
+			{% elif question_loop == 27 %}
+				<div id="Self Analysis" class="section_title">Self-Analysis Section</div>
+			{% endif %}
+			
+			<div class="panel panel-default">
+				<div class="panel-heading question-text">{{ question_loop }}. {{ question.text|safe }}</div>
+				<div class="panel-body mc_answer_area">
+					{% if question.type == "MULTIPLE_CHOICE" %}
+						{% for answer in question.answers %}
+							{% if answer.value != None %}
+								<span class="mc_grade">{{ answer.value|first }}</span>
+								{% if user_answers["question_" + (question_loop|string)] == answer.value %}
+									<input type="radio" class="mc_radio" disabled checked>
+								{% else %}
+									<input type="radio" class="mc_radio" disabled>
+								{% endif %}
+								<span name="question_{{ question_loop }}" class="mc_text">{{ answer.text|safe }}</span>
+							{% else %}
+								{% if user_answers["question_" + (question_loop|string)] == answer.text %}
+									<input type="radio" class="mc_radio" disabled checked>
+								{% else %}
+									<input type="radio" class="mc_radio" disabled>
+								{% endif %}
+								<span name="question_{{ question_loop }}" class="mc_text">{{ answer.text|safe }}</span>
+							{% endif %}
+							<br>
+						{% endfor %}
+					{% elif question.type == "INTEGER" %}
+						<input class="input_number" type="number" value="{{ user_answers["question_" + (question_loop|string)] }}" disabled>
+					{% elif question.type == "GRID" %}
+						{% set table_width = question.columns|length %}
+						<table class="table table-bordered table-striped table-hover question_grid">
+							<tr> <td></td>{# <!-- Table Header and blank first column --> #}
+							{% for column in question.columns %}
+							{% set column_loop = loop %}
+								<td class="grid_cell grid_text">
+									{% if question['rows'][0]['values'][column_loop.index - 1] != None %}
+										<span class="grid_answer">{{ question['rows'][0]['values'][column_loop.index - 1] }}</span><br>
+									{% else %}
+										<br>
+									{% endif %}
+									<span>{{ column }}</span>
+								</td>
+							{% endfor %}
+							</tr>
+							{% for row in question.rows %}
+							{% set row_loop = loop %}
+								<tr>
+									<td class='grid_text'>{{ row.text }}</td>
+									{% for i in range(0, table_width) %}
+										{% if row['values'][i] != None %}
+											{% if user_answers["question_" + (question_loop|string) + "_row_" +  (row_loop.index|string) ] == row['values'][i]%}
+												<td class="grid_cell"><input type="radio" class="grid_radio" disabled checked></td>
+											{% else %}
+												<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop }}_row_{{ row_loop.index }}" value="{{ row['values'][i] }}" data-text="{{ question.columns[i] }}" disabled></td>
+											{% endif %}
+										{% else %}
+											{% if user_answers["question_" + (question_loop|string) + "_row_" +  (row_loop.index|string)] == question.columns[i] %}
+												<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}" data-text="{{ row['values'][i] }}" disabled checked></td>
+											{% else %}
+												<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}" data-text="{{ row['values'][i] }}" disabled></td>
+											{% endif %}
+										{% endif %}
+									{% endfor %}
+								</tr>
+							{% endfor %}
+						</table>
+					{% endif %}
+				</div>
+				{% if question.blurb %}
+					<div class="question_blurb_container panel-footer">
+						{{ question.blurb }}
+					</div>
+				{% endif %}
+			</div>
+		{% endfor %}
+	    
+    </div>
+    
+    <span id="top-link-block" class="hidden well well-sm">
+	    <i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+	</span><!-- /top-link-block -->
 	
 {% endblock content %}
 
 {% block footer %}{% endblock footer %}
+{% block script_section %}
+	<script src="../static/libs/Chart.js-master/Chart.js"></script>
+	<script src="../static/js/hra_results.js"></script>
+{% endblock script_section %}

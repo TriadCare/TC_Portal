@@ -35,11 +35,9 @@ def add_user(userDict):
 		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], userDict['tcid']]
 		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
 	except Exception as e:
-		#cursor.close()
-		return e
+		return None
 	#if no exceptions, commit the addition
 	conn.commit()
-	#cursor.close()
 	return True
 	
 def get_user_hash(email):
@@ -146,7 +144,7 @@ def get_hra_data(columns=[]):
 			desc.append(d[0])
 		return [desc, list(cursor.fetchall())]
 	except Exception as e:
-		return e
+		return None
 	return None
 
 
