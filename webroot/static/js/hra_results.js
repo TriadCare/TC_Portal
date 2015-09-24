@@ -61,7 +61,11 @@ $(document).ready(function(){
 	hra_bar_chart = new Chart(barChartContext).Bar(emptyBarChartData,{
 		"responsive":true,
 		"maintainAspectRatio":false, 
-		"multiTooltipTemplate": "<%= value %>%"
+		"multiTooltipTemplate": "<%= value %>%",
+		"scaleOverride": true, 
+		"scaleStartValue": 0, 
+		"scaleStepWidth": 10, 
+		"scaleSteps": 10
 		});
 			
 
