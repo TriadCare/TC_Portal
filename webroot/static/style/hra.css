@@ -122,14 +122,45 @@ body
 .chart_container
 {
 	margin-top: 15px;
-	margin-bottom: 30px;
+	margin-bottom: 15px;
+}
+
+#chart_legend
+{
+	margin-top: -10px;
+}
+.legend_label
+{
+	font-size: 0.7em;
+	display: inline-block;
+	margin-right: 10px;
+}
+.legend_key
+{
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+}
+#user_score_key
+{
+	border: 1px solid rgba(151,187,205,0.8);
+	background-color: rgba(151,187,205,0.5);
+}
+#user_score_label
+{
+}
+#tc_score_key
+{
+	border: 1px solid rgba(180,180,180,0.8);
+	background-color: rgba(180,180,180,0.5);
+}
+#tc_score_label
+{
 }
 
 .graph_title
 {
 	font-size: 1.2em;
-	margin-top: 15px;
-	margin-bottom: 15px;
 }
 
 .section_title

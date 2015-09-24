@@ -60,8 +60,8 @@ $(document).ready(function(){
 																					});
 	hra_bar_chart = new Chart(barChartContext).Bar(emptyBarChartData,{
 		"responsive":true,
-		"maintainAspectRatio":false 
-		//"multiTooltipTemplate": "<%= datasetLabel %>: <%= value %>"
+		"maintainAspectRatio":false, 
+		"multiTooltipTemplate": "<%= value %>%"
 		});
 			
 
@@ -81,6 +81,10 @@ $(document).ready(function(){
 
 });
 
+
+var gpa_to_percent = function(gpa){
+	return ((gpa/4.0)*100).toFixed(0);
+}
 	
 
 var updateChart = function(data){
@@ -92,9 +96,9 @@ var updateChart = function(data){
 		$("#overall_score").text("No Data to Display");
 	} else {
 	
-		$("#overall_score").text(overallData[0])
+		$("#overall_score").text(gpa_to_percent(overallData[0]).toString() + "%");
 		
-		overall_donut_chart.removeData()
+		overall_donut_chart.removeData();
 		
 		overall_donut_chart.addData({
 			value: overallData[0],
@@ -109,7 +113,7 @@ var updateChart = function(data){
 	}
 
 	for(section in data['tcData']){
-		hra_bar_chart.addData([data['userData'][section], data['tcData'][section]], section)
+		hra_bar_chart.addData([gpa_to_percent(data['userData'][section]), gpa_to_percent(data['tcData'][section])], section);
 	}
 	
 	for(bar in hra_bar_chart.datasets[0].bars){
