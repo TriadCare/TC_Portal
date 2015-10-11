@@ -82,15 +82,20 @@ def get_hra_score(tcid=""):
 				
 				for q in group['questions']:
 					q_name = "question_" + str(q)  # Build the question names from the meta
+					
+					if hra_results[q_name] is None: # If there is no answer, increment dont_count and break
+						dont_score += 1
+						break
+					
 					g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
 					if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
 						dont_score += 1
 						break
 					
 					data += grade_scores[g]  # Add the grade points together
-				
-				if data > 0:
-					data /= (len(group['questions'])-dont_score)  # Divide to get the average for this section
+				questions_to_score = (len(group['questions'])-dont_score)
+				if data > 0 and questions_to_score > 0:
+					data /= questions_to_score  # Divide to get the average for this section
 				score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
 		
 		# Lastly, calculate the Overall Score
@@ -150,6 +155,15 @@ def get_tc_hra_score():
 	graded_sections["Overall"] = round(overall_total/len(graded_sections.values()),1)
 	
 	return graded_sections
+
+
+#helper function for this one-time pdf print issue. 
+#gets the next tcid in the list of Box Board employees.
+# DOES NOT BELONG IN PRODUCTION. USED FOR PRINTING ALL SCORECARDS FOR BOX BOARD.
+#def get_next_id(this_id):
+#	all_box_board_employee_ids = data_transfer.get_user_ids_from_box_board()
+#	return all_box_board_employee_ids[all_box_board_employee_ids.index(this_id)+1]
+
 
 
 # helper function to sanitize and validate the password. Rules are as follows:

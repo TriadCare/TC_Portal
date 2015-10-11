@@ -2,6 +2,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CsrfProtect
+from flask_weasyprint import HTML, CSS, render_pdf
 
 #import python commons
 import sys, os, json
@@ -139,7 +140,7 @@ def renderHRA():
 @app.route('/hra_results', methods=['GET','POST'])
 @login_required
 def hra_results():
-	#get HRA JSON data (duped code from renderHRA,TODO: break this out to stay DRY
+	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
 	hra_data = {}
 	#Make sure we are in the same directory as this file
 	os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -176,7 +177,62 @@ def hra_tc_data():
 @login_required
 def hra_data():
 	return jsonify(**{"userData": tc_security.get_hra_score(current_user.get_id()), "tcData": tc_security.get_tc_hra_score()})
+
+
+#Route that takes html data, converts it to PDF using WeasyPrint, and returns the PDF as a download.
+@app.route('/export_to_pdf', methods=['POST'])
+@login_required
+def export_to_pdf():
+	if not current_user.get_id() == '0000000001':
+		flash("You are not authorized to access this page.")
+		return redirect(url_for("logoutUser"))
 	
+	#return "HTML: " + request.form['html'] + " Name: " + request.form['name']
+	#decoded_str = str(request.form['html'])#.decode("utf8")
+	#return HTML(decoded_str.encode("utf8")).write_pdf()
+
+	
+	pdf = HTML(string=request.form['html']).write_pdf(stylesheets=[CSS(url_for('static', filename='libs/bootstrap/bootstrap.css')), CSS(url_for('static', filename='style/style.css')), CSS(url_for('static', filename='style/hra.css'))])
+	
+	with open('/Users/jackwhite/Desktop/scorecards/'+ request.form['name'], "w") as out:
+		out.write(pdf)
+	
+	return "Done"
+	
+# 	response = render_pdf(HTML(string=request.form['html']), download_filename=request.form['name'])
+# 	response.headers['Content-Type'] = "application/download"
+# 	return response
+
+#Route that returns questionnaire HTML for the specified user. Login required. DOES NOT BELONG IN PRODUCTION
+# @app.route('/get_questionnaire', methods=['POST'])
+# @login_required
+# def get_questionnaire():
+# 	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+# 	hra_data = {}
+# 	#Make sure we are in the same directory as this file
+# 	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+# 	with open("hra.json") as hra_file:
+# 		hra_data = json.load(hra_file)
+# 	#parse out the meta survey groupings
+# 	hra_meta = hra_data['hra_meta']
+# 	#get the questions from the hra data
+# 	hra_questions = hra_data['hra_questions']
+# 	
+# 	last_id = request.form['id']
+# 	this_id = tc_security.get_next_id(last_id)
+# 	user = data_transfer.get_user_with_tcid(this_id)
+# 	if user['first_name'] is None:
+# 		this_name = this_id
+# 	else:
+# 		this_name = user['first_name'] + " " + user['last_name']
+# 	
+# 	return render_template('questionnaire_results.html',
+# 							hra_questions=hra_questions, 
+# 							hra_meta=hra_meta, 
+# 							user_answers=tc_security.get_hra_results(this_id),
+# 							this_id=this_id,
+# 							this_name=this_name)
+
 
 #callback used by Flask-Login to reload a user object from a userid in a session
 @login_manager.user_loader

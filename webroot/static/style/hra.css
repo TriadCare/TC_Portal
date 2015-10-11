@@ -175,6 +175,7 @@ body
 .question_blurb_container
 {
 	font-size: 0.8em;
+	text-align: left;
 }
 
 .mc_grade, .grid_answer
@@ -248,4 +249,32 @@ body
     position: fixed; /* keeps it on the bottom once in view */
     bottom: 18px; /* height of link element */
     left: 10px; /* padding from the left side of the window */
+}
+
+
+/* Styles used to help with formatting the scorecard for printing 
+@page
+{
+	size: a4;
+}*/
+@media print
+{
+	/*.section_title{page-break-before: always;}*/
+	.panel{page-break-inside: avoid;}
+	.panel.\26{page-break-inside: auto;page-break-before: avoid;} 
+	
+	#overall_score{font-size: 24pt; color: rgb(151,187,205); margin-top: 75px;}
+	/*.hra_results_navbar{display: none;}*/
+	#top-link-block{display: none;}
+	.hra-submit{display: none;}
+	#hra-logout{display: none;/*
+	#scoreDonutChart{display: none;}
+	#scoreBarChart{display: none;}
+	#donutChartImage{display: inline;}
+	#barChartImage{display: inline;}*/
+	#user_score_key{background-color: rgb(151,187,205)!important;}
+	#tc_score_key{background-color: rgb(180,180,180)!important;}
+}
+@page{
+	margin: 0.5cm;
 }

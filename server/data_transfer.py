@@ -163,3 +163,14 @@ def get_all_hra_results():
 	except Exception as e:
 		return None
 	return None
+
+# TODO: DELETE THIS
+# def get_user_ids_from_box_board():
+# 	conn = getConnection()
+# 	cursor = conn.cursor()
+# 	try:
+# 		cursor.execute("select webappusers.tcid from webappusers JOIN hra_answers on hra_answers.tcid = webappusers.tcid where Account = 'Box Board Products' order by webappusers.tcid")
+# 		return  [r[0] for r in cursor.fetchall()]
+# 	except Exception as e:
+# 		return e
+# 	return None
