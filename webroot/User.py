@@ -18,6 +18,9 @@ class User():
 
 	def get_id(self):
 		return unicode(self.tcid)  # python 2
+	
+	def get_email(self):
+		return self.email
 		
 
 	def __repr__(self):

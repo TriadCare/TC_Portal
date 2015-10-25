@@ -87,6 +87,70 @@ def get_user_with_tcid(tcid):
 	
 	return None
 
+
+def store_session(session_id="", user_id="", timeout=""):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("insert into session (sid, user, time_created, timeout) values (%s, %s, %s, %s)", [session_id, user_id, dt.now(), timeout])
+	except Exception as e:
+		return None
+	
+	conn.commit()
+	return True
+
+
+def retrieve_session(session_id=""):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select sid, user, time_created, timeout from session where sid = %s", [session_id])
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		if len(result) > 1:
+			return None
+			
+		return dict(zip(desc, result[0]))
+	except:
+		return None
+	
+	return None
+
+
+def remove_session(session_id):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("delete from session where sid=%s", [session_id])
+	except Exception as e:
+		return e
+	conn.commit()
+	return True
+
+def remove_user_session(user_email):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("delete from session where user=%s", [user_email])
+	except Exception as e:
+		return e
+	conn.commit()
+	return True
+
+
+def set_password_for_user_id(user_id, hash):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("update webappusers set hash=%s where tcid=%s", [hash, user_id])
+	except Exception as e:
+		return False
+	conn.commit()
+	return True
+
+
+
 def store_hra_answers(tcid, hra_answers):
 	#get the connection cursor
 	conn = getConnection()

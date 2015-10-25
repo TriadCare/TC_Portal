@@ -3,6 +3,9 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CsrfProtect
 from flask_weasyprint import HTML, CSS, render_pdf
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeSerializer, BadSignature
+
 
 #import python commons
 import sys, os, json
@@ -23,11 +26,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'loginUser'
 login_manager.session_protection = "strong"
+#Flask-Mail
+mail = Mail(app)
+#itsdangerous
+password_uss = URLSafeSerializer(app.config['SECRET_KEY'], salt='password_reset')
 
 #import locals
-from forms import LoginForm
-from forms import RegistrationForm
-from forms import EmptyForm
+from forms import *
 from User import User
 
 
@@ -88,8 +93,8 @@ def loginUser():
 			flash('Log in failed, Please try again.')
 			return render_template('user_login.html',form=form)
 			
-		#return redirect(request.args.get('next') or url_for('renderDashboard'))
-		return redirect(url_for('renderHRA')) #PLEASE REVERT TO LINE ABOVE IN PRODUCTION
+		return redirect(request.args.get('next') or url_for('renderHRA'))
+		#return redirect(url_for('renderHRA')) #PLEASE REVERT TO LINE ABOVE IN PRODUCTION
 	#else return with errors (TODO)
 	return render_template('user_login.html',form=form)
 
@@ -100,7 +105,61 @@ def loginUser():
 def logoutUser():
 	logout_user()
 	return redirect(url_for('loginUser'))
+
+
+#Route that collects the email from an un-authenticated user and sends a Reset Password Email
+@app.route('/forgot_password', methods=['GET','POST'])
+def forgotPassword():
+	form = ForgotPasswordForm()
+	if form.validate_on_submit():
+		email_addr = str(form.email.data)
+		#first check if the email exists
+		if tc_security.email_exists(email_addr):
 	
+			password_session_id = tc_security.generateSession(user=email_addr, duration="20")
+			password_session_digest = password_uss.dumps(password_session_id)
+			
+			email = Message(
+				"Triad Care Portal - Reset Password",
+				recipients=[email_addr],
+				html= ("<div>Click on the link below to set a new password.</div>\
+				<div><a href='my.triadcare.com/reset_password/" + password_session_digest + "'>Reset Password</a></div>")
+			)
+			mail.send(email)
+			
+			flash('An email has been sent (check your spam folder). Please follow the instructions in the email to reset your password.')
+			return redirect(url_for('loginUser'))
+		else:
+			flash('The email you provided does not exist in our system. Please provide the email you registered.')
+			return redirect(url_for('forgotPassword'))
+	return render_template('forgot_password.html', form=form)
+
+
+#Route that handles the Reset Password workflow. Logs a user in based on the session id
+@app.route('/reset_password/<id>', methods=['GET', 'POST'])
+def resetPassword(id):
+	session_id = password_uss.loads(id)
+	user_email = tc_security.get_user_from_valid_session(session_id)
+	if not user_email is None:
+		user = User(tc_security.get_web_app_user(email=user_email))
+	
+		if login_user(user):
+			form = SetPasswordForm()
+			if form.validate_on_submit():
+				password = str(form.password.data)
+				if tc_security.set_password(current_user.get_id(), password):
+					flash('Password change successful. Please log in with your new password.')
+					tc_security.remove_user_session(user_email)
+					return redirect(url_for('logoutUser'))
+				else:
+					flash('The password you provided does not meet the complexity requirements.')
+					return ("", 204)
+			else:
+				return render_template('set_password.html', form=form)
+	tc_security.remove_session(session_id) 
+	flash('Reset code has expired. Please try again.')
+	return redirect(url_for('loginUser'))
+
 
 #Route that displays the HRA. Requires login.
 @app.route('/hra', methods=['GET','POST'])

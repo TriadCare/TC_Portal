@@ -1,6 +1,8 @@
 ### This file holds security-related helper functions for the Triad Care Web Application. ###
-
+from datetime import datetime as dt
+from binascii import hexlify
 from passlib.hash import bcrypt
+import os
 import json
 import re 
 MIN_PASSWORD_LENGTH = "8"
@@ -26,7 +28,18 @@ def get_web_app_user(email="", tcid=""):
 	elif tcid != "":
 		return data_transfer.get_user_with_tcid(tcid)
 	return None
+
+
+# function that checks if a given email exists in the TCDB
+def email_exists(email=""):
+	if email == "" or email is None:
+		return False
 	
+	if data_transfer.get_user_with_email(email) is None:
+		return False
+	
+	return True
+
 
 # function to call to verify the user's creds. Provides sanitization via other functions in this file.
 def authenticate_user(email, password):
@@ -178,6 +191,14 @@ def validate_password(password):
 	return True
 
 
+# helper function to change the password for the provided user_id (should only come from Auth Manager, not user input.)
+def set_password(user_id, password):
+	if not validate_password(password):
+		return False
+	return data_transfer.set_password_for_user_id(user_id, str(bcrypt.encrypt(password)))
+
+
+
 #this function should be called for ANY user input that should abide by the following rules:
 #  1. Only contains alphanumerics and @ and .
 # Please add more rules to this list as you see fit. May need to add options list to turn on/off tests
@@ -185,3 +206,41 @@ def is_sanitary(input):
 	if re.match("^[A-Za-z0-9@\.]*$", input):
 		return True
 	return False
+
+
+def get_user_from_valid_session(session_id=""):
+	if session_id == "" or session_id is None:
+		return None
+		
+	session_object = data_transfer.retrieve_session(session_id)
+	if session_object is None:
+		return None
+	
+	# if the session has timed out, return None
+	if (dt.now() - session_object['time_created']).seconds > (int(session_object['timeout']) * 60):
+		return None
+	
+	return session_object['user']
+
+#This function removes all session records with the provided user email.
+def remove_user_session(user_email):
+	return data_transfer.remove_user_session(user_email)
+	
+#This function removes the session with the provided session_id.
+def remove_session(session_id):
+	return data_transfer.remove_session(session_id)
+
+
+# This function creates and returns a session_id and stores it with some other info in the TCDB.
+def generateSession(user, duration="30"):
+	if email_exists(user):
+		session_id = generateRandomSessionKey()
+		data_transfer.store_session(session_id=session_id, user_id=user, timeout=duration)
+		return session_id
+	return None
+
+
+# This function generates a random 16 byte string used for session IDs.
+def generateRandomSessionKey():
+    return hexlify(os.urandom(16))
+
