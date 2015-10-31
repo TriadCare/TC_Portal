@@ -87,6 +87,24 @@ def get_user_with_tcid(tcid):
 	
 	return None
 
+def get_users_with_account(account):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select * from webappusers where Account=%s", [account])
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		users = []
+		for r in result:
+			users.append(dict(zip(desc, r)))
+		return users
+
+	except Exception as e:
+		return e
+	
+	return None
+
 
 def store_session(session_id="", user_id="", timeout=""):
 	conn = getConnection()
@@ -108,11 +126,11 @@ def retrieve_session(session_id=""):
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
 		result = cursor.fetchall()
-		if len(result) > 1:
+		if len(result) != 1:
 			return None
 			
 		return dict(zip(desc, result[0]))
-	except:
+	except Exception as e:
 		return None
 	
 	return None

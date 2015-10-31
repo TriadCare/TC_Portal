@@ -30,6 +30,7 @@ login_manager.session_protection = "strong"
 mail = Mail(app)
 #itsdangerous
 password_uss = URLSafeSerializer(app.config['SECRET_KEY'], salt='password_reset')
+registration_uss = URLSafeSerializer(app.config['SECRET_KEY'], salt='registration')
 
 #import locals
 from forms import *
@@ -123,7 +124,7 @@ def forgotPassword():
 				"Triad Care Portal - Reset Password",
 				recipients=[email_addr],
 				html= ("<div>Click on the link below to set a new password.</div>\
-				<div><a href='my.triadcare.com/reset_password/" + password_session_digest + "'>Reset Password</a></div>")
+				<div><a href='https://my.triadcare.com/reset_password/" + password_session_digest + "'>Reset Password</a></div>")
 			)
 			mail.send(email)
 			
@@ -138,7 +139,12 @@ def forgotPassword():
 #Route that handles the Reset Password workflow. Logs a user in based on the session id
 @app.route('/reset_password/<id>', methods=['GET', 'POST'])
 def resetPassword(id):
-	session_id = password_uss.loads(id)
+	session_id = ""
+	try:
+		session_id = password_uss.loads(id)
+	except BadSignature:
+		flash('Bad link, please try again or request another Reset Password email.')
+		return redirect(url_for('loginUser'))
 	user_email = tc_security.get_user_from_valid_session(session_id)
 	if not user_email is None:
 		user = User(tc_security.get_web_app_user(email=user_email))
@@ -160,6 +166,71 @@ def resetPassword(id):
 	flash('Reset code has expired. Please try again.')
 	return redirect(url_for('loginUser'))
 
+
+#Route that handles the Registration-from-email workflow. Logs a user in based on the session id
+@app.route('/email_registration/<id>', methods=['GET', 'POST'])
+def emailRegistration(id):
+	session_id = ""
+	try:
+		session_id = registration_uss.loads(id)
+	except BadSignature:
+		flash('Registration Key not recognized. Please follow the exact link provided in the Registration Email.')
+		return redirect(url_for('loginUser'))
+	user_email = tc_security.get_user_from_valid_session(session_id)
+	if not user_email is None:
+		user = User(tc_security.get_web_app_user(email=user_email))
+	
+		if login_user(user):
+			form = SetPasswordForm()
+			if form.validate_on_submit():
+				password = str(form.password.data)
+				if tc_security.set_password(current_user.get_id(), password):
+					flash('Registration successful. Come on in!')
+					tc_security.remove_user_session(user_email)
+					return redirect(url_for('logoutUser'))
+				else:
+					flash('The password you provided does not meet the complexity requirements.')
+					return ("", 204)
+			else:
+				return render_template('set_password.html', form=form)
+	tc_security.remove_session(session_id) 
+	flash('Registration Error. It seems that we don\'t have you in our records.')
+	return redirect(url_for('loginUser'))
+
+
+# Admin Route that handles bulk-emailing registration emails for a specific Account.
+@app.route('/registration-kick-off/<account>', methods=['GET'])
+@login_required
+def bulkRegisterUsers(account):
+	if current_user.get_email() == 'jwhite@triadcare.com' and account == 'Triad Care, Inc.':
+		users = tc_security.get_users_with_account(account)
+		count = 0
+		with mail.connect() as conn:
+		    for user in users:
+				if user['email'] is not None:
+					registration_session_id = tc_security.generateSession(user=user['email'], duration="-1")
+					registration_session_digest = registration_uss.dumps(registration_session_id)
+				
+					email = Message(
+						"Triad Care Portal - Registration",
+						recipients=[user['email']],
+						html= ("<div>Hi " + user['first_name'] + "!</div><div>Welcome to Triad Care! Click the link below to register.</div>\
+						<div><a href='https://my.triadcare.com/email_registration/" + registration_session_digest + "'>Register</a></div>")
+					)
+					conn.send(email)
+					count += 1
+		summary = Message(
+			"Bulk Registration Emails sent to employees of " + account,
+			recipients=['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'rwhite@triadcare.com'],
+			html = ("<div>Number of employee records we have for " + account + ": " + str(len(users)) + 
+			"</div><div>Number of emails sent: " + str(count) + "</div>")
+		)
+		mail.send(summary)
+		return "Finished."
+		
+	else:
+		flash("You are not authorized to access this page.")
+		return redirect(url_for("logoutUser"))
 
 #Route that displays the HRA. Requires login.
 @app.route('/hra', methods=['GET','POST'])

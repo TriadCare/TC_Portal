@@ -208,6 +208,13 @@ def is_sanitary(input):
 	return False
 
 
+def get_users_with_account(account=""):
+	if account == "" or account is None:
+		return None
+	
+	return data_transfer.get_users_with_account(account)
+
+
 def get_user_from_valid_session(session_id=""):
 	if session_id == "" or session_id is None:
 		return None
@@ -216,8 +223,8 @@ def get_user_from_valid_session(session_id=""):
 	if session_object is None:
 		return None
 	
-	# if the session has timed out, return None
-	if (dt.now() - session_object['time_created']).seconds > (int(session_object['timeout']) * 60):
+	# if the session has timed out, return None (if it is -1, this session does not expire.)
+	if session_object['timeout'] != "-1" and (dt.now() - session_object['time_created']).seconds > (int(session_object['timeout']) * 60):
 		return None
 	
 	return session_object['user']
