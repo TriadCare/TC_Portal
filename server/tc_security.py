@@ -56,6 +56,12 @@ def email_exists(email=""):
 	
 	return True
 
+def user_is_registered(email):
+	if data_transfer.get_user_hash(email) is None:
+		return False
+	return True
+		
+
 
 # function to call to verify the user's creds. Provides sanitization via other functions in this file.
 def authenticate_user(email, password):
@@ -310,6 +316,27 @@ def get_users_with_account(account=""):
 		return None
 	
 	return data_transfer.get_users_with_account(account)
+
+
+def get_next_fifty_users_for(account):
+	next_fifty = []
+	# get all employees ordered by date created (newest first)
+	all_users_with_account = get_users_with_account(account)
+	count = 0
+	for user in all_users_with_account:
+		if not user_has_session(user['email']):
+			if not user_is_registered(user['email']):
+				count += 1
+				next_fifty.append(user)
+				if count == 50:
+					break
+	return next_fifty
+
+
+def user_has_session(email):
+	if data_transfer.retrieve_user_session(email) is None:
+		return False
+	return True
 
 
 def get_user_from_valid_session(session_id=""):

@@ -202,8 +202,8 @@ def emailRegistration(id):
 @app.route('/registration-kick-off/<account>', methods=['GET'])
 @login_required
 def bulkRegisterUsers(account):
-	if current_user.get_email() == 'jwhite@triadcare.com' and account == 'Triad Care, Inc.':
-		users = tc_security.get_users_with_account(account)
+	if current_user.get_email() == 'jwhite@triadcare.com':
+		users = tc_security.get_next_fifty_users_for(account)
 		count = 0
 		with mail.connect() as conn:
 		    for user in users:

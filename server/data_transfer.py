@@ -43,10 +43,10 @@ def add_user(userDict):
 def get_user_hash(email):
 	#get the connection cursor
 	cursor = getConnection().cursor()
-	#get the password hash form the database *Note: email should be scrubbed by now because this function is internal*
+	#get the password hash from the database *Note: email should be scrubbed by now because this function is internal*
 	cursor.execute("select hash from webappusers where email = %s", [email])
 	h = cursor.fetchone()
-	if len(h) > 0:
+	if h is not None and len(h) > 0:
 		return h[0]
 	return None
 
@@ -90,7 +90,7 @@ def get_user_with_tcid(tcid):
 def get_users_with_account(account):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select * from webappusers where Account=%s", [account])
+		cursor.execute("select * from webappusers where Account=%s order by DATE_CREATED desc", [account])
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
@@ -135,6 +135,22 @@ def retrieve_session(session_id=""):
 	
 	return None
 
+def retrieve_user_session(email=""):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select sid, user, time_created, timeout from session where user = %s", [email])
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		if len(result) != 1:
+			return None
+			
+		return dict(zip(desc, result[0]))
+	except Exception as e:
+		return None
+	
+	return None
 
 def remove_session(session_id):
 	conn = getConnection()
