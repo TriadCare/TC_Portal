@@ -14,11 +14,27 @@ import data_transfer
 
 # called to store the HRA results for a particular patient.
 def store_hra_results(tcid="", hra_results={}):
-	return data_transfer.store_hra_answers(tcid, hra_results) 
+	return data_transfer.store_hra_answers(tcid, hra_results, get_survey_id_for_user(tcid))
+	
+def store_and_score_hra_results(tcid="", hra_results={}):
+	pass
+
 
 # called to process the HRA results into a health score
 def process_hra_results(hra_results={}):
-	del hra_results['csrf_token'] #clean the form results for processing
+	#clean the form results for processing
+	results = []
+	for r in hra_results:
+		try:
+			if r != 'csrf_token':
+				results.append({"qid": str(r), "aid": str(hra_results[r])})
+		except ValueError as e:
+			continue
+	return results
+
+
+def get_survey_id_for_user(tcid):
+	return "2"
 
 
 # called to retrieve the WebAppUser with the provided email or tcid
@@ -60,9 +76,30 @@ def register_user(userDict):
 		return data_transfer.add_user(userDict)
 	return False
 
+
+# returns the hra version the user has taken, otherwise gives the latest.
+def get_hra_filename(tcid):
+	return "hra_files/english_01.json"
+
+def user_did_complete_hra(tcid):
+	if data_transfer.get_hra_results_old(tcid) is not None:
+		return True
+	return data_transfer.user_did_complete_hra(tcid)
+
+def user_did_complete_new_hra(tcid):
+	return data_transfer.user_did_complete_hra(tcid)
+
+def user_did_complete_old_hra(tcid):
+	if data_transfer.get_hra_results_old(tcid) is not None:
+		return True
+	return False
+
+# function to retrieve and return the hra answers
+def get_hra_results_old(tcid=""):
+	return data_transfer.get_hra_results_old(tcid)
+
 # function to retrieve and return the hra answers
 def get_hra_results(tcid=""):
-	#right now this function just checks if there is a record of an hra for this user. A check for completion is a TODO...
 	return data_transfer.get_hra_results(tcid)
 
 # Given the tcid of the user, returns the scores as follows:
@@ -75,57 +112,117 @@ def get_hra_results(tcid=""):
 #		"Screening and Preventative Care": #
 #	}
 def get_hra_score(tcid=""):
+	if not user_did_complete_new_hra(tcid):
+		
+		try:
+			hra_results = get_hra_results_old(tcid)
+			
+			score = {}
+			
+			dont_score = 0  # Count the number of answers that shouldn't scored
+			
+			with open('../webroot/hra_files/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
+				hra_data = json.load(hra_file)
+			
+			groupings = hra_data['hra_meta']['groupings']
+			
+			for group in groupings:
+				if group['graded']:
+					data = 0
+					# I need to get a score for each graded section.
+					
+					for q in group['questions']:
+						q_name = "question_" + str(q)  # Build the question names from the meta
+						
+						if hra_results[q_name] is None: # If there is no answer, increment dont_count and break
+							dont_score += 1
+							break
+						
+						g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
+						if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
+							dont_score += 1
+							break
+						
+						data += grade_scores[g]  # Add the grade points together
+					questions_to_score = (len(group['questions'])-dont_score)
+					if data > 0 and questions_to_score > 0:
+						data /= questions_to_score  # Divide to get the average for this section
+					score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
+			
+			# Lastly, calculate the Overall Score
+			overall_total = 0
+			for s in score.values():
+				overall_total += s
+			score["Overall"] = round(overall_total/len(score.values()),1)
+			
+			return score
+		except Exception as e:
+			return {}
 	
-	try:
-		hra_results = get_hra_results(tcid)
-		
-		score = {}
-		
-		dont_score = 0  # Count the number of answers that shouldn't scored
-		
-		with open('../webroot/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
-			hra_data = json.load(hra_file)
-		
-		groupings = hra_data['hra_meta']['groupings']
-		
-		for group in groupings:
-			if group['graded']:
-				data = 0
-				# I need to get a score for each graded section.
-				
-				for q in group['questions']:
-					q_name = "question_" + str(q)  # Build the question names from the meta
+	else:
+	
+		try:
+			hra_results = get_hra_results(tcid)
+			
+			score = {}
+			
+			dont_score = 0  # Count the number of answers that shouldn't scored
+			
+			with open('../webroot/hra_files/english_01.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
+				hra_data = json.load(hra_file)
+			
+			groupings = hra_data['hra_meta']['groupings']
+			questions = hra_data['hra_questions']
+
+			answers = {}
+			for question in questions:
+				r = {}
+				try:					
+					for a in question['answers']:
+						r[a['aid']] = a['value']
+					answers[question['qid']] = r
+				except:
+					continue
+
+			for group in groupings:
+				if group['graded']:
+					data = 0
+					# I need to get a score for each graded section.
 					
-					if hra_results[q_name] is None: # If there is no answer, increment dont_count and break
-						dont_score += 1
-						break
-					
-					g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
-					if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
-						dont_score += 1
-						break
-					
-					data += grade_scores[g]  # Add the grade points together
-				questions_to_score = (len(group['questions'])-dont_score)
-				if data > 0 and questions_to_score > 0:
-					data /= questions_to_score  # Divide to get the average for this section
-				score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
-		
-		# Lastly, calculate the Overall Score
-		overall_total = 0
-		for s in score.values():
-			overall_total += s
-		score["Overall"] = round(overall_total/len(score.values()),1)
-		
-		return score
-	except Exception as e:
-		return {}
+					for q in group['questions']:
+						
+						if hra_results[q] is None: # If there is no answer, increment dont_count and break
+							dont_score += 1
+							break
+						
+						g = answers[q][hra_results[q]]	# Get the letter grade that corresponds to the aid.
+						if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
+							dont_score += 1
+							break
+						
+						data += grade_scores[g]  # Add the grade points together
+					questions_to_score = (len(group['questions'])-dont_score)
+					if data > 0 and questions_to_score > 0:
+						data /= questions_to_score  # Divide to get the average for this section
+					score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
+			
+			# Lastly, calculate the Overall Score
+			overall_total = 0
+			for s in score.values():
+				overall_total += s
+			score["Overall"] = round(overall_total/len(score.values()),1)
+			
+			return score
+		except Exception as e:
+			return e
+	
+	return {'Nope'}
 
 
 # This function returns the average HRA scores for everyone who has taken the HRA
 def get_tc_hra_score():
 	# Need the meta data from this file. Should probably come from TCDB in the future.
-	with open('../webroot/hra.json') as hra_file:  
+	with open('../webroot/hra_files/hra.json') as hra_file:  
 		hra_data = json.load(hra_file)
 	# Get the question names that we are concerned with
 	groupings = hra_data['hra_meta']['groupings']

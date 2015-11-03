@@ -80,9 +80,7 @@ body
 	color: #fff;
 }
 
-#hra-logout{}
-
-#hra-logout > a
+.btn > a
 {
 	color: #fff;
 }

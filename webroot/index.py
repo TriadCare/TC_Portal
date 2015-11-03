@@ -212,10 +212,23 @@ def bulkRegisterUsers(account):
 					registration_session_digest = registration_uss.dumps(registration_session_id)
 				
 					email = Message(
-						"Triad Care Portal - Registration",
+						"Register for Triad Care Portal and Complete Your Health Asssessment",
 						recipients=[user['email']],
-						html= ("<div>Hi " + user['first_name'] + "!</div><div>Welcome to Triad Care! Click the link below to register.</div>\
-						<div><a href='https://my.triadcare.com/email_registration/" + registration_session_digest + "'>Register</a></div>")
+						html= ("<div>Hi " + user['first_name'] + "!</div><br><div>You have been registered by your company to take \
+						Triad Care's Health Assessment as part of your wellness program. The link below will allow you to complete \
+						the registration process and take the Health Assessment in the Triad Care Portal. This assessment is \
+						confidential and will take approximately 20 minutes to complete.</div><br>\
+						<div>Once you click on the link below you will be taken to the Triad Care Portal where you will set and confirm \
+						your password for your new account.</div><br>\
+						<div><a href='https://my.triadcare.com/email_registration/" + registration_session_digest + "'>Register</a></div><br> \
+						<div>Please follow the password requirements: <ul><li>Must be longer than 8 characters.</li>\
+						<li>Must use at least one uppercase, one lowercase, and one special character (e.g.- !$&@, etc.)</li></ul></div><br>\
+						<div>After you set your password you will be taken to the login page. Please use your email address \
+						(" + user['email'] + ") and your new password to log in.</div><br>\
+						<div>Once you have logged in you will be able to begin the questionnaire. Please note, all questions are required \
+						and you will only be able to see your confidential results after you click the 'Complete' button at the end of the \
+						questionnaire.</div><br><div>Please email Triad Care Customer Service at customercare@triadcare.com if you have any trouble.\
+						")
 					)
 					conn.send(email)
 					count += 1
@@ -238,55 +251,76 @@ def bulkRegisterUsers(account):
 def renderHRA():
 	form = EmptyForm()
 	if form.validate_on_submit():
-		hra_results = request.form.to_dict()
-		#assert app.debug == False
- 		tc_security.process_hra_results(hra_results)
- 		if tc_security.store_hra_results(current_user.get_id(),hra_results):
+		hra_results = tc_security.process_hra_results(request.form.to_dict())
+		if tc_security.store_hra_results(current_user.get_id(), tc_security.process_hra_results(request.form)):
+		#if tc_security.store_and_score_hra_results(current_user.get_id(),hra_results):
 			return redirect(url_for('hra_results'))
 		else:
 			flash('Submission failed, please contact your administrator.')
 			return redirect(url_for('logoutUser'))
 	else:
 		# check if the user has already taken the hra
-		results = tc_security.get_hra_results(current_user.get_id())
-		if results is not None: # if results exist, just redirect to the results page
+		if tc_security.user_did_complete_hra(current_user.get_id()):
 			return redirect(url_for('hra_results'))
 		#get HRA JSON data
 		hra_data = {}
 		#Make sure we are in the same directory as this file
-		os.chdir(os.path.dirname(os.path.realpath(__file__)))
-		with open("hra.json") as hra_file:
-			hra_data = json.load(hra_file)
+		#os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
 		hra_questions = hra_data['hra_questions']
 		
 		#passing the empty form in here for the csrf key implementation
-		return render_template('hra.html', user=current_user, hra_questions=hra_questions, form=form) # Do I need the user in this template?
+		return render_template('hra.html', hra_questions=hra_questions, form=form)
+
+#Route that saves a partial HRA. Requires login.
+@app.route('/save_hra', methods=['POST'])
+@login_required
+def saveHRA():
+	tc_security.store_hra_results(current_user.get_id(), tc_security.process_hra_results(request.form))
+	return "Success"
+		
+	
 
 
 #Route that displays the HRA Results. Requires login.
 @app.route('/hra_results', methods=['GET','POST'])
 @login_required
 def hra_results():
-	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
-	hra_data = {}
-	#Make sure we are in the same directory as this file
-	os.chdir(os.path.dirname(os.path.realpath(__file__)))
-	with open("hra.json") as hra_file:
-		hra_data = json.load(hra_file)
-	#parse out the meta survey groupings
-	hra_meta = hra_data['hra_meta']
-	#get the questions from the hra data
-	hra_questions = hra_data['hra_questions']
-	
-	return render_template('hra_results.html', 
-							hra_questions=hra_questions, 
-							hra_meta=hra_meta, 
-							user_answers=tc_security.get_hra_results(current_user.get_id()), 
-							form=EmptyForm())
-
+	if not tc_security.user_did_complete_new_hra(current_user.get_id()):
+		#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+		hra_data = {}
+		#Make sure we are in the same directory as this file
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		with open("hra_files/hra.json") as hra_file:
+			hra_data = json.load(hra_file)
+		#parse out the meta survey groupings
+		hra_meta = hra_data['hra_meta']
+		#get the questions from the hra data
+		hra_questions = hra_data['hra_questions']
+		return render_template('hra_results_old.html', 
+								hra_questions=hra_questions, 
+								hra_meta=hra_meta, 
+								user_answers=tc_security.get_hra_results_old(current_user.get_id()), 
+								form=EmptyForm())
+	else: # user completed the new HRA.
+		#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+		hra_data = {}
+		#Make sure we are in the same directory as this file
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		with open("hra_files/english_01.json") as hra_file:
+			hra_data = json.load(hra_file)
+		#parse out the meta survey groupings
+		hra_meta = hra_data['hra_meta']
+		#get the questions from the hra data
+		hra_questions = hra_data['hra_questions']
+		return render_template('hra_results.html', 
+								hra_questions=hra_questions, 
+								hra_meta=hra_meta, 
+								user_answers=tc_security.get_hra_results(current_user.get_id()), 
+								form=EmptyForm())
 
 #Route that returns hra data for the current user. Requires login.
 @app.route('/hra_user_data', methods=['GET','POST'])

@@ -142,7 +142,7 @@ def remove_session(session_id):
 	try:
 		cursor.execute("delete from session where sid=%s", [session_id])
 	except Exception as e:
-		return e
+		return False
 	conn.commit()
 	return True
 
@@ -152,7 +152,7 @@ def remove_user_session(user_email):
 	try:
 		cursor.execute("delete from session where user=%s", [user_email])
 	except Exception as e:
-		return e
+		return False
 	conn.commit()
 	return True
 
@@ -169,34 +169,75 @@ def set_password_for_user_id(user_id, hash):
 
 
 
-def store_hra_answers(tcid, hra_answers):
+def store_hra_answers(tcid, hra_answers, surveyID):
 	#get the connection cursor
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		valueCount = "%s, %s, %s, "
+		cursor.execute("select count(*) from survey_response where (tcid=%s and surveyID=%s)", [tcid, surveyID])
+		c = cursor.fetchall()[0][0]
+		
+		valueCount = "%s, %s, %s, %s, "
 		columns = []
-		values = [get_user_with_tcid(tcid)['email'], dt.now(), tcid]
-		for answer in hra_answers:
+		values = []
+		for answer in sorted(hra_answers, key=lambda k: k['qid']):
 			valueCount += "%s, "
-			columns.append(answer)
-			values.append(hra_answers[answer])
+			columns.append("`" + str(answer['qid']) + "`")
+			values.append(str(answer['aid']))
 		valueCount = valueCount[:-2]
-		query = "insert into hra_answers (USER_CREATED, DATE_CREATED, tcid, %s) values (" % ", ".join(columns)
-		query += valueCount + ")"
+		if c > 0:
+			columns[:0] = ['USER_UPDATED']
+			values[:0] = [get_user_with_tcid(tcid)['email']]
+			query = "update survey_response set %s" % "=%s, ".join(columns) + "=%s where (tcid=%s and surveyID=%s)"
+			values += [tcid, surveyID]
+		else:
+			columns[:0] = ['USER_CREATED', 'DATE_CREATED', 'tcid', 'surveyID']
+			values[:0] = [get_user_with_tcid(tcid)['email'], dt.now(), tcid, surveyID]
+			query = "insert into survey_response (%s) values (" % ", ".join(columns)
+			query += valueCount + ")"
 		cursor.execute(query, values)
 	except Exception as e:
-		return None
+		return False
 	
 	conn.commit()
 	return True
 
 
-def get_hra_results(tcid):
+def user_did_complete_hra(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select * from survey_response where tcid = %s", [tcid])
+		result = cursor.fetchall()
+		if len(result) != 0:
+			return True
+		return False
+	except Exception as e:
+		return False
+
+
+def get_hra_results_old(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
 		cursor.execute("select * from hra_answers where tcid = %s", [tcid])
+		#build the return dict
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		if len(result) != 1:
+			return None
+		return dict(zip(desc, result[0]))
+	except Exception as e:
+		return None
+	return None	
+
+def get_hra_results(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select * from survey_response where tcid = %s", [tcid])
 		#build the return dict
 		desc = []
 		for d in cursor.description: #get a list of the column names

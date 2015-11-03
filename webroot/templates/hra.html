@@ -12,8 +12,11 @@
 {% block header %}
 	<div class="container hra_top_bar">
 		{{ super() }}
-		<span id="hra_results_title"><h3>Health Risk Assessment</h3></span>
+		<span id="hra_results_title"><h3>Health Assessment</h3></span>
 		<div class="tc-heading">
+			{# <span class="signup-btn btn btn-sm btn-default" id="hra-save">
+				<a href="#" onclick='saveHRA()'>Save</a>
+			</span> #}
 			<span class="signup-btn btn btn-sm btn-default" id="hra-logout">
 				<a href="/logout">Log Out</a>
 			</span>
@@ -28,47 +31,53 @@
 			<form action="/hra" method="post" name="hra" enc-type="application/json">
 				{{ form.hidden_tag() }}
 				{% for question in hra_questions %}
-					{% set question_loop = loop %}
-					<div class="panel panel-default">
-						<div class="panel-heading question-text">{{ question.text|safe }}</div>
-						<div class="panel-body mc_answer_area">
-							{% if question.type == "MULTIPLE_CHOICE" %}
-								{% for answer in question.answers %}
-									{% if answer.value != None %}
-										<input type="radio" name="question_{{ question_loop.index }}" class="mc_radio" value="{{ answer.value }}" data-grade="{{ answer.text }}">
-									{% else %}
-										<input type="radio" name="question_{{ question_loop.index }}" class="mc_radio" value="{{ answer.text }}" data-grade="{{ answer.value }}">
-									{% endif %}
-									<span class="mc_text">{{ answer.text|safe }}</span>
-									<br>
-								{% endfor %}
-							{% elif question.type == "INTEGER" %}
-								<input class="input_number" type="number" name="question_{{ question_loop.index }}" value="0" min="0" max="120">
-							{% elif question.type == "GRID" %}
-								{% set table_width = question.columns|length %}
-								<table class="table table-bordered table-striped table-hover question_grid">
-									<tr> <td></td>{# <!-- Table Header and blank first column --> #}
-									{% for column in question.columns %}
-										<td class="grid_cell">{{ column }}</td>
-									{% endfor %}
-									</tr>
-									{% for row in question.rows %}
-									{% set row_loop = loop %}
-										<tr>
-											<td>{{ row.text }}</td>
-											{% for i in range(0, table_width) %}
-												{% if row['values'][i] != None %}
-													<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop.index }}_row_{{ row_loop.index }}" value="{{ row['values'][i] }}" data-text="{{ question.columns[i] }}"></td>
-												{% else %}
-													<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop.index }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}" data-text="{{ row['values'][i] }}"></td>
-												{% endif %}
-											{% endfor %}
-										</tr>
-									{% endfor %}
-								</table>
+				
+					{% if question.type == "GRID" %}
+					{% set table_width = question.answers|length %}
+						<tr>
+							<td>{{ question.text }}</td>
+							{% for i in range(0, table_width) %}
+								<td class="grid_cell"><input type="radio" class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}"></td>
+							{% endfor %}
+						</tr>
+							{% if question.last_row %}
+						</table></div></div>
 							{% endif %}
+					
+					{% elif question.type == "GRID_TEXT"%}
+						</table>
+						<span>{{ question.text }}</span>
+						<input type="textarea" class="grid_text" name="{{ question.qid }}">
+						</div></div>
+					{% else %}
+					
+						<div class="panel panel-default">
+							<div class="panel-heading question-text">{{ question.text|safe }}</div>
+							<div class="panel-body mc_answer_area">
+								
+								{% if question.type == "MULTIPLE_CHOICE" %}
+									{% for answer in question.answers %}
+										<input type="radio" name="{{ question.qid }}" class="mc_radio" value="{{ answer.aid }}">
+										<span class="mc_text">{{ answer.text|safe }}</span>
+										<br>
+									{% endfor %}
+									
+								{% elif question.type == "INTEGER" %}
+									<input class="input_number" type="number" name="{{ question.qid }}" value="0" min="0" max="120">
+									
+								{% elif question.type == "GRID_HEADER" %}
+									{% set table_width = question.columns|length %}
+									<table class="table table-bordered table-striped table-hover question_grid">
+										<tr> <td></td>
+										{% for column in question.columns %}
+											<td class="grid_cell">{{ column }}</td>
+										{% endfor %}
+										</tr>
+										
+								{% endif %}
+							</div>
 						</div>
-					</div>
+					{% endif %}
 				{% endfor %}
 				<button type="submit" class="btn btn-lg btn-default hra-submit">Submit</button>
 			</form>
@@ -78,3 +87,7 @@
 {% endblock content %}
 
 {% block footer %}{% endblock footer %}
+
+{% block script_section %}
+	<script src="../static/js/hra.js"></script>
+{% endblock script_section %}
