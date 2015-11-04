@@ -254,14 +254,21 @@ def renderHRA():
 		hra_results = tc_security.process_hra_results(request.form.to_dict())
 		if tc_security.store_hra_results(current_user.get_id(), tc_security.process_hra_results(request.form)):
 		#if tc_security.store_and_score_hra_results(current_user.get_id(),hra_results):
-			return redirect(url_for('hra_results'))
+			if tc_security.user_did_complete_new_hra(current_user.get_id()):
+				return redirect(url_for('hra_results'))
+			else: 
+				flash("Please complete your Health Assessment to see your Scorecard.")
+				return redirect(url_for('renderHRA'))
 		else:
 			flash('Submission failed, please contact your administrator.')
 			return redirect(url_for('logoutUser'))
 	else:
-		# check if the user has already taken the hra
-		if tc_security.user_did_complete_hra(current_user.get_id()):
+		# check if the user has already taken the old hra
+		if tc_security.user_did_complete_old_hra(current_user.get_id()):
 			return redirect(url_for('hra_results'))
+		if tc_security.user_did_complete_new_hra(current_user.get_id()):
+			return redirect(url_for('hra_results'))
+				
 		#get HRA JSON data
 		hra_data = {}
 		#Make sure we are in the same directory as this file
@@ -273,29 +280,46 @@ def renderHRA():
 		hra_questions = hra_data['hra_questions']
 		
 		#passing the empty form in here for the csrf key implementation
-		return render_template('hra.html', hra_questions=hra_questions, form=form)
+		return render_template(
+			'hra.html', 
+			hra_questions=hra_questions, 
+			user_answers=tc_security.get_hra_results(current_user.get_id()), 
+			user_language=tc_security.get_hra_language(current_user.get_id()), 
+			form=form	
+		)
 
 #Route that saves a partial HRA. Requires login.
 @app.route('/save_hra', methods=['POST'])
 @login_required
 def saveHRA():
 	tc_security.store_hra_results(current_user.get_id(), tc_security.process_hra_results(request.form))
+	flash("Your assessment answers have been saved.")
+	logoutUser()
 	return "Success"
-		
+
+
+#Route that sets the user's HRA to Spanish. Requires login.
+@app.route('/spanish_hra', methods=['POST'])
+@login_required
+def spanishHRA():
+	tc_security.set_to_spanish(current_user.get_id())
+	return "Success"
 	
+#Route that sets the user's HRA to English. Requires login.
+@app.route('/english_hra', methods=['POST'])
+@login_required
+def englishHRA():
+	tc_security.set_to_english(current_user.get_id())
+	return "Success"
 
 
 #Route that displays the HRA Results. Requires login.
 @app.route('/hra_results', methods=['GET','POST'])
 @login_required
 def hra_results():
-	if not tc_security.user_did_complete_new_hra(current_user.get_id()):
+	if tc_security.user_did_complete_old_hra(current_user.get_id()):
 		#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
-		hra_data = {}
-		#Make sure we are in the same directory as this file
-		os.chdir(os.path.dirname(os.path.realpath(__file__)))
-		with open("hra_files/hra.json") as hra_file:
-			hra_data = json.load(hra_file)
+		hra_data = json.load(open("hra_files/hra.json",'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
@@ -306,12 +330,9 @@ def hra_results():
 								user_answers=tc_security.get_hra_results_old(current_user.get_id()), 
 								form=EmptyForm())
 	else: # user completed the new HRA.
-		#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
-		hra_data = {}
-		#Make sure we are in the same directory as this file
-		os.chdir(os.path.dirname(os.path.realpath(__file__)))
-		with open("hra_files/english_01.json") as hra_file:
-			hra_data = json.load(hra_file)
+		if not tc_security.user_did_complete_new_hra(current_user.get_id()):
+			return redirect(url_for('renderHRA'))
+		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data

@@ -55,7 +55,7 @@
 			{% if question.type == "GRID" %}
 			{% set table_width = question.answers|length %}
 					<tr>
-						<td class='grid_text'>{{ question.text }}</td>
+						<td class='grid_column'>{{ question.text }}</td>
 						{% for i in range(0, table_width) %}
 							{% if user_answers[question.qid] == question.answers[i]['aid'] %}
 								<td class="grid_cell"><input type="radio" class="grid_radio" disabled checked></td>
@@ -148,7 +148,7 @@
 							{% for column in question.columns %}
 							{% set column_loop = loop.index %}
 							{% set a = hra_questions[question_loop+headercounter+1]['answers'][column_loop-1]['value'] %}
-								<td class="grid_cell grid_text">
+								<td class="grid_cell grid_column">
 									{% if a != None %}
 										<span class="grid_answer">{{ a }}</span><br>
 									{% else %}

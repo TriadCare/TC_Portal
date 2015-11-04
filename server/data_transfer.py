@@ -219,13 +219,74 @@ def store_hra_answers(tcid, hra_answers, surveyID):
 	return True
 
 
+def get_hra_filename(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select surveyID from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
+		sid = cursor.fetchall()[0][0]
+		cursor.execute("select filename from survey where surveyID=%s", [sid])
+		return cursor.fetchall()[0][0]
+	except Exception as e:
+		return None
+	return None
+
+def get_hra_sid(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select surveyID from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
+		return cursor.fetchall()[0][0]
+	except Exception as e:
+		return None
+	return None
+
+
+def set_to_spanish(tcid):
+	#get the connection cursor
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select count(*) from survey_response where tcid=%s", [tcid])
+		c = cursor.fetchall()[0][0]
+		if c > 0:
+			cursor.execute("update survey_response set surveyID='3' where tcid=%s", [tcid])
+		else:
+			cursor.execute("insert into survey_reponse ('USER_CREATED', 'DATE_CREATED', 'tcid', 'surveyID') values (%s, %s, %s, '3')", [get_user_with_tcid(tcid)['email'], dt.now(), tcid])
+	except Exception as e:
+		return e
+	
+	conn.commit()
+	return True
+
+def set_to_english(tcid):
+	#get the connection cursor
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select count(*) from survey_response where tcid=%s", [tcid])
+		c = cursor.fetchall()[0][0]
+		if c > 0:
+			cursor.execute("update survey_response set surveyID='2' where tcid=%s", [tcid])
+		else:
+			cursor.execute("insert into survey_reponse ('USER_CREATED', 'DATE_CREATED', 'tcid', 'surveyID') values (%s, %s, %s, '2')", [get_user_with_tcid(tcid)['email'], dt.now(), tcid])
+	except Exception as e:
+		return e
+	
+	conn.commit()
+	return True
+
+
 def user_did_complete_hra(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
 		cursor.execute("select * from survey_response where tcid = %s", [tcid])
-		result = cursor.fetchall()
+		result = cursor.fetchall()[0]
 		if len(result) != 0:
+			for a in result:
+				if a is None:
+					return False
 			return True
 		return False
 	except Exception as e:

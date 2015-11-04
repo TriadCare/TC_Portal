@@ -34,6 +34,9 @@ def process_hra_results(hra_results={}):
 
 
 def get_survey_id_for_user(tcid):
+	sid = data_transfer.get_hra_sid(tcid)
+	if sid is not None:
+		return sid
 	return "2"
 
 
@@ -85,7 +88,25 @@ def register_user(userDict):
 
 # returns the hra version the user has taken, otherwise gives the latest.
 def get_hra_filename(tcid):
+	f = data_transfer.get_hra_filename(tcid)
+	if f is not None:
+		return "hra_files/" + f
 	return "hra_files/english_01.json"
+
+def get_hra_language(tcid):
+	sid = data_transfer.get_hra_sid(tcid)
+	if sid is not None:
+		if sid == "3":
+			return "Spanish"
+	return "English"
+
+
+def set_to_spanish(tcid):
+	return data_transfer.set_to_spanish(tcid)
+
+def set_to_english(tcid):
+	return data_transfer.set_to_english(tcid)
+
 
 def user_did_complete_hra(tcid):
 	if data_transfer.get_hra_results_old(tcid) is not None:
@@ -106,7 +127,10 @@ def get_hra_results_old(tcid=""):
 
 # function to retrieve and return the hra answers
 def get_hra_results(tcid=""):
-	return data_transfer.get_hra_results(tcid)
+	results = data_transfer.get_hra_results(tcid)
+	if results is None:
+		return {}
+	return results
 
 # Given the tcid of the user, returns the scores as follows:
 #	{
