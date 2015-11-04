@@ -64,7 +64,7 @@
 					
 					{% elif question.type == "GRID_TEXT"%}
 						</table>
-						<span>{{ question.text }}</span>
+						<span>{{ question.text }}</span>&nbsp
 						{% if user_answers[question.qid] != None %}
 						<input type="textarea" class="grid_text" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}">
 						{% else %}

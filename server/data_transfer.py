@@ -281,16 +281,21 @@ def user_did_complete_hra(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		cursor.execute("select * from survey_response where tcid = %s", [tcid])
-		result = cursor.fetchall()[0]
+		columns = []
+		for i in range(1, 79):
+			columns.append("`" + str(i) + "`")
+		query = "select " + ", ".join(columns) + " from survey_response where tcid = %s"
+		cursor.execute(query, [tcid])
+		result = cursor.fetchall()
 		if len(result) != 0:
-			for a in result:
+			for a in result[0]:
 				if a is None:
 					return False
 			return True
 		return False
 	except Exception as e:
-		return False
+		return e
+	return False
 
 
 def get_hra_results_old(tcid):

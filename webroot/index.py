@@ -268,7 +268,6 @@ def renderHRA():
 			return redirect(url_for('hra_results'))
 		if tc_security.user_did_complete_new_hra(current_user.get_id()):
 			return redirect(url_for('hra_results'))
-				
 		#get HRA JSON data
 		hra_data = {}
 		#Make sure we are in the same directory as this file

@@ -54,7 +54,7 @@ body
 
 input.grid_text[type="textarea"]
 {
-	text-align: right;
+	text-align: left;
 }
 
 .mc_radio
