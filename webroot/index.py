@@ -272,7 +272,7 @@ def renderHRA():
 		#get HRA JSON data
 		hra_data = {}
 		#Make sure we are in the same directory as this file
-		#os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
@@ -318,6 +318,8 @@ def englishHRA():
 @login_required
 def hra_results():
 	if tc_security.user_did_complete_old_hra(current_user.get_id()):
+		#Make sure we are in the same directory as this file
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
 		hra_data = json.load(open("hra_files/hra.json",'r'))
 		#parse out the meta survey groupings
@@ -332,6 +334,8 @@ def hra_results():
 	else: # user completed the new HRA.
 		if not tc_security.user_did_complete_new_hra(current_user.get_id()):
 			return redirect(url_for('renderHRA'))
+		#Make sure we are in the same directory as this file
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
