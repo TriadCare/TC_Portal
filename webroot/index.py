@@ -235,8 +235,7 @@ def bulkRegisterUsers(account):
 		summary = Message(
 			"Bulk Registration Emails sent to employees of " + account,
 			recipients=['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'rwhite@triadcare.com'],
-			html = ("<div>Number of employee records we have for " + account + ": " + str(len(users)) + 
-			"</div><div>Number of emails sent: " + str(count) + "</div>")
+			html = ("<div>Number of emails sent: " + str(count) + "/50</div>")
 		)
 		mail.send(summary)
 		return "Finished."
