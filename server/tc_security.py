@@ -348,12 +348,13 @@ def get_next_fifty_users_for(account):
 	all_users_with_account = get_users_with_account(account)
 	count = 0
 	for user in all_users_with_account:
-		if not user_has_session(user['email']):
-			if not user_is_registered(user['email']):
-				count += 1
-				next_fifty.append(user)
-				if count == 50:
-					break
+		if user['email'] is not None:
+			if not user_has_session(user['email']):
+				if not user_is_registered(user['email']):
+					count += 1
+					next_fifty.append(user)
+					if count == 50:
+						break
 	return next_fifty
 
 
