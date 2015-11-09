@@ -112,9 +112,9 @@
 				<div class="panel-body mc_answer_area">
 					{% if question.type == "MULTIPLE_CHOICE" %}
 						{% for answer in question.answers %}
-							{% if answer.value != None %}
+							{# {% if answer.value != None %}
 								<span class="mc_grade">{{ answer.value|first }}</span>
-							{% endif %}
+							{% endif %} #}
 							{% if user_answers[question.qid] == answer.aid %}
 								<input type="radio" class="mc_radio" disabled checked>
 							{% else %}
@@ -149,11 +149,11 @@
 							{% set column_loop = loop.index %}
 							{% set a = hra_questions[question_loop+headercounter+1]['answers'][column_loop-1]['value'] %}
 								<td class="grid_cell grid_column">
-									{% if a != None %}
+									{# {% if a != None %}
 										<span class="grid_answer">{{ a }}</span><br>
 									{% else %}
 										<br>
-									{% endif %}
+									{% endif %} #}
 									<span>{{ column }}</span>
 								</td>
 							{% endfor %}
