@@ -154,9 +154,9 @@ def resetPassword(id):
 			if form.validate_on_submit():
 				password = str(form.password.data)
 				if tc_security.set_password(current_user.get_id(), password):
-					flash('Password change successful. Please log in with your new password.')
+					flash('Password change successful')
 					tc_security.remove_user_session(user_email)
-					return redirect(url_for('logoutUser'))
+					return redirect(url_for('renderHRA'))
 				else:
 					flash('The password you provided does not meet the complexity requirements.')
 					return ("", 204)
@@ -187,7 +187,7 @@ def emailRegistration(id):
 				if tc_security.set_password(current_user.get_id(), password):
 					flash('Registration successful. Come on in!')
 					tc_security.remove_user_session(user_email)
-					return redirect(url_for('logoutUser'))
+					return redirect(url_for('renderHRA'))
 				else:
 					flash('The password you provided does not meet the complexity requirements.')
 					return ("", 204)
