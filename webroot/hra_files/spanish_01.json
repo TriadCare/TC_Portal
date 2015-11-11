@@ -48,7 +48,7 @@
 					"questions": [
 									"40","41","42","43","44","45","46","47","48","49",
 									"50","51","52","53","54","55","56","57","58","59",
-									"60","61","62","63","64"
+									"60","61","62","63","64","79"
 								],
 					"graded": false
 				},
@@ -1127,7 +1127,7 @@
 			"qid": "40",
 			"type": "GRID",
 			"grid_id": "3",
-			"text": "Ansiedad / depresión",
+			"text": "Ansiedad",
 			"answers": [
 				{
 					"aid": "1",
@@ -1240,6 +1240,22 @@
 			"type": "GRID",
 			"grid_id": "3",
 			"text": "Enfermedad de Crohn",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "79",
+			"type": "GRID",
+			"grid_id": "3",
+			"text": "Depresión",
 			"answers": [
 				{
 					"aid": "1",

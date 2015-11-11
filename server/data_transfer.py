@@ -282,7 +282,7 @@ def user_did_complete_hra(tcid):
 	cursor = conn.cursor()
 	try:
 		columns = []
-		for i in range(1, 79):
+		for i in range(1, 80):
 			columns.append("`" + str(i) + "`")
 		query = "select " + ", ".join(columns) + " from survey_response where tcid = %s"
 		cursor.execute(query, [tcid])
