@@ -21,10 +21,10 @@ def add_user(userDict):
 	#May need to log various things here and give feedback to the user based on what happens.
 	try:
 		# first check if the email already exists in the TCDB
-		cursor.execute("select email from webappusers where email=%s", [userDict['email']])
-		exists = cursor.fetchall()
-		if len(exists): # already registered or put in a non-unique email address
-			return False
+# 		cursor.execute("select email from webappusers where email=%s", [userDict['email']])
+# 		exists = cursor.fetchall()
+# 		if len(exists): # already registered or put in a non-unique email address
+# 			return False
 		# then check if the tcid exists
 		cursor.execute("select dob from webappusers where tcid=%s", [userDict['tcid']])
 		exists = cursor.fetchall()

@@ -8,7 +8,7 @@ from itsdangerous import URLSafeSerializer, BadSignature
 
 
 #import python commons
-import sys, os, json
+import sys, os, json, datetime
 
 #import data class
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'server'))
@@ -57,7 +57,7 @@ def renderRegistrationPage():
 			"password": str(form.password.data),
 			"confirm_password": str(form.confirm_password.data),
 			"email": str(form.email.data),
-			"dob": form.dob.data
+			"dob": datetime.datetime.strptime(str(form.dob_month.data) + str(form.dob_day.data) + str(form.dob_year.data), "%m%d%Y").date()
 		}
 		#try to register the user with our database
 		if not tc_security.register_user(userDict):

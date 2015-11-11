@@ -31,47 +31,59 @@
             <form class="form-signin" action="/registration" method="post" name="register">
 	            {{ form.hidden_tag() }}
 	            
-	            <label for="tcid" class="sr-only">TCID</label>
-		        {{ form.tcid(class_="form-signin form-control inputField", placeholder="TCID") }}
-	            {% for error in form.tcid.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+	            {% if form.tcid.errors %}
+	            	{{ form.tcid(class_="error form-signin form-control inputField", placeholder="TCID") }}
+	            {% else %}
+	            	{{ form.tcid(class_="form-signin form-control inputField", placeholder="TCID") }}
+	            {% endif %}
 		        
-		        <label for="first_name" class="sr-only">First Name</label>
-		        {{ form.first_name(class_="form-signin form-control inputField", placeholder="First Name") }}
-		        {% for error in form.first_name.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+		        {% if form.first_name.errors %}
+		        	{{ form.first_name(class_="error form-user_name form-control inputField", placeholder="First Name") }}
+		        {% else %}
+		        	{{ form.first_name(class_="form-user_name form-control inputField", placeholder="First Name") }}
+		        {% endif %}
 		        
-		        <label for="last_name" class="sr-only">Last Name</label>
-		        {{ form.last_name(class_="form-signin form-control inputField", placeholder="Last Name") }}
-		        {% for error in form.last_name.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+		        {% if form.last_name.errors %}
+		        	{{ form.last_name(class_="error form-user_name form-control inputField", placeholder="Last Name") }}
+		        {% else %}
+		        	{{ form.last_name(class_="form-user_name form-control inputField", placeholder="Last Name") }}
+		        {% endif %}
 		        
-		        <label for="email" class="sr-only">Email</label>
-		        {{ form.email(class_="form-signin form-control inputField", placeholder="Email") }}
-		        {% for error in form.email.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+		        {% if form.email.errors %}
+		        	{{ form.email(class_="error form-signin form-control inputField", placeholder="Email") }}
+		        {% else %}
+		        	{{ form.email(class_="form-signin form-control inputField", placeholder="Email") }}
+		        {% endif %}
 		        
-		        <label for="dob" class="sr-only">Date of Birth</label>
-		        {{ form.dob(class_="form-signin form-control inputField", placeholder="Date of Birth", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"yyyy-mm-dd", 'data-trigger':"focus", 'type':"text"}) }}
-		        {% for error in form.dob.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+				{% if form.dob_month.errors %}
+					{{ form.dob_month(class_="error form-control form-dob inputField", placeholder="Birth Month") }}
+				{% else %}
+					{{ form.dob_month(class_="form-control form-dob inputField", placeholder="Birth Month") }}
+				{% endif %}
+
+				{% if form.dob_day.errors %}
+					{{ form.dob_day(class_="error form-control form-dob inputField", placeholder="Birth Day") }}
+				{% else %}
+					{{ form.dob_day(class_="form-control form-dob inputField", placeholder="Birth Day") }}
+				{% endif %}
 		        
-		        <label for="password" class="sr-only">Password</label>
-		        {{ form.password(class_="form-signin form-control inputField", placeholder="Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Your password must contain at least 8 characters, one upper-case character, one lower-case character, and one special character (!, $, &, etc).", 'data-trigger':"focus"}) }}
-		        {% for error in form.password.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+		        {% if form.dob_year.errors %}
+		        	{{ form.dob_year(class_="error form-control form-dob inputField", placeholder="Birth Year") }}
+		        {% else %}
+		        	{{ form.dob_year(class_="form-control form-dob inputField", placeholder="Birth Year") }}
+		        {% endif %}
 		        
-		        <label for="confirm_password" class="sr-only">Confirm Password</label>
-		        {{ form.confirm_password(class_="form-signin form-control inputField", placeholder="Confirm Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Must match Password", 'data-trigger':"focus"}) }}
-		        {% for error in form.confirm_password.errors %}
-		        	<span style="color: red;">[{{ error }}]</span>
-		        {% endfor %}
+		        {% if form.password.errors %}
+		        	{{ form.password(class_="error form-signin form-control inputField", placeholder="Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Your password must contain at least 8 characters, one upper-case character, one lower-case character, and one special character (!, $, &, etc).", 'data-trigger':"focus"}) }}
+		        {% else %}
+		        	{{ form.password(class_="form-signin form-control inputField", placeholder="Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Your password must contain at least 8 characters, one upper-case character, one lower-case character, and one special character (!, $, &, etc).", 'data-trigger':"focus"}) }}
+		        {% endif %}
+		        
+		        {% if form.confirm_password.errors %}
+		        	{{ form.confirm_password(class_="error form-signin form-control inputField", placeholder="Confirm Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Must match Password", 'data-trigger':"focus"}) }}
+		        {% else %}
+		        	{{ form.confirm_password(class_="form-signin form-control inputField", placeholder="Confirm Password", type="password", **{'data-toggle':"popover", 'data-placement':"right", 'data-content':"Must match Password", 'data-trigger':"focus"}) }}
+		        {% endif %}
 		  		        
 		        <p class="lead">
 					<input type="submit" class="btn btn-lg btn-default" value="Register">

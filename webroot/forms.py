@@ -20,7 +20,9 @@ class RegistrationForm(Form):
 	password = StringField('password', validators=[DataRequired(), Regexp(pw_regex, message='Please follow password complexity rules.')])
 	confirm_password = StringField('confirm_password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
 	email = EmailField('email', validators=[DataRequired()])
-	dob = DateField('dob', validators=[], format='%Y-%m-%d')
+	dob_month = IntegerField('dob_month', validators=[DataRequired()])
+	dob_day = IntegerField('dob_day', validators=[DataRequired()])
+	dob_year = IntegerField('dob_year', validators=[DataRequired()])
 
 class ForgotPasswordForm(Form):
 	email = StringField('email', validators=[DataRequired()])
