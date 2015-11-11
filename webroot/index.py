@@ -49,7 +49,11 @@ def renderLoginPage():
 def renderRegistrationPage():
 	form = RegistrationForm()
 	if form.validate_on_submit():
-		#before, I was using the wtf form to_dict function to get all of the fields... but I need granularity for debugging
+		try:
+			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + str(form.dob_day.data) + str(form.dob_year.data), "%m%d%Y").date()
+		except ValueError:
+			flash('The Date of Birth you entered is not a valid date.')
+			return render_template('user_registration.html',form=form)
 		userDict = {
 			"tcid": str(form.tcid.data), #comes out of the form as unicode (needs to be str in python 2.7)
 			"first_name": str(form.first_name.data),
@@ -57,7 +61,7 @@ def renderRegistrationPage():
 			"password": str(form.password.data),
 			"confirm_password": str(form.confirm_password.data),
 			"email": str(form.email.data),
-			"dob": datetime.datetime.strptime(str(form.dob_month.data) + str(form.dob_day.data) + str(form.dob_year.data), "%m%d%Y").date()
+			"dob": user_dob
 		}
 		#try to register the user with our database
 		if not tc_security.register_user(userDict):
