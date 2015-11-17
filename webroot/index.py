@@ -50,7 +50,7 @@ def renderRegistrationPage():
 	form = RegistrationForm()
 	if form.validate_on_submit():
 		try:
-			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + str(form.dob_day.data) + str(form.dob_year.data), "%m%d%Y").date()
+			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + "/" + str(form.dob_day.data) + "/" + str(form.dob_year.data), "%m/%d/%Y").date()
 		except ValueError:
 			flash('The Date of Birth you entered is not a valid date.')
 			return render_template('user_registration.html',form=form)

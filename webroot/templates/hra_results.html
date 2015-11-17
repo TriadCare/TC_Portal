@@ -13,7 +13,7 @@
 {% block header %}
 	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
 		{{ super() }}
-		<span id="hra_results_title"><h3>{{ current_user.first_name }} {{ current_user.last_name }}'s HRA Results</h3></span>
+		<span id="hra_results_title">{{ current_user.first_name }} {{ current_user.last_name }}'s HRA Results</span>
 		<div class="tc-heading">
 			<span class="signup-btn btn btn-sm btn-default" id="hra-logout">
 				<a href="/logout">Log Out</a>
@@ -175,6 +175,8 @@
 
 {% block footer %}{% endblock footer %}
 {% block script_section %}
-	<script src="../static/libs/Chart.js-master/Chart.js"></script>
+	<script src="../static/libs/Chart.js/src/Chart.Core.js"></script>
+	<script src="../static/libs/Chart.js/src/Chart.Bar.js"></script>
+	<script src="../static/libs/Chart.js/src/Chart.Doughnut.js"></script>
 	<script src="../static/js/hra_results.js"></script>
 {% endblock script_section %}

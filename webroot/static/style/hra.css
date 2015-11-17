@@ -101,6 +101,14 @@ input.grid_text[type="textarea"]
 #hra_results_title
 {
 	float: left;
+    font-size: 24px;
+}
+@media (max-width: 475px)
+{
+	#hra_results_title
+	{
+		font-size: 21px;
+	}
 }
 
 .hra_results_navbar
