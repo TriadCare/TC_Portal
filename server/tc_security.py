@@ -12,26 +12,6 @@ grade_scores = {"A": 4.0, "B": 3.0, "C": 2.0, "D": 1.0, "F": 0.0}
 
 import data_transfer
 
-# called to store the HRA results for a particular patient.
-def store_hra_results(tcid="", hra_results={}):
-	return data_transfer.store_hra_answers(tcid, hra_results, get_survey_id_for_user(tcid))
-	
-def store_and_score_hra_results(tcid="", hra_results={}):
-	pass
-
-
-# called to process the HRA results into a health score
-def process_hra_results(hra_results={}):
-	#clean the form results for processing
-	results = []
-	for r in hra_results:
-		try:
-			if r != 'csrf_token':
-				results.append({"qid": str(r), "aid": str(hra_results[r])})
-		except ValueError as e:
-			continue
-	return results
-
 
 def get_survey_id_for_user(tcid):
 	sid = data_transfer.get_hra_sid(tcid)
@@ -132,6 +112,109 @@ def get_hra_results(tcid=""):
 		return {}
 	return results
 
+
+# called to store the HRA results for a particular patient.
+def store_hra_results(tcid="", hra_results={}):
+	#first, check if it completed
+	with open('../webroot/hra_files/english_01.json') as hra_file:  # Need the meta data from this file.
+		hra_data = json.load(hra_file)
+	questions = hra_data['hra_questions']
+	
+	question_count = 0
+	for question in questions:
+		if question['type'] != 'GRID_HEADER':
+			question_count += 1
+			
+	completed = len(hra_results) == question_count
+	
+	score = score_hra_results(hra_results)
+	
+	hra_results.append({'qid': 'Diet & Nutrition', 'aid': score['Diet & Nutrition']})
+	hra_results.append({'qid': 'Tobacco', 'aid': score['Tobacco']})
+	hra_results.append({'qid': 'Physical Activity', 'aid': score['Physical Activity']})
+	hra_results.append({'qid': 'Stress', 'aid': score['Stress']})
+	hra_results.append({'qid': 'Preventative Care', 'aid': score['Preventative Care']})
+	hra_results.append({'qid': 'Overall', 'aid': score['Overall']})
+	
+	return data_transfer.store_hra_answers(tcid, hra_results, get_survey_id_for_user(tcid), completed)
+
+# takes hra_results and returns a score object:
+#	{
+#		"Overall": #, 
+#		"Diet & Nutrition": #, 
+#		"Physical Activity": #, 
+#		"Stress": #, 
+#		"Tobacco": #, 
+#		"Screening and Preventative Care": #
+#	}
+def score_hra_results(hra_results={}):
+	if hra_results is None or hra_results == {}:
+		return None
+	
+	answer_dict = dict((x['qid'], x['aid']) for x in hra_results)
+	
+	score = {}
+	
+	with open('../webroot/hra_files/english_01.json') as hra_file:  # Need the meta data from this file.
+		hra_data = json.load(hra_file)
+	
+	groupings = hra_data['hra_meta']['groupings']
+	questions = hra_data['hra_questions']
+
+	answers = {}
+	for question in questions:
+		r = {}
+		try:					
+			for a in question['answers']:
+				r[a['aid']] = a['value']
+			answers[question['qid']] = r
+		except:
+			continue
+	
+	for group in groupings:
+		if group['graded']:
+			data = 0
+			dont_score = 0  # Count the number of answers that shouldn't be scored
+
+			# I need to get a score for each graded section.
+			for q in group['questions']:
+				
+				if q not in answer_dict.keys() or answer_dict[q] is None: # If there is no answer, increment dont_count and break
+					dont_score += 1
+					continue
+				else:
+					g = answers[q][answer_dict[q]]	# Get the letter grade that corresponds to the aid.
+					if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
+						dont_score += 1
+						continue
+				
+					data += grade_scores[g]  # Add the grade points together
+			questions_to_score = (len(group['questions'])-dont_score)
+			if data > 0 and questions_to_score > 0:
+				data /= questions_to_score  # Divide to get the average for this section
+			score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
+	
+	# Lastly, calculate the Overall Score
+	overall_total = 0
+	for s in score.values():
+		overall_total += s
+	score["Overall"] = round(overall_total/len(score.values()),1)
+	
+	return score
+
+
+def process_hra_results(hra_results={}):
+	#clean the form results for processing
+	results = []
+	for r in hra_results:
+		try:
+			if r != 'csrf_token':
+				results.append({"qid": str(r), "aid": str(hra_results[r])})
+		except ValueError as e:
+			continue
+	return results
+
+
 # Given the tcid of the user, returns the scores as follows:
 #	{
 #		"Overall": #, 
@@ -192,110 +275,43 @@ def get_hra_score(tcid=""):
 	else:
 	
 		try:
-			hra_results = get_hra_results(tcid)
-			
-			score = {}
-			
-			dont_score = 0  # Count the number of answers that shouldn't scored
-			
-			with open('../webroot/hra_files/english_01.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
-				hra_data = json.load(hra_file)
-			
-			groupings = hra_data['hra_meta']['groupings']
-			questions = hra_data['hra_questions']
-
-			answers = {}
-			for question in questions:
-				r = {}
-				try:					
-					for a in question['answers']:
-						r[a['aid']] = a['value']
-					answers[question['qid']] = r
-				except:
-					continue
-
-			for group in groupings:
-				if group['graded']:
-					data = 0
-					# I need to get a score for each graded section.
-					
-					for q in group['questions']:
-						
-						if hra_results[q] is None: # If there is no answer, increment dont_count and break
-							dont_score += 1
-							break
-						
-						g = answers[q][hra_results[q]]	# Get the letter grade that corresponds to the aid.
-						if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
-							dont_score += 1
-							break
-						
-						data += grade_scores[g]  # Add the grade points together
-					questions_to_score = (len(group['questions'])-dont_score)
-					if data > 0 and questions_to_score > 0:
-						data /= questions_to_score  # Divide to get the average for this section
-					score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
-			
-			# Lastly, calculate the Overall Score
-			overall_total = 0
-			for s in score.values():
-				overall_total += s
-			score["Overall"] = round(overall_total/len(score.values()),1)
-			
-			return score
+			return data_transfer.get_hra_score(tcid)
 		except Exception as e:
-			return e
+			return None
 	
 	return {'Nope'}
 
 
-# This function returns the average HRA scores for everyone who has taken the HRA
+# This function returns the average HRA scores for everyone who has completed the HRA
 def get_tc_hra_score():
-	# Need the meta data from this file. Should probably come from TCDB in the future.
-	with open('../webroot/hra_files/hra.json') as hra_file:  
-		hra_data = json.load(hra_file)
-	# Get the question names that we are concerned with
-	groupings = hra_data['hra_meta']['groupings']
-	question_names = []
-	groups = {} # create a dict of groups and question names to be used later when averaging section scores.
-	for group in groupings:
-		if group['graded']:
-			groups[group['group']] = [] # make a new list of question names for this group name key.
-			for q in group['questions']:
-				question_name = "question_" + str(q)
-				question_names.append(question_name)
-				groups[group['group']].append(question_name)
-	# get all of the answers for these questions
-	hra_results = data_transfer.get_hra_data(question_names)
-	column_names = hra_results.pop(0)
-	hra_results = hra_results[0]
-	# build the dict of scores for each question
-	scores = {}
-	for idx, column in enumerate(column_names):
-		total_points = 0
-		dont_count = 0 # var used to count the number of N/As and nulls so that they don't count against the score
-		for result in hra_results:
-			if result[idx] is None or result[idx] == "N/A":
-				dont_count += 1
-			else:
-				total_points += grade_scores[result[idx][:1]]
-		scores[column_names[idx]] = round(total_points/(len(hra_results)-dont_count),1)
-	#for each graded section, figure out the average score
-	graded_sections = {}
-	for group in groups:
-		total_points = 0
-		for question in groups[group]:
-			total_points += scores[question]
-		graded_sections[group] = round(total_points/len(groups[group]),1)
+	scores = data_transfer.get_all_completed_hra_scores()
 	
-	# Lastly, calculate the Overall Score
-	overall_total = 0
-	for s in graded_sections.values():
-		overall_total += s
-	graded_sections["Overall"] = round(overall_total/len(graded_sections.values()),1)
+	if len(scores) == 0:
+		return {}
 	
-	return graded_sections
-
+	overall_score = 0
+	dn_score = 0
+	tobacco_score = 0
+	stress_score = 0
+	screening_score = 0
+	physical_score = 0
+	
+	for score in scores:
+		overall_score += score['Overall']
+		dn_score += score['Diet & Nutrition']
+		tobacco_score += score['Tobacco']
+		stress_score += score['Stress']
+		screening_score += score['Preventative Care']
+		physical_score += score['Physical Activity']
+		
+	return {
+		'Overall': round(overall_score/len(scores),1), 
+		'Diet & Nutrition': round(dn_score/len(scores),1), 
+		'Tobacco': round(tobacco_score/len(scores),1), 
+		'Stress': round(stress_score/len(scores),1), 
+		'Preventative Care': round(screening_score/len(scores),1), 
+		'Physical Activity': round(physical_score/len(scores),1)
+	}
 
 #helper function for this one-time pdf print issue. 
 #gets the next tcid in the list of Box Board employees.
@@ -399,4 +415,24 @@ def generateSession(user, duration="30"):
 # This function generates a random 16 byte string used for session IDs.
 def generateRandomSessionKey():
     return hexlify(os.urandom(16))
+
+# Goes through all of the survey_response records that have an Overall score of -1 (Not yet scored) and scores them
+# def score_hras():
+# 	responses = data_transfer.get_unscored_hras()
+# 	fails = []
+# 	for response in responses:
+# 		if user_did_complete_hra(response[0]):
+# 			r = data_transfer.update_hra_score(response[0]['tcid'], score_hra_results(response[1]))
+# 			if r is not True:
+# 				fails.append({"tcid": response[0]['tcid'], "response": r})
+# 	return fails
+
+#def complete_hras():
+#	try:
+#		for tcid in data_transfer.get_survey_tcids():
+#			if data_transfer.user_did_complete_hra(tcid):
+#				data_transfer.complete_hra(tcid)
+#	except Exception as e:
+#		return e
+#	return True
 

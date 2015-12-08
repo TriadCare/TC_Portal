@@ -8,7 +8,7 @@ from itsdangerous import URLSafeSerializer, BadSignature
 
 
 #import python commons
-import sys, os, json, datetime
+import sys, os, json, datetime, time
 
 #import data class
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'server'))
@@ -254,9 +254,8 @@ def bulkRegisterUsers(account):
 def renderHRA():
 	form = EmptyForm()
 	if form.validate_on_submit():
-		hra_results = tc_security.process_hra_results(request.form.to_dict())
 		if tc_security.store_hra_results(current_user.get_id(), tc_security.process_hra_results(request.form)):
-		#if tc_security.store_and_score_hra_results(current_user.get_id(),hra_results):
+			#if the the user has completed the HRA, redirect to the scorecard.
 			if tc_security.user_did_complete_new_hra(current_user.get_id()):
 				return redirect(url_for('hra_results'))
 			else: 
@@ -271,6 +270,7 @@ def renderHRA():
 			return redirect(url_for('hra_results'))
 		if tc_security.user_did_complete_new_hra(current_user.get_id()):
 			return redirect(url_for('hra_results'))
+		
 		#get HRA JSON data
 		hra_data = {}
 		#Make sure we are in the same directory as this file
@@ -295,6 +295,7 @@ def renderHRA():
 @login_required
 def saveHRA():
 	tc_security.store_hra_results(current_user.get_id(), tc_security.process_hra_results(request.form))
+	# client-side redirect to /login page. Should logout the user before returning Success.
 	flash("Your assessment answers have been saved.")
 	logoutUser()
 	return "Success"
@@ -424,6 +425,18 @@ def export_to_pdf():
 # 							this_id=this_id,
 # 							this_name=this_name)
 
+
+# @app.route('/score_hras', methods=['GET'])
+# @login_required
+# def score_hras():
+# 	raise
+# 	return json.dumps(tc_security.score_hras())
+
+#@app.route('/complete_hras', methods=['GET'])
+#@login_required
+#def complete_hras():
+#	raise
+#	return json.dumps(tc_security.complete_hras())
 
 #callback used by Flask-Login to reload a user object from a userid in a session
 @login_manager.user_loader

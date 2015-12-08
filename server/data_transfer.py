@@ -185,7 +185,7 @@ def set_password_for_user_id(user_id, hash):
 
 
 
-def store_hra_answers(tcid, hra_answers, surveyID):
+def store_hra_answers(tcid, hra_answers, surveyID, completed):
 	#get the connection cursor
 	conn = getConnection()
 	cursor = conn.cursor()
@@ -193,9 +193,9 @@ def store_hra_answers(tcid, hra_answers, surveyID):
 		cursor.execute("select count(*) from survey_response where (tcid=%s and surveyID=%s)", [tcid, surveyID])
 		c = cursor.fetchall()[0][0]
 		
-		valueCount = "%s, %s, %s, %s, "
-		columns = []
-		values = []
+		valueCount = "%s, %s, %s, %s, %s, "
+		columns = ['completed']
+		values = ['1'] if completed else ['0']
 		for answer in sorted(hra_answers, key=lambda k: k['qid']):
 			valueCount += "%s, "
 			columns.append("`" + str(answer['qid']) + "`")
@@ -211,13 +211,61 @@ def store_hra_answers(tcid, hra_answers, surveyID):
 			values[:0] = [get_user_with_tcid(tcid)['email'], dt.now(), tcid, surveyID]
 			query = "insert into survey_response (%s) values (" % ", ".join(columns)
 			query += valueCount + ")"
+		#return {"query": query, "values": values, "columnCount": len(columns), "valueCount": len(values)}
 		cursor.execute(query, values)
 	except Exception as e:
-		return False
+		return e
 	
 	conn.commit()
 	return True
 
+
+def get_hra_score(tcid):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where tcid = %s", [tcid])
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		return dict(zip(desc, result[0]))
+	except Exception as e:
+		return None
+	return None
+
+def get_all_completed_hra_scores():
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where `completed`=1")
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		results = cursor.fetchall()
+		scores = []
+		for result in results:
+			scores.append(dict(zip(desc, result)))
+		return scores
+	except Exception as e:
+		return e
+	return None
+
+def get_unscored_hras():
+	cursor = getConnection().cursor()
+	columns = range(1,80)
+	query = "select tcid, " + ", ".join(["`%s`"]*79) + " from survey_response where Overall='-1'"
+	try:
+		cursor.execute(query, columns)
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		data = []
+		for r in result:
+			data.append([{'tcid': r[0]}, [{'qid': desc[x], 'aid':r[x]} for x in range(1, len(desc))]])
+		return data
+	except Exception as e:
+		return e
+		
 
 def get_hra_filename(tcid):
 	conn = getConnection()
@@ -368,6 +416,58 @@ def get_all_hra_results():
 	except Exception as e:
 		return None
 	return None
+
+
+#def insert_survey_response(columns, column_values):
+#	conn = getConnection()
+#	cursor = conn.cursor()
+#	try:
+#		columnCount = "%s"
+#		for i in range(len(columns)-1):
+#			columnCount += ", %s"
+#		values = column_values.split(", ")
+#		query = "insert into survey_response (surveyID, %s) values (" % ", ".join(columns)
+#		query += "2, " + columnCount + ")"
+#		#return {'query': query, 'values': values}
+#		#return {"columnCount": len(columnCount.split(", ")), "columns": len(columns), "column_values": len(column_values.split(", ")), "values": values}
+#		if cursor.execute(query, values) != 1:
+#			return False
+#	except Exception as e:
+#		return e
+#	
+#	conn.commit()
+#	return True
+
+
+def update_hra_score(tcid, scores):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("update survey_response set `Diet & Nutrition`=%s, `Tobacco`=%s, `Physical Activity`=%s, `Stress`=%s, `Preventative Care`=%s, `Overall`=%s where tcid=%s", [scores['Diet & Nutrition'], scores['Tobacco'], scores['Physical Activity'], scores['Stress'], scores['Preventative Care'], scores['Overall'], tcid])
+	except Exception as e:
+		return e
+	conn.commit()
+	return True
+
+#def get_survey_tcids():
+#	cursor = getConnection().cursor()
+#	try:
+#		cursor.execute("select tcid from survey_response")
+#		return cursor.fetchall()
+#	except Exception as e:
+#		return e
+#	return None
+
+# def complete_hra(tcid):
+# 	conn = getConnection()
+# 	cursor = conn.cursor()
+# 	try:
+# 		cursor.execute("update survey_response set completed=1 where tcid=%s", [tcid])
+# 	except Exception as e:
+# 		return e
+# 	conn.commit()
+# 	return True
+
 
 # TODO: DELETE THIS
 # def get_user_ids_from_box_board():
