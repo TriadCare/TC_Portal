@@ -265,7 +265,21 @@ def get_unscored_hras():
 		return data
 	except Exception as e:
 		return e
-		
+
+def get_hra_data_for_account(account):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select * from survey_response where tcid in (select tcid from webappusers where Account=%s);", [account])
+		desc = []
+		results = []
+		for d in cursor.description:
+			desc.append(d[0])
+		data = cursor.fetchall()
+		for datum in data:
+			results.append(dict(zip(desc, datum)))
+		return results
+	except Exception as e:
+		return e
 
 def get_hra_filename(tcid):
 	conn = getConnection()
@@ -330,8 +344,11 @@ def user_did_complete_hra(tcid):
 	cursor = conn.cursor()
 	try:
 		columns = []
-		for i in range(1, 80):
-			columns.append("`" + str(i) + "`")
+		for i in range(1, 78):  # skipping 64, 66, 78, 79
+			if i == 64 or i == 66:
+				pass
+			else:
+				columns.append("`" + str(i) + "`")
 		query = "select " + ", ".join(columns) + " from survey_response where tcid = %s"
 		cursor.execute(query, [tcid])
 		result = cursor.fetchall()
@@ -449,24 +466,24 @@ def update_hra_score(tcid, scores):
 	conn.commit()
 	return True
 
-#def get_survey_tcids():
-#	cursor = getConnection().cursor()
-#	try:
-#		cursor.execute("select tcid from survey_response")
-#		return cursor.fetchall()
-#	except Exception as e:
-#		return e
-#	return None
+def get_survey_tcids():
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select tcid from survey_response")
+		return cursor.fetchall()
+	except Exception as e:
+		return e
+	return None
 
-# def complete_hra(tcid):
-# 	conn = getConnection()
-# 	cursor = conn.cursor()
-# 	try:
-# 		cursor.execute("update survey_response set completed=1 where tcid=%s", [tcid])
-# 	except Exception as e:
-# 		return e
-# 	conn.commit()
-# 	return True
+def complete_hra(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("update survey_response set completed=1 where tcid=%s", [tcid])
+	except Exception as e:
+		return e
+	conn.commit()
+	return True
 
 
 # TODO: DELETE THIS

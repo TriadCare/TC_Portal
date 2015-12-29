@@ -6,7 +6,7 @@ var export_timer;
 var csrftoken = $('meta[name=csrf-token]').attr('content')
 var jqxhr = $.ajax({
 	type: "POST",
-	url: "/hra_data",
+	url: "/hra_tc_data",
 	beforeSend: 
 		function(xhr, settings){
 			if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
@@ -93,29 +93,26 @@ var gpa_to_percent = function(gpa){
 }
 
 var get_letter_text = function(grade){
-	switch(Math.floor(grade)){
-		case 4: return " is an A";
-		case 3: return " is a B";
-		case 2: return " is a C";
-		case 1: return " is a D";
-		case 0: return " is an F";
-	}
+	if (grade >= 90) return " is an A";
+	if (grade >= 80) return " is a B";
+	if (grade >= 70) return " is a C";
+	if (grade >= 60) return " is a D";
+	return " is an F";
 }
 	
 
 var updateChart = function(data){
-	var overallData = [data['userData']['Overall']]
-	delete data['userData']['Overall']
-	delete data['tcData']['Overall']
+	var overallData = [section_scores['Overall']]  //section_scores from server
+	delete data['Overall']
 	
 	if(overallData[0] === undefined){
 		$("#overall_score").text("No Data to Display");
 	} else {
+		var overall_percentage = gpa_to_percent(overallData[0]);
+		var overall_letter_text = get_letter_text(overall_percentage);
 		
-		var overall_letter_text = get_letter_text(overallData[0]);
 		$("#overall_score_title").text("Your Overall Score" + overall_letter_text);
-	
-		$("#overall_score").text(gpa_to_percent(overallData[0]).toString() + "%");
+		$("#overall_score").text(overall_percentage.toString() + "%");
 		
 		overall_donut_chart.removeData();
 		overall_donut_chart.removeData();  //removed twice to remove both pie sections
@@ -132,8 +129,8 @@ var updateChart = function(data){
 		});
 	}
 
-	for(section in data['tcData']){
-		hra_bar_chart.addData([gpa_to_percent(data['userData'][section]), gpa_to_percent(data['tcData'][section])], section);
+	for(section in data){
+		hra_bar_chart.addData([gpa_to_percent(section_scores[section]), gpa_to_percent(data[section])], section);
 	}
 	
 	for(bar in hra_bar_chart.datasets[0].bars){
@@ -267,42 +264,4 @@ var convert_to_pdf = function(html_data, filename, callback){
 	xhr.send(JSON.stringify(html_data));
 }
 
-/*
 
-var prepare_next_scorecard = function(response){
-	
-	var data = {'id': ($("#questionnaireBreakdownContainer").attr("data-id") || '0000000001')};
-	
-	$("#questionnaireBreakdownContainer").remove();
-	
-	var jqxhr = $.ajax({
-	type: "POST",
-	url: "/get_questionnaire",
-	data: data})
-	.done(function(response){
-		$("#content").append(response);
-		$("#hra_results_title").html("<h3>" + $("#questionnaireBreakdownContainer").attr("data-thisname") + "'s HRA Results</h3>")
-		
-		
-		var data = {'id': ($("#questionnaireBreakdownContainer").attr("data-id") || '0000000001')};
-		$.ajax({
-		type: "POST",
-		url: "/hra_data_unprotected",
-		data: data
-		})
-		.done(function(data){
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();  // removed five times, once for each section in the datasets
-			updateChart(data);
-			export_timer = window.setTimeout(export_to_pdf, 3000);  //3 seconds after the charts are updated, start the process over for this scorecard.
-		})
-		
-		
-	});
-	
-}
-
-*/

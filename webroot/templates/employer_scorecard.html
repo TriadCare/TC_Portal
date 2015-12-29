@@ -2,18 +2,21 @@
 
 {% import 'macros.html' as macros %}
 
-{% block title %}HRA{% endblock title %}
+{% block title %} Results{% endblock title %}
 
 {% block head %}
 	{{ super() }}
-	<link rel="stylesheet" href="static/style/hra.css"/>
+	<link rel="stylesheet" href="/static/style/hra.css"/>
 	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<script type=text/javascript>
+    	var section_scores = {{ results['section_scores']|safe }};
+	</script>
 {% endblock head %}
 
 {% block header %}
 	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
 		{{ super() }}
-		<span id="hra_results_title">{{ current_user.first_name }} {{ current_user.last_name }}'s HRA Results</span>
+		<span id="hra_results_title"> {{ account }} Aggregate Results</span>
 		<div class="tc-heading">
 			<span class="signup-btn btn btn-sm btn-default" id="export_pdf">
 				<a href="#" onclick="export_to_pdf()">Export PDF</a>
@@ -52,6 +55,7 @@
 	    <div class="graph_title">Questionnaire Breakdown</div>
 	    {% set blurb = "" %}
 	    {% set headercounter = 0 %}
+		{% set answer_count = results['answer_counts'] %}
 	    {% for question in hra_questions %}
 			{% set question_loop = loop.index - headercounter %}
 				
@@ -60,11 +64,7 @@
 					<tr>
 						<td class='grid_column'>{{ question.text }}</td>
 						{% for i in range(0, table_width) %}
-							{% if user_answers[question.qid] == question.answers[i]['aid'] %}
-								<td class="grid_cell"><input type="radio" class="grid_radio" disabled checked></td>
-							{% else %}
-								<td class="grid_cell"><input type="radio" class="grid_radio" disabled></td>
-							{% endif %}
+							<td class="grid_cell"><span class="grid_answer">{{ answer_count[question.qid][(i+1)|string]|default("0%") }}</span></td>
 						{% endfor %}
 					</tr>
 			
@@ -82,7 +82,7 @@
 			{% elif question.type == "GRID_TEXT"%}
 				</table>
 				<span>{{ question.text }}</span>
-				<input type="textarea" class="grid_text" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}" disabled>
+				<input type="textarea" class="grid_answer" name="{{ question.qid }}" {# value="{{  }}" #} disabled>
 				</div>
 					{% if blurb != "" %}
 				<div class="question_blurb_container panel-footer">
@@ -95,34 +95,39 @@
 			{% if question_loop == 3 %}
 				<div id="Tobacco" class="section_title">Tobacco Section</div>
 			{% elif question_loop == 6 %}
-				<div id="Diet & Nutrition" class="section_title">Diet & Nutrition Section</div>
+				<div id="Diet&Nutrition" class="section_title">Diet & Nutrition Section</div>
 			{% elif question_loop == 16 %}
-				<div id="Physical Activity" class="section_title">Physical Activity Section</div>
+				<div id="PhysicalActivity" class="section_title">Physical Activity Section</div>
 			{% elif question_loop == 19 %}
 				<div id="Stress" class="section_title">Stress Section</div>
 			{% elif question_loop == 22 %}
-				<div id="Medication Management" class="section_title">Medication Management Section</div>
+				<div id="MedicationManagement" class="section_title">Medication Management Section</div>
 			{% elif question_loop == 27 %}
-				<div id="Preventative Care" class="section_title">Screening & Preventative Care Section</div>
+				<div id="PreventativeCare" class="section_title">Screening & Preventative Care Section</div>
 			{% elif question_loop == 40 %}
-				<div id="Chronic Conditions" class="section_title">Chronic Conditions Section</div>
+				<div id="ChronicConditions" class="section_title">Chronic Conditions Section</div>
 			{% elif question_loop == 65 %}
-				<div id="Self Analysis" class="section_title">Self-Analysis Section</div>
+				<div id="SelfAnalysis" class="section_title">Self-Analysis Section</div>
 			{% endif %}
 			
 			<div class="panel panel-default {{ question_loop }}">
-				<div class="panel-heading question-text">{{ question_loop }}. {{ question.text|safe }}</div>
+				{% if question.text == "Age" %}
+					<div class="panel-heading question-text">{# {{ question_loop }}. #}Average Age</div>
+				{% else %}
+					<div class="panel-heading question-text">{# {{ question_loop }}. #}{{ question.text|safe }}</div>
+				{% endif %}
 				<div class="panel-body mc_answer_area">
 					{% if question.type == "MULTIPLE_CHOICE" %}
 						{% for answer in question.answers %}
 							{# {% if answer.value != None %}
 								<span class="mc_grade">{{ answer.value|first }}</span>
 							{% endif %} #}
-							{% if user_answers[question.qid] == answer.aid %}
-								<input type="radio" class="mc_radio" disabled checked>
-							{% else %}
-								<input type="radio" class="mc_radio" disabled>
+							{% set a = answer_count[question.qid][answer.aid]|default("0%") %}
+							<span class="mc_grade">{{ a }}</span>
+							{% if a|length == 2 %}
+								<span>&nbsp;</span>
 							{% endif %}
+							<span>&nbsp;</span>
 							<span name="{{ question.qid }}" class="mc_text">{{ answer.text|safe }}</span>
 							<br>
 						{% endfor %}
@@ -134,7 +139,7 @@
 						{% endif %}
 			</div>
 					{% elif question.type == "INTEGER" %}
-						<input class="input_number" type="number" value="{{ user_answers[question.qid] }}" disabled>
+						<input class="input_number mc_grade" type="number" value="{{ answer_count[question.qid]|int }}" disabled>
 				</div>
 						{% if question.blurb %}
 				<div class="question_blurb_container panel-footer">
@@ -181,5 +186,5 @@
 	<script src="../static/libs/Chart.js/src/Chart.Core.js"></script>
 	<script src="../static/libs/Chart.js/src/Chart.Bar.js"></script>
 	<script src="../static/libs/Chart.js/src/Chart.Doughnut.js"></script>
-	<script src="../static/js/hra_results.js"></script>
+	<script src="../static/js/employer_scorecard.js"></script>
 {% endblock script_section %}

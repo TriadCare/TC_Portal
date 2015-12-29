@@ -270,21 +270,27 @@ input.grid_text[type="textarea"]
 }*/
 @media print
 {
+	/*body{font-size: 0.8em;}*/
 	/*.section_title{page-break-before: always;}*/
 	.panel{page-break-inside: avoid;}
-	.panel.\26{page-break-inside: auto;page-break-before: avoid;} 
+	.panel.\26{page-break-inside: auto; page-break-before: avoid;}
+	.panel.\40{page-break-inside: auto; page-break-before: avoid;} 
+	#PreventativeCare{page-break-before: always; page-break-after: avoid;}
 	
 	#overall_score{font-size: 24pt; color: rgb(151,187,205); margin-top: 75px;}
 	/*.hra_results_navbar{display: none;}*/
 	#top-link-block{display: none;}
 	.hra-submit{display: none;}
-	#hra-logout{display: none;/*
+	#hra-logout{display: none;}
+	#export_pdf{display: none;}/*
 	#scoreDonutChart{display: none;}
 	#scoreBarChart{display: none;}
 	#donutChartImage{display: inline;}
 	#barChartImage{display: inline;}*/
 	#user_score_key{background-color: rgb(151,187,205)!important;}
 	#tc_score_key{background-color: rgb(180,180,180)!important;}
+	/*#donutChartImage{height: 200px; width: 720px;}
+	#barChartImage{height: 350px; width: 720px;}*/
 }
 @page{
 	margin: 0.5cm;

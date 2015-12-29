@@ -181,14 +181,13 @@ def score_hra_results(hra_results={}):
 				
 				if q not in answer_dict.keys() or answer_dict[q] is None: # If there is no answer, increment dont_count and break
 					dont_score += 1
-					continue
 				else:
 					g = answers[q][answer_dict[q]]	# Get the letter grade that corresponds to the aid.
 					if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
 						dont_score += 1
-						continue
-				
-					data += grade_scores[g]  # Add the grade points together
+					else:
+						data += grade_scores[g]  # Add the grade points together
+						
 			questions_to_score = (len(group['questions'])-dont_score)
 			if data > 0 and questions_to_score > 0:
 				data /= questions_to_score  # Divide to get the average for this section
@@ -213,6 +212,80 @@ def process_hra_results(hra_results={}):
 		except ValueError as e:
 			continue
 	return results
+
+
+def get_hra_data_for_account(account=""):
+	if account == "" or account is None or type(account) is not str:
+		return {}
+		
+	answer_counts = {'1': 0}
+	section_scores = {
+		"Overall": 0,
+		"Tobacco": 0,
+		"Diet & Nutrition": 0,
+		"Physical Activity": 0,
+		"Stress": 0,
+		"Preventative Care": 0
+	}
+	total_completed = 0
+	no_age = 0
+	
+	hra_data = data_transfer.get_hra_data_for_account(account)
+	
+	for datum in hra_data:
+		total_completed += datum['completed']  # completed is a 0 if not completed, a 1 if it is.
+		
+		for key in datum.keys():
+			if key.isdigit():	# only count the questions
+				if key == '1':
+					if datum[key].isdigit():
+						answer_counts['1'] += int(datum[key])
+					else:
+						no_age += 1
+				elif key in answer_counts.keys():
+					if datum[key] in answer_counts[key].keys():
+						answer_counts[key][datum[key]] += 1
+					else:
+						answer_counts[key][datum[key]] = 1
+				else:
+					answer_counts[key] = {datum[key]: 1}
+			else:
+				if datum['completed'] == 1:  # only count if the survey was completed
+					if key == "Overall":
+						section_scores['Overall'] += datum[key]
+					elif key == "Tobacco":
+						section_scores['Tobacco'] += datum[key]
+					elif key == "Diet & Nutrition":
+						section_scores['Diet & Nutrition'] += datum[key]
+					elif key == "Physical Activity":
+						section_scores['Physical Activity'] += datum[key]
+					elif key == "Stress":
+						section_scores['Stress'] += datum[key]
+					elif key == "Preventative Care":
+						section_scores['Preventative Care'] += datum[key]
+	
+	for key in answer_counts.keys():
+		if key == '1' and (len(hra_data)-no_age) != 0:
+			answer_counts['1'] = round(answer_counts['1']/(len(hra_data)-no_age), 0)
+		else:
+			total = sum(answer_counts[key].values())  # get total answers for this question
+			if total > 0:
+				answer_counts[key].update([(x, "{0:.0f}%".format((float(y)/total)*100)) for x, y in answer_counts[key].items()])
+		
+	
+	for key in section_scores.keys():
+		if total_completed != 0:
+			section_scores[key] = round(section_scores[key] / total_completed, 1)
+		else:
+			{}
+	
+	return {"total_completed": total_completed, "answer_counts": answer_counts, "section_scores": section_scores}
+	
+	
+		#Need to get the total answer counts for each question {...qid: [aid: #, aid: #,...]...}
+		#Also need to get the scores for each section.
+		#Need to figure out the best way to format the data here, so that these calculations will be easiest.
+		
 
 
 # Given the tcid of the user, returns the scores as follows:
@@ -426,13 +499,13 @@ def generateRandomSessionKey():
 # 			if r is not True:
 # 				fails.append({"tcid": response[0]['tcid'], "response": r})
 # 	return fails
-
-#def complete_hras():
-#	try:
-#		for tcid in data_transfer.get_survey_tcids():
-#			if data_transfer.user_did_complete_hra(tcid):
-#				data_transfer.complete_hra(tcid)
-#	except Exception as e:
-#		return e
-#	return True
+# 
+# def complete_hras():
+# 	try:
+# 		for tcid in data_transfer.get_survey_tcids():
+# 			if data_transfer.user_did_complete_hra(tcid):
+# 				data_transfer.complete_hra(tcid)
+# 	except Exception as e:
+# 		return e
+# 	return True
 

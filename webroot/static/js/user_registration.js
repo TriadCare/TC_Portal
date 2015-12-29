@@ -3,4 +3,9 @@ $(document).ready(function(){
 	$("#password").popover();
 	$("#confirm_password").popover();
 	$("#dob").popover();
+	
+	$(".form-dob").change(function(){
+		if ($(this).val() < 0)
+			$(this).val(0);
+	});
 })

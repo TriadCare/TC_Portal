@@ -1,5 +1,5 @@
 #import Flask and Flask extensions
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
+from flask import Flask, request, Response, session, g, redirect, url_for, abort, render_template, flash, jsonify, make_response
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CsrfProtect
 from flask_weasyprint import HTML, CSS, render_pdf
@@ -371,29 +371,50 @@ def hra_data():
 	return jsonify(**{"userData": tc_security.get_hra_score(current_user.get_id()), "tcData": tc_security.get_tc_hra_score()})
 
 
-#Route that takes html data, converts it to PDF using WeasyPrint, and returns the PDF as a download.
-@app.route('/export_to_pdf', methods=['POST'])
+#Route that returns the Employer Aggregate Scorecard
+@app.route('/employer_scorecard/<account>', methods=['GET'])
+@login_required
+def employer_scorecard(account):
+	account = str(account)
+	if account is None:
+		return redirect(url_for("loginUser"))
+	
+	# get the aggregate results for the given account
+	results = tc_security.get_hra_data_for_account(account)
+	
+	#Make sure we are in the same directory as this file
+	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
+	#parse out the meta survey groupings
+	hra_meta = hra_data['hra_meta']
+	#get the questions from the hra data
+	hra_questions = hra_data['hra_questions']
+	
+	return render_template('employer_scorecard.html', 
+							account=account,
+							hra_questions=hra_questions, 
+							hra_meta=hra_meta, 
+							results=results, 
+							form=EmptyForm())
+
+
+
+#Route that takes html data, converts it to PDF using WeasyPrint, and returns the PDF data.
+@app.route('/convert_html_to_pdf', methods=['POST'])
 @login_required
 def export_to_pdf():
-	if not current_user.get_id() == '0000000001':
-		flash("You are not authorized to access this page.")
-		return redirect(url_for("logoutUser"))
+	try:
+		pdf_data = json.loads(request.data)
+		pdf_html = pdf_data['html']
+		pdf = HTML(string=pdf_html).write_pdf()
 	
-	#return "HTML: " + request.form['html'] + " Name: " + request.form['name']
-	#decoded_str = str(request.form['html'])#.decode("utf8")
-	#return HTML(decoded_str.encode("utf8")).write_pdf()
+		return Response(pdf, mimetype='arraybuffer', content_type='arraybuffer')
+	except Exception as e:
+		if app.debug == True:
+			return json.dumps({"error": True, "message": e})
+		else:
+			return json.dumps({"error": True})
 
-	
-	pdf = HTML(string=request.form['html']).write_pdf(stylesheets=[CSS(url_for('static', filename='libs/bootstrap/bootstrap.css')), CSS(url_for('static', filename='style/style.css')), CSS(url_for('static', filename='style/hra.css'))])
-	
-	with open('/Users/jackwhite/Desktop/scorecards/'+ request.form['name'], "w") as out:
-		out.write(pdf)
-	
-	return "Done"
-	
-# 	response = render_pdf(HTML(string=request.form['html']), download_filename=request.form['name'])
-# 	response.headers['Content-Type'] = "application/download"
-# 	return response
 
 #Route that returns questionnaire HTML for the specified user. Login required. DOES NOT BELONG IN PRODUCTION
 # @app.route('/get_questionnaire', methods=['POST'])
@@ -432,11 +453,11 @@ def export_to_pdf():
 # 	raise
 # 	return json.dumps(tc_security.score_hras())
 
-#@app.route('/complete_hras', methods=['GET'])
-#@login_required
-#def complete_hras():
-#	raise
-#	return json.dumps(tc_security.complete_hras())
+# @app.route('/complete_hras', methods=['GET'])
+# @login_required
+# def complete_hras():
+# 	raise
+# 	return json.dumps(tc_security.complete_hras())
 
 #callback used by Flask-Login to reload a user object from a userid in a session
 @login_manager.user_loader
