@@ -111,7 +111,7 @@
 			{% endif %}
 			
 			<div class="panel panel-default {{ question_loop }}">
-				<div class="panel-heading question-text">{{ question_loop }}. {{ question.text|safe }}</div>
+				<div class="panel-heading question-text">{# {{ question_loop }}. #}{{ question.text|safe }}</div>
 				<div class="panel-body mc_answer_area">
 					{% if question.type == "MULTIPLE_CHOICE" %}
 						{% for answer in question.answers %}
