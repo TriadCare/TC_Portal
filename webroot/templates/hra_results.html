@@ -35,7 +35,7 @@
 			<canvas id="scoreDonutChart" width="100%" height="100%"></canvas>
 		</div>
 		<div class="graph_title">
-			<span>Section Breakdown</span>
+			<span class="title_text">Section Breakdown</span>
 			<div id="chart_legend">
 				<div class="legend_key" id="user_score_key"></div>
 				<div class="legend_label" id="user_score_label">Your Score</div>
@@ -49,7 +49,7 @@
     </div>
     
     <div id="questionnaireBreakdownContainer" class="container">
-	    <div class="graph_title">Questionnaire Breakdown</div>
+	    <div class="graph_title title_text">Questionnaire Breakdown</div>
 	    {% set blurb = "" %}
 	    {% set headercounter = 0 %}
 	    {% for question in hra_questions %}
@@ -81,8 +81,8 @@
 			
 			{% elif question.type == "GRID_TEXT"%}
 				</table>
-				<span>{{ question.text }}</span>
-				<input type="textarea" class="grid_text" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}" disabled>
+				<span class="grid_text_question">{{ question.text }}</span>
+				<input type="textarea" class="grid_text grid_text_answer" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}" disabled>
 				</div>
 					{% if blurb != "" %}
 				<div class="question_blurb_container panel-footer">

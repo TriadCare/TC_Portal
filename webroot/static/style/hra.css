@@ -270,28 +270,30 @@ input.grid_text[type="textarea"]
 }*/
 @media print
 {
-	/*body{font-size: 0.8em;}*/
+	body{font-size: 11px;}
+	.table{margin-bottom: 0;}
 	/*.section_title{page-break-before: always;}*/
+	.section_title{page-break-after: avoid; font-size: 14px;}
+	.title_text{margin-bottom: 10px; font-size: 14px;}
 	.panel{page-break-inside: avoid;}
-	.panel.\26{page-break-inside: auto; page-break-before: avoid;}
-	.panel.\40{page-break-inside: auto; page-break-before: avoid;} 
-	#PreventativeCare{page-break-before: always; page-break-after: avoid;}
 	
 	#overall_score{font-size: 24pt; color: rgb(151,187,205); margin-top: 75px;}
 	/*.hra_results_navbar{display: none;}*/
 	#top-link-block{display: none;}
 	.hra-submit{display: none;}
 	#hra-logout{display: none;}
-	#export_pdf{display: none;}/*
-	#scoreDonutChart{display: none;}
-	#scoreBarChart{display: none;}
-	#donutChartImage{display: inline;}
-	#barChartImage{display: inline;}*/
+	#export_pdf{display: none;}
+	.grid_text_question{display: none;}
+	.grid_text_answer{display: none;}
+	#export_pdf{display: none;}
 	#user_score_key{background-color: rgb(151,187,205)!important;}
 	#tc_score_key{background-color: rgb(180,180,180)!important;}
-	/*#donutChartImage{height: 200px; width: 720px;}
-	#barChartImage{height: 350px; width: 720px;}*/
 }
 @page{
 	margin: 0.5cm;
+	@bottom-center {
+		content: "Triad Care, Inc. ∙ 302 Pomona Dr. Suite L ∙ Greensboro, NC 27407 ∙ www.TriadCare.com ∙ 866-885-7931";
+		padding-bottom: 5mm;
+	}
 }
+

@@ -218,7 +218,7 @@ var export_to_pdf = function(){
 	data['html'] = $("html").html();
 	var filename = $("#hra_results_title").text().replace(/ /g, "") + ".pdf"
 	
-	convert_to_pdf(data, filename, function(){$("#export_pdf>a").text("Done.");})
+	convert_to_pdf(data, filename, function(){$("#export_pdf>a").text("Done");})
 	
 	//revert the changes to the scorecard
 	$("#tc-brand_img").after(tc_brand_element);
