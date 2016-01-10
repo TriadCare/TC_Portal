@@ -92,8 +92,8 @@ input.grid_text[type="textarea"]
 
 .tc-heading
 {
-    display: inline-block;
-    float: right;
+    position: absolute;
+    right: 10px;
 }
 
 
@@ -107,7 +107,10 @@ input.grid_text[type="textarea"]
 {
 	#hra_results_title
 	{
-		font-size: 21px;
+		font-size: 17px;
+		margin-top: 15px;
+		width: 160px;
+		line-height: 16pt;
 	}
 }
 
@@ -182,11 +185,19 @@ input.grid_text[type="textarea"]
     line-height: 50px;
     font-size: 1.1em;
 }
+@media (max-width: 475px)
+{
+	.section_title
+	{
+		line-height: 25px;
+	}
+}
 
 .question_blurb_container
 {
 	font-size: 0.8em;
 	text-align: left;
+	color: rgb(0,120,185);
 }
 
 .mc_grade, .grid_answer
@@ -272,12 +283,19 @@ input.grid_text[type="textarea"]
 {
 	body{font-size: 11px;}
 	.table{margin-bottom: 0;}
-	/*.section_title{page-break-before: always;}*/
-	.section_title{page-break-after: avoid; font-size: 14px;}
-	.title_text{margin-bottom: 10px; font-size: 14px;}
+	#hra_results_title{float: none;}
+	.section_title{page-break-after: avoid; font-size: 1.4em; height:40px!important; background: rgb(220,220,220)!important; color: rgb(0,120,185)!important;}
+	.title_text{margin-bottom: 15px; font-size: 1.3em;}
+	#chart_legend:{margin-top: none;}
 	.panel{page-break-inside: avoid;}
+	.panel-heading, .panel-footer{background-color: #f5f5f5!important; border-color: #ddd!important;}
+	panel-footer{background-color: #f5f5f5!important; border-color: #ddd!important;}
+	.mc_grade, .grid_answer{color: rgb(0,120,185)!important;}
+	.question_blurb_container{font-size: 1em; color: rgb(0,120,185)!important;}
+	#overall_score_title{font-size: 1.5em; color: rgb(0,120,185);}
+	/*.graph_title{font-size: 1.2em;}*/
 	
-	#overall_score{font-size: 24pt; color: rgb(151,187,205); margin-top: 75px;}
+	#overall_score{font-size: 24pt; color: rgb(0,120,185)!important; margin-top: 75px;}
 	/*.hra_results_navbar{display: none;}*/
 	#top-link-block{display: none;}
 	.hra-submit{display: none;}
@@ -294,6 +312,7 @@ input.grid_text[type="textarea"]
 	@bottom-center {
 		content: "Triad Care, Inc. ∙ 302 Pomona Dr. Suite L ∙ Greensboro, NC 27407 ∙ www.TriadCare.com ∙ 866-885-7931";
 		padding-bottom: 5mm;
+		color: rgb(0,120,185);
 	}
 }
 

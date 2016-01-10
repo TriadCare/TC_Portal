@@ -160,7 +160,7 @@ var export_to_pdf = function(){
 	
 	data = {}
 	
-	var brandImage = "<img id='tc-brand_img' class='tc-brand' src='/static/media/triadcare_logo.png'/>";
+	var brandImage = "<img id='tc-brand_img' style='height: 50px; width: 150px;' class='tc-brand' src='static/media/TC_Web_Logo.png'/>";
 	$("div.tc-brand").after(brandImage);
 	var tc_brand_element = $("div.tc-brand");
 	$("div.tc-brand").remove();
@@ -202,12 +202,12 @@ var export_to_pdf = function(){
 	$("#scoreBarChart").remove()
 	
 	//replace all input elements with pictures of the appropriate radio button (LOVE printing)
-	$("input[type='number']").after("<span>" + $("input[type='number']").attr("value") + "</span>");
+	$("input[type='number']").after("<span class='temp_input'>" + $("input[type='number']").attr("value") + "</span>");
 	$("input[type='radio']").each(function(){
 		if($(this).attr("checked")){
-			$(this).after("<img src='static/media/checked_radio.png'>");
+			$(this).after("<img class='temp_input' src='static/media/checked_radio.png'>");
 		} else {
-			$(this).after("<img src='static/media/unchecked_radio.png'>");
+			$(this).after("<img class='temp_input' src='static/media/unchecked_radio.png'>");
 		}
 	});
 	
@@ -218,6 +218,8 @@ var export_to_pdf = function(){
 	convert_to_pdf(data, filename, function(){$("#export_pdf>a").text("Done");})
 	
 	//revert the changes to the scorecard
+	$(".temp_input").remove();
+	
 	$("#tc-brand_img").after(tc_brand_element);
 	$("#tc-brand_img").remove();
 	
@@ -237,6 +239,12 @@ var export_to_pdf = function(){
 	
 	overall_donut_chart.resize(overall_donut_chart.render, true);
 	hra_bar_chart.resize(hra_bar_chart.render, true);
+	
+	$("#scoreBarChart").click(function(e){
+		if(hra_bar_chart.getBarsAtEvent(e).length > 0){
+			$("body").animate({scrollTop: $("[id = '" + hra_bar_chart.getBarsAtEvent(e)[0]['label'] + "']").position().top - 70}, 1000);
+		}
+	});
 	
 }
 

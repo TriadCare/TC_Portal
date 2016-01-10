@@ -213,6 +213,12 @@ def process_hra_results(hra_results={}):
 			continue
 	return results
 
+def get_hra_scores_for_user(tcid=""):
+	results = data_transfer.get_hra_score(tcid)
+	if results is None:
+		return {}
+	return results
+
 
 def get_hra_data_for_account(account=""):
 	if account == "" or account is None or type(account) is not str:

@@ -345,8 +345,9 @@ def hra_results():
 		#get the questions from the hra data
 		hra_questions = hra_data['hra_questions']
 		return render_template('hra_results.html', 
-								hra_questions=hra_questions, 
-								hra_meta=hra_meta, 
+								hra_questions=hra_questions,
+								hra_meta=hra_meta,
+								results=tc_security.get_hra_scores_for_user(current_user.get_id()),
 								user_answers=tc_security.get_hra_results(current_user.get_id()), 
 								form=EmptyForm())
 

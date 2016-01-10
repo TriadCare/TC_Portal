@@ -16,7 +16,7 @@
 {% block header %}
 	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
 		{{ super() }}
-		<span id="hra_results_title"> {{ account }} Aggregate Results</span>
+		<div id="hra_results_title"> {{ account }} Aggregate Results</div>
 		<div class="tc-heading">
 			<span class="signup-btn btn btn-sm btn-default" id="export_pdf">
 				<a href="#" onclick="export_to_pdf()">Export PDF</a>
@@ -93,21 +93,21 @@
 			{% else %}
 			
 			{% if question_loop == 3 %}
-				<div id="Tobacco" class="section_title">Tobacco Section</div>
+				<div id="Tobacco" class="section_title">Tobacco Section | Your Section GPA is {{ results['section_scores']['Tobacco'] }}</div>
 			{% elif question_loop == 6 %}
-				<div id="Diet&Nutrition" class="section_title">Diet & Nutrition Section</div>
+				<div id="Diet & Nutrition" class="section_title">Diet & Nutrition Section | Your Section GPA is {{ results['section_scores']['Diet & Nutrition'] }}</div>
 			{% elif question_loop == 16 %}
-				<div id="PhysicalActivity" class="section_title">Physical Activity Section</div>
+				<div id="Physical Activity" class="section_title">Physical Activity Section | Your Section GPA is {{ results['section_scores']['Physical Activity'] }}</div>
 			{% elif question_loop == 19 %}
-				<div id="Stress" class="section_title">Stress Section</div>
+				<div id="Stress" class="section_title">Stress Section | Your Section GPA is {{ results['section_scores']['Stress'] }}</div>
 			{% elif question_loop == 22 %}
-				<div id="MedicationManagement" class="section_title">Medication Management Section</div>
+				<div id="Medication Management" class="section_title">Medication Management Section</div>
 			{% elif question_loop == 27 %}
-				<div id="PreventativeCare" class="section_title">Screening & Preventative Care Section</div>
+				<div id="Preventative Care" class="section_title">Screening & Preventative Care Section | Your Section GPA is {{ results['section_scores']['Preventative Care'] }}</div>
 			{% elif question_loop == 40 %}
-				<div id="ChronicConditions" class="section_title">Chronic Conditions Section</div>
+				<div id="Chronic Conditions" class="section_title">Chronic Conditions Section</div>
 			{% elif question_loop == 65 %}
-				<div id="SelfAnalysis" class="section_title">Self-Analysis Section</div>
+				<div id="Self Analysis" class="section_title">Self-Analysis Section</div>
 			{% endif %}
 			
 			<div class="panel panel-default {{ question_loop }}">

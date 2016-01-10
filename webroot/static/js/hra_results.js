@@ -93,13 +93,11 @@ var gpa_to_percent = function(gpa){
 }
 
 var get_letter_text = function(grade){
-	switch(Math.floor(grade)){
-		case 4: return " is an A";
-		case 3: return " is a B";
-		case 2: return " is a C";
-		case 1: return " is a D";
-		case 0: return " is an F";
-	}
+	if (grade >= 90) return " is an A";
+	if (grade >= 80) return " is a B";
+	if (grade >= 70) return " is a C";
+	if (grade >= 60) return " is a D";
+	return " is an F";
 }
 	
 
@@ -111,10 +109,10 @@ var updateChart = function(data){
 	if(overallData[0] === undefined){
 		$("#overall_score").text("No Data to Display");
 	} else {
+		var overall_percentage = gpa_to_percent(overallData[0]);
+		var overall_letter_text = get_letter_text(overall_percentage);
 		
-		var overall_letter_text = get_letter_text(overallData[0]);
 		$("#overall_score_title").text("Your Overall Score" + overall_letter_text);
-	
 		$("#overall_score").text(gpa_to_percent(overallData[0]).toString() + "%");
 		
 		overall_donut_chart.removeData();
@@ -205,12 +203,12 @@ var export_to_pdf = function(){
 	$("#scoreBarChart").remove()
 	
 	//replace all input elements with pictures of the appropriate radio button (LOVE printing)
-	$("input[type='number']").after("<span>" + $("input[type='number']").attr("value") + "</span>");
+	$("input[type='number']").after("<span class='temp_input'>" + $("input[type='number']").attr("value") + "</span>");
 	$("input[type='radio']").each(function(){
 		if($(this).attr("checked")){
-			$(this).after("<img src='static/media/checked_radio.png'>");
+			$(this).after("<img class='temp_input' src='static/media/checked_radio.png'>");
 		} else {
-			$(this).after("<img src='static/media/unchecked_radio.png'>");
+			$(this).after("<img class='temp_input' src='static/media/unchecked_radio.png'>");
 		}
 	});
 	
@@ -221,6 +219,8 @@ var export_to_pdf = function(){
 	convert_to_pdf(data, filename, function(){$("#export_pdf>a").text("Done");})
 	
 	//revert the changes to the scorecard
+	$(".temp_input").remove();
+	
 	$("#tc-brand_img").after(tc_brand_element);
 	$("#tc-brand_img").remove();
 	
@@ -240,6 +240,12 @@ var export_to_pdf = function(){
 	
 	overall_donut_chart.resize(overall_donut_chart.render, true);
 	hra_bar_chart.resize(hra_bar_chart.render, true);
+	
+	$("#scoreBarChart").click(function(e){
+		if(hra_bar_chart.getBarsAtEvent(e).length > 0){
+			$("body").animate({scrollTop: $("[id = '" + hra_bar_chart.getBarsAtEvent(e)[0]['label'] + "']").position().top - 70}, 1000);
+		}
+	});
 	
 }
 
