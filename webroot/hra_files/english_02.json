@@ -1071,7 +1071,7 @@
 		{
 			"type": "GRID_HEADER",
 			"grid_id": "3",
-			"columns": ["Please check this column if you currently suffer from or have been diagnosed with any of the following conditions", "Please check this column if you currently take any medications or supplements for the following conditions"],
+			"columns": ["Currently suffer or diagnosed with any of the following conditions", "Currently take any medications or supplements for the following conditions"],
 			"text": "Do you currently suffer from or have been diagnosed with any of the following conditions? Do you currently take any medications or supplements for the following conditions?",
 			"blurb": "One quarter of all U.S. adults suffer from multiple chronic medical conditions, most commonly a combination of diabetes, hypertension, and hyperlipidemia.  Healthcare costs for individuals with 2-3 chronic conditions are estimated at $8,478 per year, and $16,257 for individuals with 4 or more chronic conditions."
 		},

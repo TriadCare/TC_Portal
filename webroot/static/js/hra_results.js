@@ -238,6 +238,13 @@ var export_to_pdf = function(){
 			$(this).after("<img class='temp_input' src='static/media/unchecked_radio.png'>");
 		}
 	});
+	$("input[type='checkbox']").each(function(){
+		if($(this).attr("checked")){
+			$(this).after("<img class='temp_input' src='static/media/checked_checkbox.png'>");
+		} else {
+			$(this).after("<img class='temp_input' src='static/media/unchecked_checkbox.png'>");
+		}
+	});
 	
 	
 	data['html'] = $("html").html();
