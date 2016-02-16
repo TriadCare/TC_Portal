@@ -1,96 +1,122 @@
-<div id="questionnaireBreakdownContainer" class="container" data-id="{{ this_id }}" data-thisname="{{ this_name }}">
-	<div class="graph_title">Questionnaire Breakdown</div>
-	{% for question in hra_questions %}
-		{% set question_loop = loop.index %}
-			
+<div id="questionnaireBreakdownContainer" class="container" data-id="{{ this_id }}" data-thisname="{{ this_name }}" >
+	{% if mailing_addresses %} 
+		<script>
+			var mailing_addresses = {{ mailing_addresses | tojson }}
+		</script>
+	{% endif %}
+    <div class="graph_title title_text">Questionnaire Breakdown</div>
+    {% set blurb = "" %}
+    {% set headercounter = 0 %}
+    {% for question in hra_questions %}
+		{% set question_loop = loop.index - headercounter %}
+		
+		{% if question.type == "GRID" or question.type == "CHECKBOX_GRID"%}
+			{% set table_width = question.answers|length %}
+			{% if question.type == "GRID" %}
+				{% set inputType = "type=radio" %}
+			{% else %}
+				{% set inputType = "type=checkbox" %}
+			{% endif %}
+			<tr>
+				<td class='grid_column'>{{ question.text }}</td>
+				{% for i in range(0, table_width) %}
+					{% if user_answers[question.qid] == question['answers'][i]['aid'] or (user_answers[question.qid] == '3' and question.type == "CHECKBOX_GRID") %}
+					<td class="grid_cell"><input {{ inputType }} class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" checked disabled></td>
+					{% else %}
+					<td class="grid_cell"><input {{ inputType }} class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" disabled></td>
+					{% endif %}
+				{% endfor %}
+			</tr>
+				{% if question.last_row %}
+			</table></div></div>
+				{% endif %}
+					
+		{% elif question.type == "GRID_TEXT"%}
+			</table>
+			<span class="grid_text_question">{{ question.text }}</span>
+			<input type="textarea" class="grid_text grid_text_answer" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}" disabled>
+			</div>
+				{% if blurb != "" %}
+			<div class="question_blurb_container panel-footer">
+				{{ blurb }}
+			</div>
+				{% endif %}
+		</div>
+		{% else %}
+		
 		{% if question_loop == 3 %}
-			<div id="Tobacco" class="section_title">Tobacco Section</div>
+			<div id="Tobacco" class="section_title">Tobacco Section | Your Section GPA is {{ results['Tobacco'] }}</div>
 		{% elif question_loop == 6 %}
-			<div id="Diet & Nutrition" class="section_title">Diet & Nutrition Section</div>
-		{% elif question_loop == 14 %}
-			<div id="Physical Activity" class="section_title">Physical Activity Section</div>
-		{% elif question_loop == 17 %}
-			<div id="Stress" class="section_title">Stress Section</div>
-		{% elif question_loop == 20 %}
+			<div id="Diet & Nutrition" class="section_title">Diet & Nutrition Section | Your Section GPA is {{ results['Diet & Nutrition'] }}</div>
+		{% elif question_loop == 16 %}
+			<div id="Physical Activity" class="section_title">Physical Activity Section | Your Section GPA is {{ results['Physical Activity'] }}</div>
+		{% elif question_loop == 19 %}
+			<div id="Stress" class="section_title">Stress Section | Your Section GPA is {{ results['Stress'] }}</div>
+		{% elif question_loop == 22 %}
 			<div id="Medication Management" class="section_title">Medication Management Section</div>
 		{% elif question_loop == 25 %}
-			<div id="Preventative Care" class="section_title">Screening & Preventative Care Section</div>
-		{% elif question_loop == 26 %}
+			<div id="Preventative Care" class="section_title">Screening & Preventative Care Section | Your Section GPA is {{ results['Preventative Care'] }}</div>
+		{% elif question_loop == 38 %}
 			<div id="Chronic Conditions" class="section_title">Chronic Conditions Section</div>
-		{% elif question_loop == 27 %}
+		{% elif question_loop == 64 %}
 			<div id="Self Analysis" class="section_title">Self-Analysis Section</div>
 		{% endif %}
 		
 		<div class="panel panel-default {{ question_loop }}">
-			<div class="panel-heading question-text">{{ question_loop }}. {{ question.text|safe }}</div>
+			<div class="panel-heading question-text">{# {{ question_loop }}. #}{{ question.text|safe }}</div>
 			<div class="panel-body mc_answer_area">
 				{% if question.type == "MULTIPLE_CHOICE" %}
 					{% for answer in question.answers %}
-						{% if answer.value != None %}
+						{# {% if answer.value != None %}
 							<span class="mc_grade">{{ answer.value|first }}</span>
-							{% if user_answers["question_" + (question_loop|string)] == answer.value %}
-								<input type="radio" class="mc_radio" disabled checked>
-							{% else %}
-								<input type="radio" class="mc_radio" disabled>
-							{% endif %}
-							<span name="question_{{ question_loop }}" class="mc_text">{{ answer.text|safe }}</span>
+						{% endif %} #}
+						{% if user_answers[question.qid] == answer.aid %}
+							<input type="radio" class="mc_radio" disabled checked>
 						{% else %}
-							{% if user_answers["question_" + (question_loop|string)] == answer.text %}
-								<input type="radio" class="mc_radio" disabled checked>
-							{% else %}
-								<input type="radio" class="mc_radio" disabled>
-							{% endif %}
-							<span name="question_{{ question_loop }}" class="mc_text">{{ answer.text|safe }}</span>
+							<input type="radio" class="mc_radio" disabled>
 						{% endif %}
+						<span name="{{ question.qid }}" class="mc_text">{{ answer.text|safe }}</span>
 						<br>
 					{% endfor %}
+			</div>
+					{% if question.blurb %}
+			<div class="question_blurb_container panel-footer">
+				{{ question.blurb }}
+			</div>
+					{% endif %}
+		</div>
 				{% elif question.type == "INTEGER" %}
-					<input class="input_number" type="number" value="{{ user_answers["question_" + (question_loop|string)] }}" disabled>
-				{% elif question.type == "GRID" %}
+					<input class="input_number" type="number" value="{{ user_answers[question.qid] }}" disabled>
+			</div>
+					{% if question.blurb %}
+			<div class="question_blurb_container panel-footer">
+				{{ question.blurb }}
+			</div>
+					{% endif %}
+		</div>
+				{% elif question.type == "GRID_HEADER" %}
+					{% set blurb = question.blurb %}
+					{% set headercounter = headercounter + 1 %}
 					{% set table_width = question.columns|length %}
 					<table class="table table-bordered table-striped table-hover question_grid">
 						<tr> <td></td>{# <!-- Table Header and blank first column --> #}
 						{% for column in question.columns %}
-						{% set column_loop = loop %}
-							<td class="grid_cell grid_text">
-								{% if question['rows'][0]['values'][column_loop.index - 1] != None %}
-									<span class="grid_answer">{{ question['rows'][0]['values'][column_loop.index - 1] }}</span><br>
+						{% set column_loop = loop.index %}
+						{% set a = hra_questions[question_loop+headercounter+1]['answers'][column_loop-1]['value'] %}
+							<td class="grid_cell grid_column">
+								{# {% if a != None %}
+									<span class="grid_answer">{{ a }}</span><br>
 								{% else %}
 									<br>
-								{% endif %}
+								{% endif %} #}
 								<span>{{ column }}</span>
 							</td>
 						{% endfor %}
 						</tr>
-						{% for row in question.rows %}
-						{% set row_loop = loop %}
-							<tr>
-								<td class='grid_text'>{{ row.text }}</td>
-								{% for i in range(0, table_width) %}
-									{% if row['values'][i] != None %}
-										{% if user_answers["question_" + (question_loop|string) + "_row_" +  (row_loop.index|string) ] == row['values'][i]%}
-											<td class="grid_cell"><input type="radio" class="grid_radio" disabled checked></td>
-										{% else %}
-											<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop }}_row_{{ row_loop.index }}" value="{{ row['values'][i] }}" data-text="{{ question.columns[i] }}" disabled></td>
-										{% endif %}
-									{% else %}
-										{% if user_answers["question_" + (question_loop|string) + "_row_" +  (row_loop.index|string)] == question.columns[i] %}
-											<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}" data-text="{{ row['values'][i] }}" disabled checked></td>
-										{% else %}
-											<td class="grid_cell"><input type="radio" class="grid_radio" name="question_{{ question_loop }}_row_{{ row_loop.index }}" value="{{ question.columns[i] }}" data-text="{{ row['values'][i] }}" disabled></td>
-										{% endif %}
-									{% endif %}
-								{% endfor %}
-							</tr>
-						{% endfor %}
-					</table>
+						
 				{% endif %}
-			</div>
-			{% if question.blurb %}
-				<div class="question_blurb_container panel-footer">
-					{{ question.blurb }}
-				</div>
-			{% endif %}
-		</div>
+		{% endif %}
 	{% endfor %}
+    
+	</div>
 </div>

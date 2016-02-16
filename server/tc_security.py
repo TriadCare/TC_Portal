@@ -17,7 +17,7 @@ def get_survey_id_for_user(tcid):
 	sid = data_transfer.get_hra_sid(tcid)
 	if sid is not None:
 		return sid
-	return "2"
+	return "4"
 
 
 # called to retrieve the WebAppUser with the provided email or tcid
@@ -71,7 +71,7 @@ def get_hra_filename(tcid):
 	f = data_transfer.get_hra_filename(tcid)
 	if f is not None:
 		return "hra_files/" + f
-	return "hra_files/english_01.json"
+	return "hra_files/english_02.json"
 
 def get_hra_language(tcid):
 	sid = data_transfer.get_hra_sid(tcid)
@@ -116,18 +116,27 @@ def get_hra_results(tcid=""):
 # called to store the HRA results for a particular patient.
 def store_hra_results(tcid="", hra_results={}):
 	#first, check if it completed
-	with open('../webroot/hra_files/english_01.json') as hra_file:  # Need the meta data from this file.
+	with open(get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	questions = hra_data['hra_questions']
 	
 	question_count = 0
+	dont_count = []
 	for question in questions:
 		if question['type'] != 'GRID_HEADER':
-			question_count += 1
+			if question['type'] == 'CHECKBOX_GRID':
+				dont_count.append(question['qid'])
+			else:
+				question_count += 1
+		
+	result_count = 0
+	for r in hra_results:
+		if r['qid'] not in dont_count:
+			result_count += 1
 			
-	completed = len(hra_results) == question_count
+	completed = result_count == question_count
 	
-	score = score_hra_results(hra_results)
+	score = score_hra_results(tcid, hra_results)
 	
 	hra_results.append({'qid': 'Diet & Nutrition', 'aid': score['Diet & Nutrition']})
 	hra_results.append({'qid': 'Tobacco', 'aid': score['Tobacco']})
@@ -147,7 +156,7 @@ def store_hra_results(tcid="", hra_results={}):
 #		"Tobacco": #, 
 #		"Screening and Preventative Care": #
 #	}
-def score_hra_results(hra_results={}):
+def score_hra_results(tcid="",hra_results={}):
 	if hra_results is None or hra_results == {}:
 		return None
 	
@@ -155,7 +164,8 @@ def score_hra_results(hra_results={}):
 	
 	score = {}
 	
-	with open('../webroot/hra_files/english_01.json') as hra_file:  # Need the meta data from this file.
+	filename = get_hra_filename(tcid)
+	with open(filename) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	
 	groupings = hra_data['hra_meta']['groupings']
@@ -179,7 +189,7 @@ def score_hra_results(hra_results={}):
 			# I need to get a score for each graded section.
 			for q in group['questions']:
 				
-				if q not in answer_dict.keys() or answer_dict[q] is None: # If there is no answer, increment dont_count and break
+				if q not in answer_dict.keys() or answer_dict[q] is None or answer_dict[q] == '': # If there is no answer, increment dont_count and break
 					dont_score += 1
 				else:
 					g = answers[q][answer_dict[q]]	# Get the letter grade that corresponds to the aid.
@@ -208,9 +218,14 @@ def process_hra_results(hra_results={}):
 	for r in hra_results:
 		try:
 			if r != 'csrf_token':
-				results.append({"qid": str(r), "aid": str(hra_results[r])})
+				if len(hra_results.getlist(r)) > 1:
+					results.append({"qid": str(r), "aid": str(sum(map(int, hra_results.getlist(r))))})
+				else:
+					results.append({"qid": str(r), "aid": str(hra_results[r])})
+				
 		except ValueError as e:
 			continue
+	
 	return results
 
 def get_hra_scores_for_user(tcid=""):
@@ -392,12 +407,11 @@ def get_tc_hra_score():
 		'Physical Activity': round(physical_score/len(scores),1)
 	}
 
-#helper function for this one-time pdf print issue. 
-#gets the next tcid in the list of Box Board employees.
-# DOES NOT BELONG IN PRODUCTION. USED FOR PRINTING ALL SCORECARDS FOR BOX BOARD.
-#def get_next_id(this_id):
-#	all_box_board_employee_ids = data_transfer.get_user_ids_from_box_board()
-#	return all_box_board_employee_ids[all_box_board_employee_ids.index(this_id)+1]
+
+def get_addresses(id):
+	triad_care_address = {"Name": "Triad Care, Inc.", "Address1": "302 Pomona Drive", "Address2": "Suite L", "City": "Greensboro", "State": "NC", "PostalCode": "27407"}
+	receiver_address = data_transfer.get_user_address(id)
+	return {'Sender': triad_care_address, 'Receiver': receiver_address}
 
 
 

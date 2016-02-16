@@ -343,23 +343,13 @@ def user_did_complete_hra(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		columns = []
-		for i in range(1, 78):  # skipping 64, 66, 78, 79
-			if i == 64 or i == 66:
-				pass
-			else:
-				columns.append("`" + str(i) + "`")
-		query = "select " + ", ".join(columns) + " from survey_response where tcid = %s"
+		query = "select completed from survey_response where tcid = %s"
 		cursor.execute(query, [tcid])
-		result = cursor.fetchall()
-		if len(result) != 0:
-			for a in result[0]:
-				if a is None:
-					return False
+		result = cursor.fetchall()[0][0]
+		if result == 1:
 			return True
-		return False
 	except Exception as e:
-		return e
+		return False
 	return False
 
 
@@ -485,14 +475,15 @@ def complete_hra(tcid):
 	conn.commit()
 	return True
 
+def get_user_address(tcid):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select CONCAT_WS(' ', first_name, last_name) AS Name, Address1, Address2, City, State, PostalCode from webappusers where tcid = %s", [tcid])
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		
+		return dict(zip(desc, cursor.fetchall()[0]))
+	except Exception as e:
+		return e
 
-# TODO: DELETE THIS
-# def get_user_ids_from_box_board():
-# 	conn = getConnection()
-# 	cursor = conn.cursor()
-# 	try:
-# 		cursor.execute("select webappusers.tcid from webappusers JOIN hra_answers on hra_answers.tcid = webappusers.tcid where Account = 'Box Board Products' order by webappusers.tcid")
-# 		return  [r[0] for r in cursor.fetchall()]
-# 	except Exception as e:
-# 		return e
-# 	return None

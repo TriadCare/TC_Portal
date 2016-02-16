@@ -46,7 +46,7 @@ var englishHRA = function(){
 
 $(document).ready(function() {
   $(window).keydown(function(event){
-    if(event.keyCode == 13) {
+    if(event.keyCode == 13 || event.keyCode == 8) {  // enter or delete keys
       event.preventDefault();
       return false;
     }

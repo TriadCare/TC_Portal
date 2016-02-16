@@ -268,6 +268,7 @@ def renderHRA():
 		# check if the user has already taken the old hra
 		if tc_security.user_did_complete_old_hra(current_user.get_id()):
 			return redirect(url_for('hra_results'))
+		
 		if tc_security.user_did_complete_new_hra(current_user.get_id()):
 			return redirect(url_for('hra_results'))
 		
@@ -370,6 +371,13 @@ def hra_tc_data():
 @login_required
 def hra_data():
 	return jsonify(**{"userData": tc_security.get_hra_score(current_user.get_id()), "tcData": tc_security.get_tc_hra_score()})
+	
+	#Route that returns hra data for the current user AND Triad Care. Requires login.
+@app.route('/hra_data_unprotected', methods=['POST'])
+@csrf.exempt
+@login_required
+def hra_data_unprotected():
+	return jsonify(**{"userData": tc_security.get_hra_score(request.form['id']), "tcData": tc_security.get_tc_hra_score()})
 
 
 #Route that returns the Employer Aggregate Scorecard
@@ -418,34 +426,37 @@ def export_to_pdf():
 
 
 #Route that returns questionnaire HTML for the specified user. Login required. DOES NOT BELONG IN PRODUCTION
-# @app.route('/get_questionnaire', methods=['POST'])
-# @login_required
-# def get_questionnaire():
-# 	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
-# 	hra_data = {}
-# 	#Make sure we are in the same directory as this file
-# 	os.chdir(os.path.dirname(os.path.realpath(__file__)))
-# 	with open("hra.json") as hra_file:
-# 		hra_data = json.load(hra_file)
-# 	#parse out the meta survey groupings
-# 	hra_meta = hra_data['hra_meta']
-# 	#get the questions from the hra data
-# 	hra_questions = hra_data['hra_questions']
-# 	
-# 	last_id = request.form['id']
-# 	this_id = tc_security.get_next_id(last_id)
-# 	user = data_transfer.get_user_with_tcid(this_id)
-# 	if user['first_name'] is None:
-# 		this_name = this_id
-# 	else:
-# 		this_name = user['first_name'] + " " + user['last_name']
-# 	
-# 	return render_template('questionnaire_results.html',
-# 							hra_questions=hra_questions, 
-# 							hra_meta=hra_meta, 
-# 							user_answers=tc_security.get_hra_results(this_id),
-# 							this_id=this_id,
-# 							this_name=this_name)
+@app.route('/get_questionnaire', methods=['POST'])
+@csrf.exempt
+@login_required
+def get_questionnaire():
+	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+	hra_data = {}
+	#Make sure we are in the same directory as this file
+	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	with open(get_hra_filename(current_user.get_id())) as hra_file:
+		hra_data = json.load(hra_file)
+	#parse out the meta survey groupings
+	hra_meta = hra_data['hra_meta']
+	#get the questions from the hra data
+	hra_questions = hra_data['hra_questions']
+	
+	last_id = request.form['id']
+	this_id = tc_security.get_next_id(last_id)
+	user = data_transfer.get_user_with_tcid(this_id)
+	if user['first_name'] is None:
+		this_name = this_id
+	else:
+		this_name = user['first_name'] + " " + user['last_name']
+	
+	return render_template('questionnaire_results.html',
+							hra_questions=hra_questions, 
+							hra_meta=hra_meta,
+							results=tc_security.get_hra_scores_for_user(this_id), 
+							user_answers=tc_security.get_hra_results(this_id),
+							this_id=this_id,
+							this_name=this_name,
+							mailing_addresses=json.dumps(tc_security.get_addresses(this_id)))
 
 
 # @app.route('/score_hras', methods=['GET'])

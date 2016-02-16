@@ -1,0 +1,1872 @@
+{
+	"hra_meta":
+	{
+		"groupings":
+			[
+				{
+					"group": "Demographic",
+					"questions": ["1", "2"],
+					"graded": false
+				},
+				{
+					"group": "Diet & Nutrition",
+					"questions": ["6","7","8","9","10","11","12","13","14","15"],
+					"graded": true
+				},
+				{
+					"group": "Physical Activity",
+					"questions": ["16","17","18"],
+					"graded": true
+				},
+				{
+					"group": "Stress",
+					"questions": ["19","20","21"],
+					"graded": true
+				},
+				{
+					"group": "Tobacco",
+					"questions": ["3","4","5"],
+					"graded": true
+				},
+				{
+					"group": "Preventative Care",
+					"questions": [
+									"25","26","27","28",
+									"29","30","31","32",
+									"33","34","35","36","37"
+								],
+					"graded": true
+				},
+				{
+					"group": "Medication Management",
+					"questions": ["22","23","24"],
+					"graded": false
+				},
+				{
+					"group": "Chronic Conditions",
+					"questions": [
+									"38","39","40","41","42","43","44","45",
+									"46","47","48","49","50","51","52","53",
+									"54","55","56","57","58","59","60","61",
+									"62","63"
+								],
+					"graded": false
+				},
+				{
+					"group": "Self-Analysis",
+					"questions": ["64","65","66","67","68","69","70","71","72","73","74","75","76", "77"],
+					"graded": false
+				}
+			]
+	},
+	"hra_questions":
+	[
+		{
+			"qid": "1",
+			"type": "INTEGER",
+			"text": "Age"
+		},
+		{
+			"qid": "2",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Sex",
+			"answers": 
+			[
+				{
+					"aid": "1",
+					"text": "Male",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"text": "Female",
+					"value": null
+				}
+			]
+		},{
+			"qid": "3",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Do you smoke cigarettes, cigars or electronic cigarettes?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Yes",
+					"value": "F"
+				},
+				{
+					"aid": "2",
+					"text": "No",
+					"value": "A"
+				}
+			],
+			"blurb": "Smoking-related illnesses cost over $300 billion each year in the United States including nearly $170 billion in direct medical expenses and over $156 billion for losses in productivity. Smoking is the leading cause of preventable death in the U.S., and smokers die, on average, ten years earlier than non-smokers."
+		},
+		{
+			"qid": "4",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Do you use any smokeless tobacco or other nicotine products",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Yes",
+					"value": "F"
+				},
+				{
+					"aid": "2",
+					"text": "No",
+					"value": "A"
+				}
+			],
+			"blurb": "Smokeless tobacco, including chewing tobacco and snuff, contains nicotine that is absorbed through the mouth or nose instead of direct inhalation of burned tobacco into the lungs, as with smoking. The nicotine addiction is the same, however, and smokeless tobacco products have not been proven to help smokers quit smoking. In fact, smokers who delay quitting by using smokeless products between cigarettes significantly heighten their risk of lung cancer as well as other health problems uniquely attributed to smokeless tobacco."
+		},
+		{
+			"qid": "5",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Are you frequently exposed to secondhand smoke (once weekly or more)",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Yes",
+					"value": "C"
+				},
+				{
+					"aid": "2",
+					"text": "No",
+					"value": "A"
+				}
+			],
+			"blurb": "Secondhand smoke accounts for about $5.6 billion in lost productivity each year in the United States."
+		},
+		{
+			"qid": "6",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How often do you eat out or get take-out?",
+			"answers": 
+			[
+				{
+					"aid": "1",
+					"text": "Never",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 times per week",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 times per week",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "5-6 times per week",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"text": "1-2 times per day",
+					"value": "F"
+				}
+			],
+			"blurb": "Dining out has become a critical risk factor for obesity. It is challenging to control portions, sodium, and calories when dining out, even if healthier options are available on the menu. Eating fast food more than twice weekly is correlated with significant weight gain over time compared to infrequent visits. Furthermore, regular consumption of fast food doubles one’s risk of developing insulin resistance, which increases the risk of type 2 diabetes."
+		},
+		{
+			"type": "GRID_HEADER",
+			"grid_id": "1",
+			"columns": ["Never", "1-2 times/week", "3-4 times/week", "5+ times/week"],
+			"text": "How often do you skip the following meals?",
+			"blurb": "Skipping meals not only causes your blood sugar to drop, making you feel tired and irritable, but it is also linked to overeating later in the day. Without consistent “fuel” through food, your body switches into starvation mode, thereby conserving calories and slowing metabolism, which may be linked to weight gain. Further, your body may start using muscle protein for fuel, which shifts body composition to burn even fewer calories at rest. Studies have linked breakfast in particular to increased risk of obesity, and individuals with diabetes are at heightened risk of unstable blood glucose if they skip meals. Finally, your brain suffers, making mood swings likely and clear thinking a significant challenge."
+		},
+		{
+			"qid": "7",
+			"type": "GRID",
+			"grid_id": "1",
+			"text": "Breakfast",
+			"answers": 
+			[
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				}
+			]
+		},
+		{
+			"qid": "8",
+			"type": "GRID",
+			"grid_id": "1",
+			"text": "Lunch",
+			"answers": 
+			[
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				}
+			]
+		},
+		{
+			"qid": "9",
+			"type": "GRID",
+			"grid_id": "1",
+			"last_row": true,
+			"text": "Dinner",
+			"answers": 
+			[
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				}
+			]
+		},
+		{
+			"qid": "10",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How much water do you drink? (1 standard water bottle = ~16 oz or 2 cups)",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "None",
+					"value": "D"
+				},
+				{
+					"aid": "2",
+					"text": "0-1 cups (8oz) per day",
+					"value": "D"
+				},
+				{
+					"aid": "3",
+					"text":	"2-4 cups per day (1-2 standard bottles of water)",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "5-8 cups per day",
+					"value": "B"
+				},
+				{
+					"aid": "5",
+					"text": "More than 8 cups per day",
+					"value": "A"
+				}
+			],
+			"blurb": "Water is involved in every cellular function in the body, and if you’re dehydrated, those processes do not function efficiently. It is calorie-free, essentially cost-free, and adds volume to your stomach, which may help with weight management if consumed before meals and snacks. Finally, by getting the optimal amount of water daily (1 oz. per 2 lbs. body weight; example: 80 oz. for a 160 lb person), one typically has to displace sweetened, caloric beverages. Substituting water for one 20 oz. soda can save ~250 calories. It also aids in digestion, keeping you “regular” and helping to reduce bloating."
+		},
+		{
+			"qid": "11",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How many servings of high fiber foods do you eat daily? (includes 100% whole grain breads and cereals, oatmeal, brown rice, whole grain pasta, fruits and vegetables, dry beans, etc.) *1 serving=1 slice bread, 1/3 cup pasta, rice, or beans; 1⁄2 cup veggies; 1 small whole fruit; 1⁄2 cup berries or sliced fruit",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Less than 1 serving per day ",
+					"value": "F"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 servings per day",
+					"value": "D"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 servings per day",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "5-6 servings per day",
+					"value": "B"
+				},
+				{
+					"aid": "5",
+					"text": "7+ servings per day",
+					"value": "A"
+				}
+			], "blurb": "Fiber fills you up, keeps you satisfied, is linked to lower body weight, and adds bulk, thereby helping with digestive regularity. Populations that consume more dietary fiber have lower incidence of chronic disease and decreased risk of developing chronic diseases. The recommended goals for fiber are 25-35 grams per day for women and men, respectively. Food sources of fiber include fruits and vegetables with skin, legumes, whole grains, nuts and seeds."
+		},
+		{
+			"qid": "12",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How often do you eat at least 5 servings of fruit and non-starchy vegetables? (does not include potatoes, sweet potatoes, corn, peas, dry beans, baked beans, etc. does includes broccoli, cauliflower, green beans, carrots, salads, tomatoes, collards, cabbage, cucumbers, mushrooms, Brussels sprouts, asparagus, peppers, onions, etc.) *1 serving=1 small piece whole fruit or 1⁄2 cup veggies or 1 cup salad greens",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Less than one day per week",
+					"value": "F"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 days per week",
+					"value": "D"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 days per week",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "5-6 days per week",
+					"value": "B"
+				},
+				{
+					"aid": "5",
+					"text": "Every day",
+					"value": "A"
+				}
+			],
+			"blurb": "Diets rich in vegetables and fruit may reduce the risk of some cancers and other chronic diseases. Fruits and vegetables are also full of vitamins and minerals, phytochemicals and antioxidants, and fiber, all of which are crucial to good health. Nearly all fruits and vegetables are naturally low in calories and fat. Eating at least five servings per day is recommended for health, but more is even better."
+		},
+		{
+			"qid": "13",
+			"type": "MULTIPLE_CHOICE",
+			"text":"On an average day, how many alcoholic drinks do you consume?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "I don't drink",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "0-1 drinks per day",
+					"value": "A"
+				},
+				{
+					"aid": "3",
+					"text": "2-3 drinks per day",
+					"value": "B"
+				},
+				{
+					"aid": "4",
+					"text": "4-5 drinks per day",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"text": "6+ drinks per day",
+					"value": "F"
+				}
+			],
+			"blurb": "Excessive alcohol consumption kills about 88,000 people in the U.S. yearly, and the costs are estimated at $223.5 billion per year (2006) from healthcare expenses, loss in workplace productivity, related criminal justice expenses, and costs of motor vehicle accidents. Binge drinking, defined as consuming more than four alcoholic beverages for women or five for men in one occasion is the most common form of excessive alcohol consumption in the U.S. Eighteen percent of U.S. adults report engaging in binge drinking."
+		},
+		{
+			"qid": "14",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How often do you eat heavily processed or sweet foods? (includes cookies, crackers, cakes, pastries, muffins, biscuits, white bread or pasta, white rice, Lunchables, boxed mixes of pasta, rice, mac & cheese, packaged foods, salty or sweet snack foods, Nabs, etc.)",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Less than 1 time per week",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 times per week",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "3-5 days per week",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "6-7 days per week",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"text": "Multiple times per day",
+					"value":"F"
+				}
+			], "blurb": "Refined grains, such as white flour (or white rice) used in processed foods like bread, pasta, baked goods, and many packaged foods, lack fiber and nutritional value and can cause blood sugar spikes that may lead to subsequent cravings for sweets or simple carbohydrates. Additionally, processed foods typically contain high amounts of sodium, which can contribute to elevated blood pressure and heart disease. More than 75% of the sodium Americans consume comes from processed foods, including restaurant meals. Any food that has been changed from its original raw form can be called processed, which often involves added ingredients including sodium and other additives, which make the product less healthy or even harmful in excess. Smart food choices are crucial to maintaining a healthy weight and a healthy heart."
+		},
+		{
+			"qid": "15",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How many caloric beverages do you drink per day? (includes sweet tea, soft drinks, juices, sweetened coffee drinks, fruit punch, lemonade, Gatorade, etc. – not including diet or sugar-free drinks or alcoholic beverages) *1 serving = 8 oz. or 1 cup; 1-20 oz. soda=2.5 servings",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Less than 1 per day",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 per day",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 per day",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "5-6 per day",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"text": "7+ per day",
+					"value": "F"
+				}
+			], "blurb": "Increasing evidence suggests that regular consumption of sugar-sweetened beverages contributes to weight gain, obesity, and type 2 diabetes. Adults who drink even one daily soft drink are 27% more likely to be overweight than those who drink none. The economic impact of obesity is estimated to be $2 trillion annually, including direct medical claims, indirect medical expenses, and obesity-related job absenteeism."
+		},
+		{
+			"qid": "16",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Does your job involve periods of sitting for more than four hours per day?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Yes",
+					"value": "D"
+				},
+				{
+					"aid": "2",
+					"text":	"No",
+					"value": "A"
+				}
+			],
+			"blurb": "Sitting for extended periods of time has been linked to a variety of health risks, including obesity, diabetes, and metabolic syndrome, as well as an increased risk of death from cardiovascular disease and cancer. Any extended sitting, including driving, at work, or in front of the TV, can be harmful, and spending a few hours vigorously exercising each week does not appear to offset the risk. It is estimated that reducing sedentary behavior and physical inactivity could save $45 million in healthcare spending by 2020. Furthermore, researchers estimate $842 million in savings for sedentary-behavior related diabetes costs and $202 million in savings for related hypertension costs."
+		},
+		{
+			"qid": "17",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How many days per week do you do get resistance exercise for at least 30 minutes? (ie: weight or strength training, Pilates, yoga, calisthenics)",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Never",
+					"value": "F"
+				},
+				{
+					"aid": "2",
+					"text": "1 day per week",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "2-4 days per week",
+					"value": "A"
+				},
+				{
+					"aid": "4",
+					"text": "5+ days per week",
+					"value": "A"
+				}
+			],
+			"blurb": "Lifting weights or doing resistance exercise like push-ups, triceps dips, and squats, can help build strong muscles, which burn more calories at rest. Activities including calisthenics, resistance bands, plyometrics, or even functional work like digging or lifting, count as resistance exercise. The recommendation for adults is resistance exercise at least twice weekly for muscle strength and maintenance of lean body mass, both of which keep the metabolism humming more efficiently."
+		},
+		{
+			"qid": "18",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How many days do you get physical activity for at least 30 consecutive minutes where your heart rate rises and you breathe heavily in a normal week?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Never",
+					"value": "F"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 days per week",
+					"value": "C"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 days per week",
+					"value": "B"
+				},
+				{
+					"aid": "4",
+					"text": "5+ days per week",
+					"value": "A"
+				}
+			],
+			"blurb": "Adults should get a minimum of 150 minutes of moderate aerobic activity per week, or about 30 minutes five days per week.  Benefits include weight management; reduced risk of type 2 diabetes, metabolic syndrome, some cancers, and cardiovascular disease; stronger bones and muscles; improved mental health and mood; easier activities of daily living; and increased longevity.  Aerobic activity makes you sweat and breathe more heavily, and includes things such as jogging, swimming, aerobics, biking, interval training, some sports (soccer, tennis, basketball), or even walking at a brisk enough pace to get your heart beating faster.  The health benefits of regular physical activity dramatically outweigh any risks of getting hurt."
+		},
+		{
+			"qid": "19",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How would you describe the stress in your daily life?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Minimal to none",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "Mild and tolerable",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "Moderate",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"text": "Excessive",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"text": "Debilitating (I've missed work or an event due to stress)",
+					"value": "F"
+				}
+			],
+			"blurb": "Chronic stress can be overwhelming to the physical and mental health of an individual.  Stress hormones are released, including cortisol and catecholamines, which disrupt nearly all of the body’s physiological processes and can significantly heighten the risk of many health conditions.  Further, stress may be responsible for aging the immune system prematurely, thereby increasing the risk of illness and age-related diseases."
+		},
+		{
+			"qid": "20",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Are you taking positive steps to manage the stress in your life? (ex: exercising, meditating, reading, hot bath, social support, listening to music, deep breathing, etc.)",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Yes",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "No",
+					"value": "F"
+				},
+				{
+					"aid": "3",
+					"text": "N/A",
+					"value": null
+				}
+			],
+			"blurb": "Individuals who are under chronic or acute stress can benefit from efforts to moderate the impact on their health and wellbeing.  Alcohol, smoking, or chemical means do not mitigate stress in the long term, and may, in fact, exacerbate anxiety and depression related to the stressful stimulus and environment."
+		},
+		{
+			"qid": "21",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Approximately how many hours of sleep do you get on a typical night?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Less than 5",
+					"value": "D"
+				},
+				{
+					"aid": "2",
+					"text": "Between 5 and 7",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "Between 7 and 9",
+					"value": "A"
+				},
+				{
+					"aid": "4",
+					"text": "More than 9",
+					"value": "C"
+				}
+			],
+			"blurb": "Sleep is critical to good health and wellbeing, and may play an essential role in performance, memory, emotional and metabolic regulation, recovery, and learning.  The Institute of Medicine 2006 report identified 7-8 hours per night as the optimal sleep duration for adults, but over 1/3 of adults get less than that.  Insufficient or poor quality sleep can increase the risk of chronic conditions including metabolic disorders (which may lead to obesity, diabetes, heart disease, or hypertension), coronary heart disease, decreased immunologic function, and mood disorders.  Conversely, sleep in excess of approximately nine hours per night has also been linked (causality not determined) to diabetes, obesity, heart disease, depression, and increased risk of death."
+		},
+		{
+			"qid": "22",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How often do you skip or miss a dose of a prescribed medication?",
+			"answers": 
+			[
+				{
+					"aid": "1",
+					"text": "Never",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 times per week",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 times per week",
+					"value": "D"
+				},
+				{
+					"aid": "4",
+					"text": "5-7 times per week",
+					"value": "F"
+				},
+				{
+					"aid": "5",
+					"text": "Not applicable (ie: I’m not on any prescribed medications)",
+					"value": null
+				}
+			],
+			"blurb": "Medication non-adherence is responsible for about $105 billion in avoidable costs per year, with a range of $68-$146 billion.  Management of diabetes and hypertension has the greatest effect on avoidable costs.  The six primary areas of opportunity for responsible use of medicines are non-adherence, medication errors, suboptimal generic use, delayed evidence-based treatment practice, antibiotic misuse, and mismanaged polypharmacy."
+		},
+		{
+			"qid": "23",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How many prescription medications are you prescribed to take daily?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "None",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"text": "1-2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"text": "3-4",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"text": "5-6",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"text": "More than 6",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "24",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Do you take any nutritional or herbal supplements on a regular basis? (includes fish oil, probiotics, vitamin D, calcium, iron, folic acid, protein supplements, etc.)",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Yes",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"text": "No",
+					"value": null
+				}
+			],
+			"blurb": ""
+		},
+		{
+			"type": "GRID_HEADER",
+			"grid_id": "2",
+			"columns": ["<1 year ago", "1-2 yrs ago", "3-5 yrs ago", ">5 yrs ago", "N/A"],
+			"text": "When was the last time you had the following screenings?",
+			"blurb": "Routine check-ups, annual physical exams, and recommended health screenings can help identify risks before they become problems, or identify problems in the early stages, which improves the chances for treatment or cure.  Age, health, family history, and lifestyle choices affect the tests and screens that are recommended for you.  Prioritizing the recommended tests and screenings for your individual circumstances improves your chances for living a longer, healthier life."
+		},
+		{
+			"qid": "25",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Annual Physical",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "26",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Blood Pressure",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "27",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Cholesterol",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "28",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Colonoscopy (if >50yrs)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "29",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Diabetes",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "30",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Dental Exam",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "31",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Eye Exam",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "32",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Skin Cancer",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "33",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Flu Vaccine",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "34",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Mammogram (40 or older female)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "35",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Pap Smear (female)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "36",
+			"type": "GRID",
+			"grid_id": "2",
+			"text": "Breast Exam by RN or MD (female)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},{
+			"qid": "37",
+			"type": "GRID",
+			"grid_id": "2",
+			"last_row": true,
+			"text": "Prostate (40 or over male)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": "A"
+				},
+				{
+					"aid": "2",
+					"value": "B"
+				},
+				{
+					"aid": "3",
+					"value": "C"
+				},
+				{
+					"aid": "4",
+					"value": "D"
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},
+		{
+			"type": "GRID_HEADER",
+			"grid_id": "3",
+			"columns": ["Please check this column if you currently suffer from or have been diagnosed with any of the following conditions", "Please check this column if you currently take any medications or supplements for the following conditions"],
+			"text": "Do you currently suffer from or have been diagnosed with any of the following conditions? Do you currently take any medications or supplements for the following conditions?",
+			"blurb": "One quarter of all U.S. adults suffer from multiple chronic medical conditions, most commonly a combination of diabetes, hypertension, and hyperlipidemia.  Healthcare costs for individuals with 2-3 chronic conditions are estimated at $8,478 per year, and $16,257 for individuals with 4 or more chronic conditions."
+		},
+		{
+			"qid": "38",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Anxiety",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "39",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Asthma",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "40",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Cancer",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "41",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "COPD or Emphysema",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "42",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Chronic Kidney Disease",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "43",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Congestive Heart Failure",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "44",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Coronary Artery Disease",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "45",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Crohn's Disease",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "46",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Depression",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "47",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Diabetes",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "48",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Epilepsy",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "49",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Glaucoma",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "50",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "HIV/AIDS",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "51",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Irregular Heartbeat (Arrhythmia or AFIB)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "52",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "High Blood Pressure",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "53",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "High Cholesterol",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "54",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Hypothyroidism",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "55",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Lupus",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "56",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Migraines",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "57",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Multiple Sclerosis",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "58",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Osteoarthritis/Osteoporosis",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "59",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Pain, chronic",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "60",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Parkinson's",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "61",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Rheumatoid Arthritis",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "62",
+			"type": "CHECKBOX_GRID",
+			"grid_id": "3",
+			"text": "Ulcerative Colitis",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "63",
+			"type": "GRID_TEXT",
+			"grid_id": "3",
+			"last_row": true,
+			"text": "Other (please specify)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "64",
+			"type": "MULTIPLE_CHOICE",
+			"text": "How do you consider your overall health?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Excellent",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"text": "Above average",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"text": "Average",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"text": "Below average",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"text": "Poor",
+					"value": null
+				}
+			],
+			"blurb": ""
+		},
+		{
+			"qid": "65",
+			"type": "MULTIPLE_CHOICE",
+			"text": "What do you think your health will be like in 10 years if you continue with your current lifestyle?",
+			"answers":
+			[
+				{
+					"aid": "1",
+					"text": "Much better",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"text": "Better",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"text": "No different",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"text": "Worse",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"text": "Much worse",
+					"value": null
+				}
+			],
+			"blurb": ""
+		},
+		{
+			"type": "GRID_HEADER",
+			"grid_id": "4",
+			"columns": ["Not ready to change", "Considering change", "Ready to change", "Taking Action to change", "No change needed"],
+			"text": "How would you describe your readiness to change in the following areas?",
+			"blurb": ""
+		},
+		{
+			"qid": "66",
+			"type": "GRID",
+			"grid_id": "4",
+			"text": "Diet/Nutrition",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "67",
+			"type": "GRID",
+			"grid_id": "4",
+			"text": "Physical Activity",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "68",
+			"type": "GRID",
+			"grid_id": "4",
+			"text": "Tobacco Cessation",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "69",
+			"type": "GRID",
+			"grid_id": "4",
+			"text": "Weight Management",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "70",
+			"type": "GRID",
+			"grid_id": "4",
+			"last_row": true,
+			"text": "Self-Management of Chronic Conditions",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				},
+				{
+					"aid": "5",
+					"value": null
+				}
+			]
+		},
+		{
+			"type": "GRID_HEADER",
+			"grid_id": "5",
+			"columns": ["Extremely Interested", "Moderately Interested", "Maybe Interested", "Not at all Interested"],
+			"text": "How would you describe your level of interest in the following topics?",
+			"blurb": ""
+		},
+		{
+			"qid": "71",
+			"type": "GRID",
+			"grid_id": "5",
+			"text": "Diet/Nutrition",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "72",
+			"type": "GRID",
+			"grid_id": "5",
+			"text": "Physical Activity",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "73",
+			"type": "GRID",
+			"grid_id": "5",
+			"text": "Tobacco Cessation",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "74",
+			"type": "GRID",
+			"grid_id": "5",
+			"text": "Weight Management",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "75",
+			"type": "GRID",
+			"grid_id": "5",
+			"text": "Self-Management of Chronic Conditions (ie: diabetes, high blood pressure, high cholesterol, etc.)",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "76",
+			"type": "GRID",
+			"grid_id": "5",
+			"text": "Stress Management",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				},
+				{
+					"aid": "2",
+					"value": null
+				},
+				{
+					"aid": "3",
+					"value": null
+				},
+				{
+					"aid": "4",
+					"value": null
+				}
+			]
+		},
+		{
+			"qid": "77",
+			"type": "GRID_TEXT",
+			"grid_id": "5",
+			"last_row": true,
+			"text": "Other Topics?",
+			"answers": [
+				{
+					"aid": "1",
+					"value": null
+				}
+			]
+		}
+	]
+}

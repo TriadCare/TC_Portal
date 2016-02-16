@@ -13,10 +13,10 @@ var jqxhr = $.ajax({
 				xhr.setRequestHeader("X-CSRFToken", csrftoken);
 			}
 		}
-	})
-	.done(function(data){
-		updateChart(data)
-	})
+})
+.done(function(data){
+	updateChart(data)
+})
 
 
 
@@ -67,8 +67,11 @@ $(document).ready(function(){
 		"scaleOverride": true, 
 		"scaleStartValue": 0, 
 		"scaleStepWidth": 10, 
-		"scaleSteps": 10
-		});
+		"scaleSteps": 10,
+		
+	    "showTooltips": false,
+	    "onAnimationComplete": renderBarValues
+	});
 			
 
 	//enable the scroll to top button
@@ -99,7 +102,29 @@ var get_letter_text = function(grade){
 	if (grade >= 60) return " is a D";
 	return " is an F";
 }
-	
+
+var get_chart_text = function(value){
+	if (value >= 90) return value + " | A";
+	if (value >= 80) return value + " | B";
+	if (value >= 70) return value + " | C";
+	if (value >= 60) return value + " | D";
+	return value + " | F";
+}
+
+var renderBarValues = function(){
+	var ctx = hra_bar_chart.chart.ctx;
+    ctx.font = hra_bar_chart.scale.font;
+    ctx.fillStyle = hra_bar_chart.scale.textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+
+    hra_bar_chart.datasets.forEach(function (dataset) {
+        dataset.bars.forEach(function (bar) {
+            ctx.fillText(get_chart_text(bar.value), bar.x, bar.y);
+        });
+    })
+	//alert("Done animating");
+}
 
 var updateChart = function(data){
 	var overallData = [data['userData']['Overall']]
@@ -147,6 +172,8 @@ var updateChart = function(data){
 	hra_bar_chart.datasets[1].label = "TC Average Score";
 	
 	hra_bar_chart.update();
+	
+	window.setTimeout(renderBarValues, 1500);
 	
 	$("#scoreBarChart").click(function(e){
 		if(hra_bar_chart.getBarsAtEvent(e).length > 0){
@@ -260,10 +287,13 @@ var convert_to_pdf = function(html_data, filename, callback){
 	    var a = document.createElement("a");
 		document.body.appendChild(a);
 		a.style = "display: none";
+		a.class = "blobLink";
 	    a.href = url;
 	    a.download = filename;
 	    a.click();
 	    window.URL.revokeObjectURL(url);
+	    
+	    document.body.removeChild(a);
 	    
 	    callback(e)
 	}
@@ -273,42 +303,4 @@ var convert_to_pdf = function(html_data, filename, callback){
 	xhr.send(JSON.stringify(html_data));
 }
 
-/*
 
-var prepare_next_scorecard = function(response){
-	
-	var data = {'id': ($("#questionnaireBreakdownContainer").attr("data-id") || '0000000001')};
-	
-	$("#questionnaireBreakdownContainer").remove();
-	
-	var jqxhr = $.ajax({
-	type: "POST",
-	url: "/get_questionnaire",
-	data: data})
-	.done(function(response){
-		$("#content").append(response);
-		$("#hra_results_title").html("<h3>" + $("#questionnaireBreakdownContainer").attr("data-thisname") + "'s HRA Results</h3>")
-		
-		
-		var data = {'id': ($("#questionnaireBreakdownContainer").attr("data-id") || '0000000001')};
-		$.ajax({
-		type: "POST",
-		url: "/hra_data_unprotected",
-		data: data
-		})
-		.done(function(data){
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();
-			hra_bar_chart.removeData();  // removed five times, once for each section in the datasets
-			updateChart(data);
-			export_timer = window.setTimeout(export_to_pdf, 3000);  //3 seconds after the charts are updated, start the process over for this scorecard.
-		})
-		
-		
-	});
-	
-}
-
-*/

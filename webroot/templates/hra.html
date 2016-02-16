@@ -41,8 +41,13 @@
 				{% set autofocused = False %}
 				{% for question in hra_questions %}
 				
-					{% if question.type == "GRID" %}
-					{% set table_width = question.answers|length %}
+					{% if question.type == "GRID" or question.type == "CHECKBOX_GRID"%}
+						{% set table_width = question.answers|length %}
+						{% if question.type == "GRID" %}
+							{% set inputType = "type=radio" %}
+						{% else %}
+							{% set inputType = "type=checkbox" %}
+						{% endif %}
 						<tr>
 							<td class='grid_column'>{{ question.text }}</td>
 							{% set autofocus = "" %}
@@ -51,10 +56,10 @@
 								{% set autofocused = True %}
 							{% endif %}
 							{% for i in range(0, table_width) %}
-								{% if user_answers[question.qid] == question['answers'][i]['aid'] %}
-								<td class="grid_cell"><input type="radio" class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" checked></td>
+								{% if user_answers[question.qid] == question['answers'][i]['aid'] or (user_answers[question.qid] == '3' and question.type == "CHECKBOX_GRID") %}
+								<td class="grid_cell"><input {{ inputType }} class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" checked></td>
 								{% else %}
-								<td class="grid_cell"><input type="radio" class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" {{ autofocus }}></td>
+								<td class="grid_cell"><input {{ inputType }} class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" {{ autofocus }}></td>
 								{% endif %}
 							{% endfor %}
 						</tr>
