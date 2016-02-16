@@ -270,7 +270,7 @@ input.grid_text[type="textarea"]
 {
     position: fixed; /* keeps it on the bottom once in view */
     bottom: 18px; /* height of link element */
-    left: 10px; /* padding from the left side of the window */
+    right: 10px; /* padding from the left side of the window */
 }
 
 
