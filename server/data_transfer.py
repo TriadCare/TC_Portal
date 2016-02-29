@@ -23,19 +23,20 @@ def add_user(userDict):
 		# first check if the email already exists in the TCDB
 		cursor.execute("select tcid, email, dob from webappusers where email=%s", [userDict['email']])
  		result = cursor.fetchall()
- 		desc = []
- 		for d in cursor.description: #get a list of the column names
-			desc.append(d[0])
-			
-		result = dict(zip(desc, result[0]))
+ 		
  		if len(result): # already registered, need to confirm they have the tcid and password right
- 			if userDict['tcid'] != result['tcid'] or userDict['dob'] != result['dob']:
- 				return False
+	 		desc = []
+	 		for d in cursor.description: #get a list of the column names
+				desc.append(d[0])
+				
+			result = dict(zip(desc, result[0]))
+			if userDict['tcid'] != result['tcid'] or userDict['dob'] != result['dob']:
+				return False
 			
 		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], userDict['tcid']]
 		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
 	except Exception as e:
-		return False
+		return e
 	#if no exceptions, commit the addition
 	conn.commit()
 	return True
