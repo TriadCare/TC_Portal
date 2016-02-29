@@ -21,17 +21,17 @@ def add_user(userDict):
 	#May need to log various things here and give feedback to the user based on what happens.
 	try:
 		# first check if the email already exists in the TCDB
-		cursor.execute("select email from webappusers where email=%s", [userDict['email']])
- 		exists = cursor.fetchall()
- 		if len(exists): # already registered or put in a non-unique email address
- 			return False
-		# then check if the tcid exists
-		cursor.execute("select dob from webappusers where tcid=%s", [userDict['tcid']])
-		exists = cursor.fetchall()
-		# if the tcid does not exist, they got it wrong. If it does exist, confirm the returned dob with the provided dob.
-		if len(exists) == 0 or exists[0][0] != userDict['dob']:
-			return False
-		#put the values into an array that will be passed into the prepared statement		
+		cursor.execute("select tcid, email, dob from webappusers where email=%s", [userDict['email']])
+ 		result = cursor.fetchall()
+ 		desc = []
+ 		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+			
+		result = dict(zip(desc, result[0]))
+ 		if len(result): # already registered, need to confirm they have the tcid and password right
+ 			if userDict['tcid'] != result['tcid'] or userDict['dob'] != result['dob']:
+ 				return False
+			
 		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], userDict['tcid']]
 		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
 	except Exception as e:
