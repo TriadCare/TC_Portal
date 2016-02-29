@@ -1,6 +1,9 @@
 class User():
 	#need TcId, DOB, first_name, last_name, email
 	def __init__(self, data):
+		if data is None:
+			return None
+		
 		self.tcid = data['tcid']
 		self.dob = data['dob']
 		self.first_name = data['first_name']

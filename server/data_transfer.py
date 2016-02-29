@@ -20,23 +20,26 @@ def add_user(userDict):
 	#Then, if they don't have a record, try to match on patient id, they must have a record in the Patient table to create an account.
 	#May need to log various things here and give feedback to the user based on what happens.
 	try:
-		# first check if the email already exists in the TCDB
-		cursor.execute("select tcid, email, dob from webappusers where email=%s", [userDict['email']])
+		# first check if the tcid already exists in the TCDB
+		cursor.execute("select tcid, email, dob, hash from webappusers where tcid=%s", [userDict['tcid']])
  		result = cursor.fetchall()
  		
- 		if len(result): # already registered, need to confirm they have the tcid and password right
+ 		if len(result): # already have a record, need to confirm they have their DOB right and don't already have a password
 	 		desc = []
 	 		for d in cursor.description: #get a list of the column names
 				desc.append(d[0])
 				
 			result = dict(zip(desc, result[0]))
-			if userDict['tcid'] != result['tcid'] or userDict['dob'] != result['dob']:
+			if result['hash'] is not None:
+				return False  # User already has a password, already registered.
+			if (result['email'] != None and userDict['email'] != result['email']) or userDict['dob'] != result['dob']:
 				return False
-			
+		else:  # TCID does not exist.
+			return False
 		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], userDict['tcid']]
 		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
 	except Exception as e:
-		return e
+		return False
 	#if no exceptions, commit the addition
 	conn.commit()
 	return True
