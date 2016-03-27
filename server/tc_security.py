@@ -465,7 +465,19 @@ def get_next_fifty_users_for(account):
 					if count == 50:
 						break
 	return next_fifty
-
+	
+def get_reminder_email_addresses(account):
+	next_fifty = []
+	# get all employees ordered by date created (newest first)
+	incompletes_with_account = data_transfer.get_incompletes_with_account(account)
+	count = 0
+	for user in incompletes_with_account:
+		if user['email'] is not None:
+			count += 1
+			next_fifty.append(user)
+			if count == 50:
+				break
+	return next_fifty
 
 def user_has_session(email):
 	if data_transfer.retrieve_user_session(email) is None:

@@ -239,7 +239,45 @@ def bulkRegisterUsers(account):
 		summary = Message(
 			"Bulk Registration Emails sent to employees of " + account,
 			recipients=['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'rwhite@triadcare.com'],
-			html = ("<div>Number of emails sent: " + str(count) + "/50</div>")
+			html = ("<div>Number of emails sent: " + str(count) + " out of " + str(len(users)) + "</div>")
+		)
+		mail.send(summary)
+		return "Finished."
+		
+	else:
+		flash("You are not authorized to access this page.")
+		return redirect(url_for("logoutUser"))
+
+# Admin Route that handles bulk-emailing HRA reminder emails for a specific Account.
+@app.route('/hra-reminders/<account>', methods=['GET'])
+@login_required
+def bulkRemindUsers(account):
+	if current_user.get_email() == 'jwhite@triadcare.com':
+		users = tc_security.get_reminder_email_addresses(account)
+		count = 0
+		with mail.connect() as conn:
+		    for user in users:
+				if user['email'] is not None:
+				
+					email = Message(
+						"Reminder to complete your Triad Care Health Assessment",
+						recipients=[user['email']],
+						html= ("<div>Hi " + user['first_name'] + "!</div><br><div>This is a friendly reminder to complete \
+						the Health Assessment in the Triad Care Portal.</div><br>\
+						<div>Once you click on the link below you will be taken to the Triad Care Portal where you can log in and complete your Assessment.</div><br>\
+						<div><a href='https://my.triadcare.com/'>Complete my Health Assessment</a></div><br> \
+						<div>Please use your email address (" + user['email'] + ") to log in.</div><br>\
+						<div>Once you have logged in you will be able to complete the questionnaire. Please note, all questions are required \
+						and you will only be able to see your confidential results after you click the 'Complete' button at the end of the \
+						questionnaire.</div><br><div>Please email Triad Care Customer Service at customercare@triadcare.com if you have any trouble.\
+						")
+					)
+					conn.send(email)
+					count += 1
+		summary = Message(
+			"Bulk Reminder Emails sent to employees of " + account,
+			recipients=['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'rwhite@triadcare.com'],
+			html = ("<div>Number of emails sent: " + str(count) + " out of " + str(len(users)) + "</div>")
 		)
 		mail.send(summary)
 		return "Finished."

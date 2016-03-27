@@ -105,6 +105,24 @@ def get_users_with_account(account):
 		return users
 
 	except Exception as e:
+		return None
+	
+	return None
+
+def get_incompletes_with_account(account):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select email, first_name from webappusers where tcid in (select tcid from survey_response where tcid in (select tcid from webappusers where Account=%s) and completed=0)", [account])
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		users = []
+		for r in result:
+			users.append(dict(zip(desc, r)))
+		return users
+
+	except Exception as e:
 		return e
 	
 	return None
