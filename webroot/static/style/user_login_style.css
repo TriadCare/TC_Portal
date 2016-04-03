@@ -65,10 +65,15 @@ a:hover {
 	font-size: 14px;
 	border-color: rgb(51,51,51);
 	margin-top: 20px;
+	margin-left: 10px;
 }
-.signup-btn > a:hover{
+.signup-btn:hover a{
 	color: rgb(247,247,247) !important;
 }
+.signup-btn:hover{
+	color: rgb(247,247,247) !important;
+}
+
 
 @media (min-width: 768px) {
   .masthead-brand {

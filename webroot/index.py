@@ -463,7 +463,7 @@ def export_to_pdf():
 			return json.dumps({"error": True})
 
 
-#Route that returns questionnaire HTML for the specified user. Login required. DOES NOT BELONG IN PRODUCTION
+#Route that returns questionnaire HTML for the specified user. Login required.
 @app.route('/get_questionnaire', methods=['POST'])
 @csrf.exempt
 @login_required
@@ -495,6 +495,41 @@ def get_questionnaire():
 							this_id=this_id,
 							this_name=this_name,
 							mailing_addresses=json.dumps(tc_security.get_addresses(this_id)))
+
+
+#Route that handles the help form.
+@app.route('/get_help_form', methods=['GET', 'POST'])
+def get_help_form():
+	form = HelpForm()
+	if request.method == 'GET':
+		form.dob['errors'] = []
+		return render_template('help_form.html', form=form)
+		
+	if form.validate_on_submit():
+		try:
+			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + "/" + str(form.dob_day.data) + "/" + str(form.dob_year.data), "%m/%d/%Y").date()
+			email = Message(
+				"Help Request From has been Submitted",
+				recipients=['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'rwhite@triadcare.com'],
+				html = ("<div><h3>Help Request</h3></div>" + 
+						"<table>" +
+							"<tr><td>Name</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['name'] + "</td></tr>" +
+							"<tr><td>Email</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['email'] + "</td></tr>" +
+							"<tr><td>DOB</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + user_dob.strftime("%m/%d/%Y") + "</td></tr>" +
+							"<tr><td>Company</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['company'] + "</td></tr>" +
+							"<tr><td>Comment</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['comment'] + "</td></tr>" +
+						"</table>")
+			)
+			mail.send(email)
+			
+			flash("Your help request has been received. We'll contact you with a solution as soon as we can.")
+			return json.dumps({"error": False})
+			
+		except Exception as e:
+			flash("There was an error when submitting your request. Please try again.")
+			return json.dumps({"error": True})
+	
+	return render_template('help_form.html', form=form)
 
 
 # @app.route('/score_hras', methods=['GET'])
