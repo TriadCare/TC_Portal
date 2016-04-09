@@ -16,6 +16,13 @@
         	{{ form.email(class_="form-signin form-control inputField", placeholder="Email") }}
         {% endif %}
         
+        {% if form.phone.errors %}
+        	{{ form.phone.errors[0] }}
+        	{{ form.phone(class_="error form-signin form-control inputField", placeholder="Phone") }}
+        {% else %}
+        	{{ form.phone(class_="form-signin form-control inputField", placeholder="Phone") }}
+        {% endif %}
+        
         {% if form.dob.errors %}
         	{{ form.dob.errors[0] }}
         {% endif %}

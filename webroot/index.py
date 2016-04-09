@@ -509,12 +509,15 @@ def get_help_form():
 		try:
 			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + "/" + str(form.dob_day.data) + "/" + str(form.dob_year.data), "%m/%d/%Y").date()
 			email = Message(
-				"Help Request From has been Submitted",
-				recipients=['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'rwhite@triadcare.com'],
-				html = ("<div><h3>Help Request</h3></div>" + 
+				"Your Help Request has been Received",
+				recipients=[request.form['email']],
+				cc= ['customercare@triadcare.com'],
+				bcc=['jwhite@triadcare.com'],
+				html = ("<div><h3>Help Request Details:</h3></div>" + 
 						"<table>" +
 							"<tr><td>Name</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['name'] + "</td></tr>" +
 							"<tr><td>Email</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['email'] + "</td></tr>" +
+							"<tr><td>Phone</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['phone'] + "</td></tr>" +
 							"<tr><td>DOB</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + user_dob.strftime("%m/%d/%Y") + "</td></tr>" +
 							"<tr><td>Company</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['company'] + "</td></tr>" +
 							"<tr><td>Comment</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['comment'] + "</td></tr>" +

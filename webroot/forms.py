@@ -1,8 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, TextAreaField
-from flask_wtf.html5 import IntegerField
-from flask_wtf.html5 import EmailField
-from flask_wtf.html5 import DateField
+from flask_wtf.html5 import IntegerField, EmailField, DateField, TelField
 from wtforms.validators import DataRequired, EqualTo, Regexp, Email
 
 import datetime
@@ -35,6 +33,7 @@ class SetPasswordForm(Form):
 
 class HelpForm(Form):
 	name = StringField('name', validators=[DataRequired(message='Please enter your name')])
+	phone = TelField('phone', validators=[DataRequired(message='Please enter your phone number')])
 	email = EmailField('email', validators=[DataRequired(message='Please enter your email address'), Email(message='Please enter a valid email address')])
 	dob_month = IntegerField('dob_month', validators=[DataRequired()])
 	dob_day = IntegerField('dob_day', validators=[DataRequired()])
