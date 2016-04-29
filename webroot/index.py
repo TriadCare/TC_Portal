@@ -535,11 +535,11 @@ def get_help_form():
 	return render_template('help_form.html', form=form)
 
 
-@app.route('/score_hras', methods=['GET'])
-@login_required
-def score_hras():
-	raise
-	return json.dumps(tc_security.score_hras())
+# @app.route('/score_hras', methods=['GET'])
+# @login_required
+# def score_hras():
+# 	raise
+# 	return json.dumps(tc_security.score_hras())
 
 # @app.route('/complete_hras', methods=['GET'])
 # @login_required
