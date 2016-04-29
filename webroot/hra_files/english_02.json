@@ -739,7 +739,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -766,7 +766,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -793,7 +793,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -808,19 +808,20 @@
 				},
 				{
 					"aid": "2",
-					"value": "B"
+					"value": "A"
 				},
 				{
 					"aid": "3",
-					"value": "C"
+					"value": "A"
 				},
 				{
 					"aid": "4",
-					"value": "D"
+					"value": "A"
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": null,
+					"conditionalValue": {"qid": "1", "greaterThanOrEqual": 50, "value": "F"}
 				}
 			]
 		},{
@@ -847,7 +848,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -874,7 +875,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -889,7 +890,7 @@
 				},
 				{
 					"aid": "2",
-					"value": "B"
+					"value": "A"
 				},
 				{
 					"aid": "3",
@@ -901,7 +902,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -928,7 +929,7 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
@@ -943,26 +944,26 @@
 				},
 				{
 					"aid": "2",
-					"value": "B"
+					"value": "F"
 				},
 				{
 					"aid": "3",
-					"value": "C"
+					"value": "F"
 				},
 				{
 					"aid": "4",
-					"value": "D"
+					"value": "F"
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": "F"
 				}
 			]
 		},{
 			"qid": "34",
 			"type": "GRID",
 			"grid_id": "2",
-			"text": "Mammogram (40 or older female)",
+			"text": "Mammogram (45 or older female)",
 			"answers": [
 				{
 					"aid": "1",
@@ -970,7 +971,7 @@
 				},
 				{
 					"aid": "2",
-					"value": "B"
+					"value": "A"
 				},
 				{
 					"aid": "3",
@@ -982,7 +983,9 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": null,
+					"conditionalValue": {"qid": "2", "equal": 2, "value": {"qid": "1", "greaterThanOrEqual": 45, "value": "F"}}
+						
 				}
 			]
 		},{
@@ -1009,7 +1012,8 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": null,
+					"conditionalValue": {"qid": "2", "equal": 2, "value": "F"}
 				}
 			]
 		},{
@@ -1036,7 +1040,8 @@
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": null,
+					"conditionalValue": {"qid": "2", "equal": 2, "value": "F"}
 				}
 			]
 		},{
@@ -1044,7 +1049,7 @@
 			"type": "GRID",
 			"grid_id": "2",
 			"last_row": true,
-			"text": "Prostate (40 or over male)",
+			"text": "Prostate (45 or over male)",
 			"answers": [
 				{
 					"aid": "1",
@@ -1052,19 +1057,20 @@
 				},
 				{
 					"aid": "2",
-					"value": "B"
+					"value": "A"
 				},
 				{
 					"aid": "3",
-					"value": "C"
+					"value": "A"
 				},
 				{
 					"aid": "4",
-					"value": "D"
+					"value": "A"
 				},
 				{
 					"aid": "5",
-					"value": null
+					"value": null,
+					"conditionalValue": {"qid": "2", "equal": 1, "value": {"qid": "1", "greaterThanOrEqual": 45, "value": "F"}}
 				}
 			]
 		},

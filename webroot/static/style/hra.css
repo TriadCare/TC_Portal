@@ -233,6 +233,11 @@ input.grid_text[type="textarea"]
     color: rgb(0,120,185);
 }
 
+#completesSpan
+{
+	font-size: .8em;
+}
+
 #donutDiv
 {
 	position: relative;

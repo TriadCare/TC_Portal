@@ -176,7 +176,10 @@ def score_hra_results(tcid="",hra_results={}):
 		r = {}
 		try:					
 			for a in question['answers']:
-				r[a['aid']] = a['value']
+				if a['value'] is None and 'conditionalValue' in a:
+					r[a['aid']] = a['conditionalValue']
+				else:
+					r[a['aid']] = a['value']
 			answers[question['qid']] = r
 		except:
 			continue
@@ -186,17 +189,55 @@ def score_hra_results(tcid="",hra_results={}):
 			data = 0
 			dont_score = 0  # Count the number of answers that shouldn't be scored
 
-			# I need to get a score for each graded section.
-			for q in group['questions']:
-				
-				if q not in answer_dict.keys() or answer_dict[q] is None or answer_dict[q] == '': # If there is no answer, increment dont_count and break
-					dont_score += 1
-				else:
-					g = answers[q][answer_dict[q]]	# Get the letter grade that corresponds to the aid.
-					if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
+			#tobacco section is graded differently...
+			if group['group'] == 'Tobacco':
+				tobacco_questions = group['questions']
+				if answer_dict[tobacco_questions[0]] == '2' and answer_dict[tobacco_questions[1]] == '2':  # checking for tobacco exposure (all or nothing)
+					data += 8.0;
+					if answer_dict[tobacco_questions[2]] == '2':  # you only get points for no secondhand smoke if you don't smoke.
+						data += 4.0;
+					else:
+						data += 2.0;  # get half if exposed to secondhand smoke
+			elif group['group'] == 'Preventative Care':
+				for q in group['questions']:
+					if q not in answer_dict.keys() or answer_dict[q] == '': # If there is no answer, increment dont_count and break
 						dont_score += 1
 					else:
-						data += grade_scores[g]  # Add the grade points together
+						value = answers[q][answer_dict[q]]
+						while type(value) == dict:  # some preventative care questions do count against you
+							if 'greaterThanOrEqual' in value:
+								if answer_dict[value['qid']] >= value['greaterThanOrEqual']:
+									value = value['value']  # unwrap the conditionalValue
+								else:
+									value = None
+									continue
+							elif 'equal' in value:
+								if answer_dict[value['qid']] == str(value['equal']):
+									value = value['value']  # unwrap the conditionalValue
+								else:
+									value = None
+									continue
+							else:
+								# value is None, don't count and continue
+								value = None
+								continue
+						
+						if value not in grade_scores:  # don't count if the grade is not in the grade_scores array
+							dont_score += 1
+						else:
+							data += grade_scores[value]  # Add the grade points together
+			else:
+				# I need to get a score for each graded section.
+				for q in group['questions']:
+					
+					if q not in answer_dict.keys() or answer_dict[q] is None or answer_dict[q] == '': # If there is no answer, increment dont_count and break
+						dont_score += 1
+					else:
+						g = answers[q][answer_dict[q]]	# Get the letter grade that corresponds to the aid.
+						if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
+							dont_score += 1
+						else:
+							data += grade_scores[g]  # Add the grade points together
 						
 			questions_to_score = (len(group['questions'])-dont_score)
 			if data > 0 and questions_to_score > 0:
@@ -522,16 +563,16 @@ def generateRandomSessionKey():
     return hexlify(os.urandom(16))
 
 # Goes through all of the survey_response records that have an Overall score of -1 (Not yet scored) and scores them
-# def score_hras():
-# 	responses = data_transfer.get_unscored_hras()
-# 	fails = []
-# 	for response in responses:
-# 		if user_did_complete_hra(response[0]):
-# 			r = data_transfer.update_hra_score(response[0]['tcid'], score_hra_results(response[1]))
-# 			if r is not True:
-# 				fails.append({"tcid": response[0]['tcid'], "response": r})
-# 	return fails
-# 
+def score_hras():
+	responses = data_transfer.get_unscored_hras()
+	fails = []
+	for response in responses:
+		#if user_did_complete_hra(response[0]):
+		r = data_transfer.update_hra_score(response[0]['tcid'], score_hra_results(response[0]['tcid'], response[1]))
+		if r is not True:
+			fails.append({"tcid": response[0]['tcid'], "response": r})
+	return fails
+
 # def complete_hras():
 # 	try:
 # 		for tcid in data_transfer.get_survey_tcids():

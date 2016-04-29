@@ -67,7 +67,10 @@ $(document).ready(function(){
 		"scaleOverride": true, 
 		"scaleStartValue": 0, 
 		"scaleStepWidth": 10, 
-		"scaleSteps": 10
+		"scaleSteps": 10,
+		
+	    "showTooltips": false,
+	    "onAnimationComplete": renderBarValues
 		});
 			
 
@@ -99,6 +102,29 @@ var get_letter_text = function(grade){
 	if (grade >= 60) return " is a D";
 	return " is an F";
 }
+
+var get_chart_text = function(value){
+	if (value >= 90) return value + " | A";
+	if (value >= 80) return value + " | B";
+	if (value >= 70) return value + " | C";
+	if (value >= 60) return value + " | D";
+	return value + " | F";
+}
+
+var renderBarValues = function(){
+	var ctx = hra_bar_chart.chart.ctx;
+    ctx.font = hra_bar_chart.scale.font;
+    ctx.fillStyle = hra_bar_chart.scale.textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+
+    hra_bar_chart.datasets.forEach(function (dataset) {
+        dataset.bars.forEach(function (bar) {
+            ctx.fillText(get_chart_text(bar.value), bar.x, bar.y);
+        });
+    })
+	//alert("Done animating");
+}
 	
 
 var updateChart = function(data){
@@ -111,7 +137,8 @@ var updateChart = function(data){
 		var overall_percentage = gpa_to_percent(overallData[0]);
 		var overall_letter_text = get_letter_text(overall_percentage);
 		
-		$("#overall_score_title").text("Your Overall Score" + overall_letter_text);
+		$("#overall_score_title").text("Your Overall Score" + overall_letter_text); 
+		$("#overall_score_title").append("<br><span id='completesSpan'>Results are based on " + total_completed + " participants</span>");//total_completed from server
 		$("#overall_score").text(overall_percentage.toString() + "%");
 		
 		overall_donut_chart.removeData();
@@ -146,6 +173,8 @@ var updateChart = function(data){
 	hra_bar_chart.datasets[1].label = "TC Average Score";
 	
 	hra_bar_chart.update();
+	
+	window.setTimeout(renderBarValues, 1500);
 	
 	$("#scoreBarChart").click(function(e){
 		if(hra_bar_chart.getBarsAtEvent(e).length > 0){
