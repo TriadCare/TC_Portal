@@ -299,11 +299,34 @@ def get_hra_data_for_account(account=""):
 		
 		for key in datum.keys():
 			if key.isdigit():	# only count the questions
-				if key == '1':
+				if key == '1':  # if this is the age question, just add them up
 					if datum[key].isdigit():
 						answer_counts['1'] += int(datum[key])
 					else:
 						no_age += 1
+				elif int(key) in range(38,63):
+					if key in answer_counts.keys():
+						if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
+							if '1' in answer_counts[key].keys():
+								answer_counts[key]['1'] += 1
+							else:
+								answer_counts[key]['1'] = 1
+							if '2' in answer_counts[key].keys():
+								answer_counts[key]['2'] += 1
+							else:
+								answer_counts[key]['2'] = 1
+						else: 
+							if datum[key] in answer_counts[key].keys():
+								answer_counts[key][datum[key]] += 1
+							else:
+								answer_counts[key][datum[key]] = 1
+					else:
+						if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
+							answer_counts[key] = {'1': 1}
+							answer_counts[key] = {'2': 1}
+						else: 
+							answer_counts[key] = {datum[key]: 1}
+						
 				elif key in answer_counts.keys():
 					if datum[key] in answer_counts[key].keys():
 						answer_counts[key][datum[key]] += 1
