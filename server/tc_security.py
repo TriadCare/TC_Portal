@@ -203,7 +203,10 @@ def score_hra_results(tcid="",hra_results={}):
 					if q not in answer_dict.keys() or answer_dict[q] == '': # If there is no answer, increment dont_count and break
 						dont_score += 1
 					else:
-						value = answers[q][answer_dict[q]]
+						try:
+							value = answers[q][answer_dict[q]]
+						except KeyError:
+							value = None
 						while type(value) == dict:  # some preventative care questions do count against you
 							if 'greaterThanOrEqual' in value:
 								if answer_dict[value['qid']] >= value['greaterThanOrEqual']:

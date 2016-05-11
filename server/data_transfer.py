@@ -274,8 +274,8 @@ def get_all_completed_hra_scores():
 def get_unscored_hras():
 	cursor = getConnection().cursor()
 	columns = range(1,80)
-	query = "select tcid, " + ", ".join(["`%s`"]*79) + " from survey_response where surveyID='4' and completed='1'"
-	#query = "select tcid, " + ", ".join(["`%s`"]*79) + " from survey_response where Overall='-1' and tcid='0000000001'"
+	query = "select tcid, " + ", ".join(["`%s`"]*79) + " from survey_response where surveyID='2' and completed='1'"
+	#query = "select tcid, " + ", ".join(["`%s`"]*79) + " from survey_response where tcid='0000000001'"
 	try:
 		cursor.execute(query, columns)
 		desc = []
