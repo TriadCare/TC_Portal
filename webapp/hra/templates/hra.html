@@ -1,0 +1,137 @@
+{% extends "layout_template.html" %}
+
+{% import 'macros.html' as macros %}
+
+{% block title %}HRA{% endblock title %}
+
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" href="{{ url_for('.static', filename='css/hra.css') }}"/>
+{% endblock head %}
+
+{% block header %}
+	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
+		{{ super() }}
+		<span id="hra_results_title"><h3>Health Assessment</h3></span>
+		{% block messages %}{{ super() }}{% endblock messages %}
+		<div class="tc-heading">
+			{% if user_language == "Spanish" %}
+			<span class="signup-btn btn btn-sm btn-default" id="hra-english">
+				<a href="#" onclick='englishHRA()'>English</a>
+			</span>
+			{% else %}
+			<span class="signup-btn btn btn-sm btn-default" id="hra-spanish">
+				<a href="#" onclick='spanishHRA()'>Español</a>
+			</span>
+			{% endif %}
+			<span class="signup-btn btn btn-sm btn-default" id="hra-save">
+				<a href="#" onclick='saveHRA()'>Save & Log Out</a>
+			</span>
+		</div>
+	</div>
+{% endblock header %}
+
+
+{% block content %}
+	<div class="container">
+		<div id="nav_bar_spacer"></div>
+		<div class="form-container">
+			<form action="/hra" method="post" name="hra" enc-type="application/json">
+				{{ form.hidden_tag() }}
+				{% set autofocused = False %}
+				{% for question in hra_questions %}
+				
+					{% if question.type == "GRID" or question.type == "CHECKBOX_GRID"%}
+						{% set table_width = question.answers|length %}
+						{% if question.type == "GRID" %}
+							{% set inputType = "type=radio" %}
+						{% else %}
+							{% set inputType = "type=checkbox" %}
+						{% endif %}
+						<tr>
+							<td class='grid_column'>{{ question.text }}</td>
+							{% set autofocus = "" %}
+							{% if user_answers[question.qid] == None and not autofocused %}
+								{% set autofocus = "autofocus" %}
+								{% set autofocused = True %}
+							{% endif %}
+							{% for i in range(0, table_width) %}
+								{% if user_answers[question.qid] == question['answers'][i]['aid'] or (user_answers[question.qid] == '3' and question.type == "CHECKBOX_GRID") %}
+								<td class="grid_cell"><input {{ inputType }} class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" checked></td>
+								{% else %}
+								<td class="grid_cell"><input {{ inputType }} class="grid_radio" name="{{ question.qid }}" value="{{ question.answers[i].aid }}" {{ autofocus }}></td>
+								{% endif %}
+							{% endfor %}
+						</tr>
+							{% if question.last_row %}
+						</table></div></div>
+							{% endif %}
+					
+					{% elif question.type == "GRID_TEXT"%}
+						</table>
+						<span>{{ question.text }}</span>&nbsp
+						{% if user_answers[question.qid] != None %}
+						<input type="textarea" class="grid_text" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}">
+						{% else %}
+						<input type="textarea" class="grid_text" name="{{ question.qid }}">
+						{% endif %}
+						</div></div>
+					{% else %}
+					
+						<div class="panel panel-default">
+							<div class="panel-heading question-text">{{ question.text|safe }}</div>
+							<div class="panel-body mc_answer_area">
+								
+								{% if question.type == "MULTIPLE_CHOICE" %}
+								{% set autofocus = "" %}
+								{% if user_answers[question.qid] == None and not autofocused %}
+									{% set autofocus = "autofocus" %}
+									{% set autofocused = True %}
+								{% endif %}
+									{% for answer in question.answers %}
+										{% if user_answers[question.qid] == answer.aid %}
+										<input type="radio" name="{{ question.qid }}" class="mc_radio" value="{{ answer.aid }}" checked>
+										{% else %}
+										<input type="radio" name="{{ question.qid }}" class="mc_radio" value="{{ answer.aid }}" {{ autofocus }}>
+										{% endif %}
+										<span class="mc_text">{{ answer.text|safe }}</span>
+										<br>
+									{% endfor %}
+									
+								{% elif question.type == "INTEGER" %}
+								{% set autofocus = "" %}
+								{% if user_answers[question.qid] == None and not autofocused %}
+									{% set autofocus = "autofocus" %}
+									{% set autofocused = True %}
+								{% endif %}
+									{% if user_answers[question.qid] != None %}
+									<input class="input_number" type="number" name="{{ question.qid }}" value="{{ user_answers[question.qid] }}" min="0" max="120">
+									{% else %}
+									<input class="input_number" type="number" name="{{ question.qid }}" value="0" min="0" max="120" {{ autofocus }}>
+									{% endif %}
+								{% elif question.type == "GRID_HEADER" %}
+									{% set table_width = question.columns|length %}
+									<table class="table table-bordered table-striped table-hover question_grid">
+										<tr> <td></td>
+										{% for column in question.columns %}
+											<td class="grid_cell grid_column">{{ column }}</td>
+										{% endfor %}
+										</tr>
+										
+								{% endif %}
+							</div>
+						</div>
+					{% endif %}
+				{% endfor %}
+				<button type="submit" class="btn btn-lg btn-default hra-submit">Submit</button>
+			</form>
+		</div>
+    </div>
+	
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}
+
+{% block script_section %}
+	<script src="{{ url_for('.static', filename='js/hra.js') }}"></script>
+{% endblock script_section %}

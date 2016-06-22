@@ -1,0 +1,65 @@
+{% extends "layout_template.html" %}
+
+{% import 'macros.html' as macros %}
+
+{% block title %}HRA{% endblock title %}
+
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" href="{{ url_for('.static', filename='css/hra.css') }}"/> 
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock head %}
+
+{% block header %}
+	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
+		{{ super() }}
+		<span id="hra_results_title">{{ current_user.first_name }} {{ current_user.last_name }}'s HRA Results</span>
+		<div class="tc-heading">
+			<span class="signup-btn btn btn-sm btn-default" id="export_pdf">
+				<a href="#" onclick="export_to_pdf()">Export PDF</a>
+			</span>
+			<span class="signup-btn btn btn-sm btn-default" id="hra-logout">
+				<a href="/logout">Log Out</a>
+			</span>
+		</div>
+	</div>
+{% endblock header %}
+{% block messages %}{% endblock messages %}
+
+{% block content %}
+	<div class="container">
+		<div id="nav_bar_spacer"></div>
+		<div id="overall_score_title" class="graph_title">Your Overall Score</div>
+		<div id="donutDiv" class="centered chart_container">
+			<div id="overall_score"></div>
+			<canvas id="scoreDonutChart" width="100%" height="100%"></canvas>
+		</div>
+		<div class="graph_title">
+			<span class="title_text">Section Breakdown</span>
+			<div id="chart_legend">
+				<div class="legend_key" id="user_score_key"></div>
+				<div class="legend_label" id="user_score_label">Your Score</div>
+				<div class="legend_key" id="tc_score_key"></div>
+				<div class="legend_label" id="tc_score_label">National Average</div>
+			</div>
+		</div>
+		<div id="barDiv" class="centered chart_container">
+			<canvas id="scoreBarChart" width="100%" height="100%"></canvas>
+		</div>	
+    </div>
+    
+    {% include 'questionnaire_results.html' %}
+    
+    <span id="top-link-block" class="hidden well well-sm">
+	    <i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+	</span><!-- /top-link-block -->
+	
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}
+{% block script_section %}
+	<script src="{{ url_for('static', filename='libs/Chart.js/src/Chart.Core.js') }}"></script>
+	<script src="{{ url_for('static', filename='libs/Chart.js/src/Chart.Bar.js') }}"></script>
+	<script src="{{ url_for('static', filename='libs/Chart.js/src/Chart.Doughnut.js') }}"></script>
+	<script src="{{ url_for('.static', filename='js/hra_results.js') }}"></script>
+{% endblock script_section %}
