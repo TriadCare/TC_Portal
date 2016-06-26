@@ -1,3 +1,7 @@
+# Packages that are needed that pip cannot install:
+# 	MySQL 
+# 	WeasyPrint depends on: Cairo, Pango, gdk-pixbuf, libxml2, libxslt, libffi (http://weasyprint.readthedocs.io/en/latest/install.html)
+
 blinker==1.4
 cairocffi==0.7.2
 CairoSVG==1.0.22
