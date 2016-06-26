@@ -29,8 +29,8 @@ from ..models.User import User
 from flask import Blueprint
 
 auth = Blueprint(
-	"auth", 
-	__name__, 
+	"auth",
+	__name__,
 	template_folder='templates',
 	static_folder='static',
 	static_url_path='/auth'
@@ -43,7 +43,7 @@ auth = Blueprint(
 @auth.route('/', methods=['GET','POST'])
 def renderLoginPage():
 	return redirect(request.args.get('next') or url_for('.loginUser'))
-	
+
 #Route and handler for user registration requests
 @auth.route('/registration', methods=['GET','POST'])
 def renderRegistrationPage():
@@ -97,7 +97,7 @@ def loginUser():
 		if not login_user(user):
 			flash('Log in failed, Please try again.')
 			return render_template('user_login.html',form=form)
-			
+
 		return redirect(request.args.get('next') or url_for('hra.renderHRA'))
 	#else return with errors (TODO)
 	return render_template('user_login.html',form=form)
@@ -119,10 +119,10 @@ def forgotPassword():
 		email_addr = str(form.email.data)
 		#first check if the email exists
 		if tc_security.email_exists(email_addr):
-	
+
 			password_session_id = tc_security.generateSession(user=email_addr, duration="20")
 			password_session_digest = password_uss.dumps(password_session_id)
-			
+
 			email = Message(
 				"Triad Care Portal - Reset Password",
 				recipients=[email_addr],
@@ -130,7 +130,7 @@ def forgotPassword():
 				<div><a href='https://my.triadcare.com/reset_password/" + password_session_digest + "'>Reset Password</a></div>")
 			)
 			mail.send(email)
-			
+
 			flash('An email has been sent (check your spam folder). Please follow the instructions in the email to reset your password.')
 			return redirect(url_for('.loginUser'))
 		else:
@@ -151,7 +151,7 @@ def resetPassword(id):
 	user_email = tc_security.get_user_from_valid_session(session_id)
 	if not user_email is None:
 		user = User(tc_security.get_web_app_user(email=user_email))
-	
+
 		if login_user(user):
 			form = SetPasswordForm()
 			if form.validate_on_submit():
@@ -165,7 +165,7 @@ def resetPassword(id):
 					return ("", 204)
 			else:
 				return render_template('set_password.html', form=form)
-	tc_security.remove_session(session_id) 
+	tc_security.remove_session(session_id)
 	flash('Reset code has expired. Please try again.')
 	return redirect(url_for('.loginUser'))
 
@@ -182,7 +182,7 @@ def emailRegistration(id):
 	user_email = tc_security.get_user_from_valid_session(session_id)
 	if not user_email is None:
 		user = User(tc_security.get_web_app_user(email=user_email))
-	
+
 		if login_user(user):
 			form = SetPasswordForm()
 			if form.validate_on_submit():
@@ -196,7 +196,7 @@ def emailRegistration(id):
 					return ("", 204)
 			else:
 				return render_template('set_password.html', form=form)
-	tc_security.remove_session(session_id) 
+	tc_security.remove_session(session_id)
 	flash('Registration Error. It seems that we don\'t have you in our records.')
 	return redirect(url_for('.loginUser'))
 

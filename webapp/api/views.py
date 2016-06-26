@@ -1,13 +1,13 @@
 from flask import make_response, jsonify, abort
-from flask.ext.login import login_required 
+from flask.ext.login import login_required
 
-import data_access_api 
+import data_access_api
 
 #Set up the Blueprint for this file/namespace
 from flask import Blueprint
 
 api = Blueprint(
-	"api", 
+	"api",
 	__name__
 )
 
@@ -54,7 +54,7 @@ def zip_sql_results(description, sql_results):
 	desc = []
 	for d in description:
 		desc.append(d[0])
-		
+
 	result = []
 	for r in sql_results:
 		result.append(dict(zip(desc, r)))

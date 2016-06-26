@@ -20,7 +20,7 @@ def execute_select(query="", args=[]):
 	try:
 		cursor = getConnection().cursor()
 		cursor.execute(query, args)
-		
+
 		log_action({"message": "Successful Select - Query: " + query + " Args: " + str(args)})
 		return {"columns": cursor.description, "results": cursor.fetchall()}
 	except Exception as e:
@@ -32,7 +32,7 @@ def execute_insert(query="", args=[]):
 		conn = getConnection()
 		cursor = conn.cursor()
 		cursor.execute(query, args)
-		
+
 		conn.commit()
 		log_action({"message": "Successful Insert - Query: " + query + " Args: " + str(args)})
 		return {"columns": cursor.description, "results": cursor.fetchall()}
