@@ -1,6 +1,6 @@
 #import Flask and Flask extensions
 from flask import Flask, render_template
-from flask.ext.login import login_required
+from flask_login import login_required
 from flask_wtf.csrf import CsrfProtect
 from flask_mail import Mail
 
@@ -14,7 +14,7 @@ app = Flask(
 	)
 
 #setting up the Flask app with an external file (config.py)
-app.config.from_object('config')
+app.config.from_object('config.default')
 app.config.from_pyfile('instance_config.py')
 
 #WTF CSRF Protection
@@ -24,11 +24,11 @@ mail = Mail(app)
 
 
 #import and register modules
-from .admin.views import admin
-from .api.views import api
-from .auth.views import auth
-from .hra.views import hra
-from .util.views import util
+from .admin import admin
+from .api import api
+from .auth import auth
+from .hra import hra
+from .util import util
 
 app.register_blueprint(admin, url_prefix='/admin')
 app.register_blueprint(api, url_prefix='/api')

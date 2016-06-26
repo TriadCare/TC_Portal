@@ -1,16 +1,10 @@
 from flask import make_response, jsonify, abort
-from flask.ext.login import login_required 
+from flask_login import login_required 
 
 import data_access_api 
 
-#Set up the Blueprint for this file/namespace
-from flask import Blueprint
-
-api = Blueprint(
-	"api", 
-	__name__
-)
-
+#import the Blueprint to register the views
+from . import api
 
 ### Account Management API ###
 

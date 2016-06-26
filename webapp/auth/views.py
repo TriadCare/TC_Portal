@@ -5,10 +5,8 @@ import sys, os, json, datetime, time
 
 #import Flask and Flask extensions
 from flask import Flask, request, Response, session, g, redirect, url_for, abort, render_template, flash, jsonify, make_response
-from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
-
-from flask.ext.login import login_required
 #init Flask Login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -25,16 +23,8 @@ from ..server import tc_security
 from ..models.forms import *
 from ..models.User import User
 
-#Set up the Blueprint for this file/namespace
-from flask import Blueprint
-
-auth = Blueprint(
-	"auth", 
-	__name__, 
-	template_folder='templates',
-	static_folder='static',
-	static_url_path='/auth'
-)
+#import the Blueprint to register the views
+from . import auth
 
 
 ##Flask Routing##
