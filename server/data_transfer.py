@@ -352,9 +352,9 @@ def set_to_english(tcid):
 		cursor.execute("select count(*) from survey_response where tcid=%s", [tcid])
 		c = cursor.fetchall()[0][0]
 		if c > 0:
-			cursor.execute("update survey_response set surveyID='2' where tcid=%s", [tcid])
+			cursor.execute("update survey_response set surveyID='4' where tcid=%s", [tcid])
 		else:
-			cursor.execute("insert into survey_response (USER_CREATED, DATE_CREATED, tcid, surveyID) values (%s, %s, %s, '2')", [get_user_with_tcid(tcid)['email'], dt.now(), tcid])
+			cursor.execute("insert into survey_response (USER_CREATED, DATE_CREATED, tcid, surveyID) values (%s, %s, %s, '4')", [get_user_with_tcid(tcid)['email'], dt.now(), tcid])
 	except Exception as e:
 		return e
 	

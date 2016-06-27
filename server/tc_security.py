@@ -192,12 +192,12 @@ def score_hra_results(tcid="",hra_results={}):
 			#tobacco section is graded differently...
 			if group['group'] == 'Tobacco':
 				tobacco_questions = group['questions']
-				if answer_dict[tobacco_questions[0]] == '2' and answer_dict[tobacco_questions[1]] == '2':  # checking for tobacco exposure (all or nothing)
-					data += 8.0;
-					if answer_dict[tobacco_questions[2]] == '2':  # you only get points for no secondhand smoke if you don't smoke.
-						data += 4.0;
-					else:
-						data += 2.0;  # get half if exposed to secondhand smoke
+				if tobacco_questions[0] in answer_dict.keys() and answer_dict[tobacco_questions[0]] == '2':
+					if tobacco_questions[1] in answer_dict.keys() and answer_dict[tobacco_questions[1]] == '2':  # checking for tobacco exposure (all or nothing)
+						if tobacco_questions[2] in answer_dict.keys() and answer_dict[tobacco_questions[2]] == '2':
+							data = 12.0  # you only get full points if no secondhand smoke
+						else:
+							data = 8.0
 			elif group['group'] == 'Preventative Care':
 				for q in group['questions']:
 					if q not in answer_dict.keys() or answer_dict[q] == '': # If there is no answer, increment dont_count and break

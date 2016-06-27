@@ -458,7 +458,7 @@ def export_to_pdf():
 		return Response(pdf, mimetype='arraybuffer', content_type='arraybuffer')
 	except Exception as e:
 		if app.debug == True:
-			return json.dumps({"error": True, "message": e})
+			return json.dumps({"error": True, "message": str(e)})
 		else:
 			return json.dumps({"error": True})
 
