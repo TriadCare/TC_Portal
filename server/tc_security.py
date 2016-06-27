@@ -116,7 +116,7 @@ def get_hra_results(tcid=""):
 # called to store the HRA results for a particular patient.
 def store_hra_results(tcid="", hra_results={}):
 	#first, check if it completed
-	with open(get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
+	with open("../webroot/" + get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	questions = hra_data['hra_questions']
 	
@@ -165,7 +165,7 @@ def score_hra_results(tcid="",hra_results={}):
 	score = {}
 	
 	filename = get_hra_filename(tcid)
-	with open(filename) as hra_file:  # Need the meta data from this file.
+	with open("../webroot/" + filename) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	
 	groupings = hra_data['hra_meta']['groupings']
