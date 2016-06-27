@@ -116,7 +116,7 @@ def get_hra_results(tcid=""):
 # called to store the HRA results for a particular patient.
 def store_hra_results(tcid="", hra_results={}):
 	#first, check if it completed
-	with open(os.path.dirname(os.path.asbpath(__file__)) + "../webroot/" + get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
+	with open(os.path.dirname(os.path.abspath(__file__)) + "../webroot/" + get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	questions = hra_data['hra_questions']
 	
@@ -165,7 +165,7 @@ def score_hra_results(tcid="",hra_results={}):
 	score = {}
 	
 	filename = get_hra_filename(tcid)
-	with open(os.path.dirname(os.path.asbpath(__file__)) + "../webroot/" + filename) as hra_file:  # Need the meta data from this file.
+	with open(os.path.dirname(os.path.abspath(__file__)) + "../webroot/" + filename) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	
 	groupings = hra_data['hra_meta']['groupings']
@@ -395,7 +395,7 @@ def get_hra_score(tcid=""):
 			
 			dont_score = 0  # Count the number of answers that shouldn't scored
 			
-			with open(os.path.dirname(os.path.asbpath(__file__)) + '../webroot/hra_files/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
+			with open(os.path.dirname(os.path.abspath(__file__)) + '../webroot/hra_files/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
 				hra_data = json.load(hra_file)
 			
 			groupings = hra_data['hra_meta']['groupings']
