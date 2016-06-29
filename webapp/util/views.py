@@ -5,13 +5,8 @@ from flask_weasyprint import HTML, CSS, render_pdf
 
 import json
 
-#Set up the Blueprint for this file/namespace
-from flask import Blueprint
-
-util = Blueprint(
-	"util", 
-	__name__
-)
+#import the Blueprint to register the views
+from . import util
 
 #Route that takes html data, converts it to PDF using WeasyPrint, and returns the PDF data.
 @util.route('/convert_html_to_pdf', methods=['POST'])

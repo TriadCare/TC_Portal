@@ -5,22 +5,15 @@ import sys, os, json, datetime, time
 
 #import Flask and Flask extensions
 from flask import Flask, request, Response, session, g, redirect, url_for, abort, render_template, flash, jsonify, make_response
-from flask.ext.login import login_required, current_user
+from flask_login import login_required, current_user
 
 #import data classes
 from ..server import tc_security
 
 from ..models.forms import *
 
-#Set up the Blueprint for this file/namespace
-from flask import Blueprint
-
-hra = Blueprint(
-	"hra", 
-	__name__, 
-	template_folder='templates',
-	static_folder='static'
-)
+#import the Blueprint to register the views
+from . import hra
 
 #Route that displays the HRA. Requires login.
 @hra.route('/', methods=['GET','POST'])
