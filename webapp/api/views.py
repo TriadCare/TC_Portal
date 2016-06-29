@@ -1,7 +1,7 @@
 from flask import make_response, jsonify, abort
 from flask_login import login_required 
 
-import data_access_api 
+import data_access_api
 
 #import the Blueprint to register the views
 from . import api
@@ -48,7 +48,7 @@ def zip_sql_results(description, sql_results):
 	desc = []
 	for d in description:
 		desc.append(d[0])
-		
+
 	result = []
 	for r in sql_results:
 		result.append(dict(zip(desc, r)))

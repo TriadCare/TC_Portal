@@ -26,7 +26,7 @@ def bulkRegisterUsers(account):
 				if user['email'] is not None:
 					registration_session_id = tc_security.generateSession(user=user['email'], duration="-1")
 					registration_session_digest = registration_uss.dumps(registration_session_id)
-				
+
 					email = Message(
 						"Register for Triad Care Portal and Complete Your Health Asssessment",
 						recipients=[user['email']],
@@ -55,7 +55,7 @@ def bulkRegisterUsers(account):
 		)
 		mail.send(summary)
 		return "Finished."
-		
+
 	else:
 		flash("You are not authorized to access this page.")
 		return redirect(url_for("auth.logoutUser"))
@@ -71,7 +71,7 @@ def bulkRemindUsers(account):
 		with mail.connect() as conn:
 		    for user in users:
 				if user['email'] is not None:
-				
+
 					email = Message(
 						"Reminder to complete your Triad Care Health Assessment",
 						recipients=[user['email']],
@@ -94,7 +94,7 @@ def bulkRemindUsers(account):
 		)
 		mail.send(summary)
 		return "Finished."
-		
+
 	else:
 		flash("You are not authorized to access this page.")
 		return redirect(url_for("auth.logoutUser"))
@@ -107,7 +107,7 @@ def get_help_form():
 	if request.method == 'GET':
 		form.dob['errors'] = []
 		return render_template('help_form.html', form=form)
-		
+
 	if form.validate_on_submit():
 		try:
 			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + "/" + str(form.dob_day.data) + "/" + str(form.dob_year.data), "%m/%d/%Y").date()
@@ -116,7 +116,7 @@ def get_help_form():
 				recipients=[request.form['email']],
 				cc= ['customercare@triadcare.com'],
 				bcc=['jwhite@triadcare.com'],
-				html = ("<div><h3>Help Request Details:</h3></div>" + 
+				html = ("<div><h3>Help Request Details:</h3></div>" +
 						"<table>" +
 							"<tr><td>Name</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['name'] + "</td></tr>" +
 							"<tr><td>Email</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['email'] + "</td></tr>" +
@@ -127,14 +127,14 @@ def get_help_form():
 						"</table>")
 			)
 			mail.send(email)
-			
+
 			flash("Your help request has been received. We'll contact you with a solution as soon as we can.")
 			return json.dumps({"error": False})
-			
+
 		except Exception as e:
 			flash("There was an error when submitting your request. Please try again.")
 			return json.dumps({"error": True})
-	
+
 	return render_template('help_form.html', form=form)
 
 
@@ -153,7 +153,7 @@ def get_questionnaire():
 	hra_meta = hra_data['hra_meta']
 	#get the questions from the hra data
 	hra_questions = hra_data['hra_questions']
-	
+
 	last_id = request.form['id']
 	this_id = tc_security.get_next_id(last_id)
 	user = data_transfer.get_user_with_tcid(this_id)
@@ -161,16 +161,16 @@ def get_questionnaire():
 		this_name = this_id
 	else:
 		this_name = user['first_name'] + " " + user['last_name']
-	
+
 	return render_template('questionnaire_results.html',
-							hra_questions=hra_questions, 
+							hra_questions=hra_questions,
 							hra_meta=hra_meta,
-							results=tc_security.get_hra_scores_for_user(this_id), 
+							results=tc_security.get_hra_scores_for_user(this_id),
 							user_answers=tc_security.get_hra_results(this_id),
 							this_id=this_id,
 							this_name=this_name,
 							mailing_addresses=json.dumps(tc_security.get_addresses(this_id)))
-							
+
 #####	This is used for printing scorecards in bulk for snail-mailing. Will be adapted for admin functions. #####
 #Route that returns questionnaire HTML for the specified user. Login required.
 # @admin.route('/get_questionnaire', methods=['POST'])
@@ -186,7 +186,7 @@ def get_questionnaire():
 # 	hra_meta = hra_data['hra_meta']
 # 	#get the questions from the hra data
 # 	hra_questions = hra_data['hra_questions']
-# 	
+#
 # 	last_id = request.form['id']
 # 	this_id = tc_security.get_next_id(last_id)
 # 	user = data_transfer.get_user_with_tcid(this_id)
@@ -194,11 +194,11 @@ def get_questionnaire():
 # 		this_name = this_id
 # 	else:
 # 		this_name = user['first_name'] + " " + user['last_name']
-# 	
+#
 # 	return render_template('questionnaire_results.html',
-# 							hra_questions=hra_questions, 
+# 							hra_questions=hra_questions,
 # 							hra_meta=hra_meta,
-# 							results=tc_security.get_hra_scores_for_user(this_id), 
+# 							results=tc_security.get_hra_scores_for_user(this_id),
 # 							user_answers=tc_security.get_hra_results(this_id),
 # 							this_id=this_id,
 # 							this_name=this_name,

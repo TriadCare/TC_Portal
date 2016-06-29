@@ -7,9 +7,9 @@ from flask_mail import Mail
 
 #init app with Flask
 app = Flask(
-		__name__, 
-		instance_relative_config=True, 
-		static_folder='static', 
+		__name__,
+		instance_relative_config=True,
+		static_folder='static',
 		template_folder='templates'
 	)
 
