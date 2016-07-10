@@ -1,5 +1,6 @@
 ### This file holds security-related helper functions for the Triad Care Web Application. ###
 from datetime import datetime as dt
+from datetime import timedelta as td
 from binascii import hexlify
 from passlib.hash import bcrypt
 import os
@@ -255,6 +256,20 @@ def score_hra_results(tcid="",hra_results={}):
 	
 	return score
 
+# Checks to make sure the user does not need to take a new HRA (returns False if no need)
+# If the user does need to take a new HRA, this function inserts a new, blank HRA record and returns True
+def should_take_new_hra(tcid):
+	new_hra_employers = ["Best Logistics Group", "Box Board Products", "Triad Care, Inc."]
+	
+	employer = data_transfer.get_user_account_name(tcid)
+	
+	if employer in new_hra_employers:
+		date_created = data_transfer.get_latest_hra_date(tcid)
+		if date_created is None or date_created < (dt.today() - td(9*30)):  # if before 9 months ago
+			data_transfer.store_hra_answers(tcid, {}, 4, False)  # set a new HRA record
+			return True
+	
+	return False
 
 def process_hra_results(hra_results={}):
 	#clean the form results for processing

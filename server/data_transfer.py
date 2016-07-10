@@ -245,7 +245,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed):
 def get_hra_score(tcid):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where tcid = %s", [tcid])
+		cursor.execute("select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
@@ -288,6 +288,27 @@ def get_unscored_hras():
 		return data
 	except Exception as e:
 		return e
+
+def get_user_account_name(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select Account from webappusers where tcid = %s", [tcid])
+		return cursor.fetchall()[0][0]
+	except Exception as e:
+		return None
+	return None 
+
+def get_latest_hra_date(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		cursor.execute("select DATE_CREATED from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
+		return cursor.fetchall()[0][0]
+	except Exception as e:
+		return None
+	return None 
+
 
 def get_hra_data_for_account(account):
 	cursor = getConnection().cursor()
@@ -366,7 +387,7 @@ def user_did_complete_hra(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		query = "select completed from survey_response where tcid = %s"
+		query = "select completed from survey_response where tcid = %s order by DATE_CREATED desc"
 		cursor.execute(query, [tcid])
 		result = cursor.fetchall()[0][0]
 		if result == 1:
@@ -397,14 +418,12 @@ def get_hra_results(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		cursor.execute("select * from survey_response where tcid = %s", [tcid])
+		cursor.execute("select * from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
 		#build the return dict
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
 		result = cursor.fetchall()
-		if len(result) != 1:
-			return None
 		return dict(zip(desc, result[0]))
 	except Exception as e:
 		return None

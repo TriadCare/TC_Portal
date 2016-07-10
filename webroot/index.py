@@ -303,18 +303,13 @@ def renderHRA():
 			flash('Submission failed, please contact your administrator.')
 			return redirect(url_for('logoutUser'))
 	else:
-		# check if the user has already taken the old hra
-		if tc_security.user_did_complete_old_hra(current_user.get_id()):
-			return redirect(url_for('hra_results'))
-		
-		if tc_security.user_did_complete_new_hra(current_user.get_id()):
-			return redirect(url_for('hra_results'))
+		# need to check if the user needs to take a new HRA
+		if not tc_security.should_take_new_hra(current_user.get_id()):  # this function will insert a new survey record if needed
+			if tc_security.user_did_complete_new_hra(current_user.get_id()):
+				return redirect(url_for('hra_results'))
 		
 		#get HRA JSON data
-		hra_data = {}
-		#Make sure we are in the same directory as this file
-		os.chdir(os.path.dirname(os.path.realpath(__file__)))
-		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
+		hra_data = json.load(open("webroot/" + tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
@@ -359,26 +354,25 @@ def englishHRA():
 @app.route('/hra_results', methods=['GET','POST'])
 @login_required
 def hra_results():
-	if tc_security.user_did_complete_old_hra(current_user.get_id()):
-		#Make sure we are in the same directory as this file
-		os.chdir(os.path.dirname(os.path.realpath(__file__)))
-		#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
-		hra_data = json.load(open("hra_files/hra.json",'r'))
-		#parse out the meta survey groupings
-		hra_meta = hra_data['hra_meta']
-		#get the questions from the hra data
-		hra_questions = hra_data['hra_questions']
-		return render_template('hra_results_old.html', 
-								hra_questions=hra_questions, 
-								hra_meta=hra_meta, 
-								user_answers=tc_security.get_hra_results_old(current_user.get_id()), 
-								form=EmptyForm())
+	if not tc_security.user_did_complete_new_hra(current_user.get_id()):
+	
+		if tc_security.user_did_complete_old_hra(current_user.get_id()):
+			#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+			hra_data = json.load(open("webroot/hra_files/hra.json",'r'))
+			#parse out the meta survey groupings
+			hra_meta = hra_data['hra_meta']
+			#get the questions from the hra data
+			hra_questions = hra_data['hra_questions']
+			return render_template('hra_results_old.html', 
+									hra_questions=hra_questions, 
+									hra_meta=hra_meta, 
+									user_answers=tc_security.get_hra_results_old(current_user.get_id()), 
+									form=EmptyForm())
+		return redirect(url_for('renderHRA'))
+	
 	else: # user completed the new HRA.
-		if not tc_security.user_did_complete_new_hra(current_user.get_id()):
-			return redirect(url_for('renderHRA'))
-		#Make sure we are in the same directory as this file
-		os.chdir(os.path.dirname(os.path.realpath(__file__)))
-		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
+		
+		hra_data = json.load(open("webroot/" + tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
@@ -429,9 +423,7 @@ def employer_scorecard(account):
 	# get the aggregate results for the given account
 	results = tc_security.get_hra_data_for_account(account)
 	
-	#Make sure we are in the same directory as this file
-	os.chdir(os.path.dirname(os.path.realpath(__file__)))
-	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
+	hra_data = json.load(open("webroot/" + tc_security.get_hra_filename(current_user.get_id()),'r'))
 	#parse out the meta survey groupings
 	hra_meta = hra_data['hra_meta']
 	#get the questions from the hra data
@@ -470,9 +462,7 @@ def export_to_pdf():
 def get_questionnaire():
 	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
 	hra_data = {}
-	#Make sure we are in the same directory as this file
-	os.chdir(os.path.dirname(os.path.realpath(__file__)))
-	with open(get_hra_filename(current_user.get_id())) as hra_file:
+	with open("webroot/" + get_hra_filename(current_user.get_id())) as hra_file:
 		hra_data = json.load(hra_file)
 	#parse out the meta survey groupings
 	hra_meta = hra_data['hra_meta']
