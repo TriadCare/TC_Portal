@@ -309,7 +309,8 @@ def renderHRA():
 				return redirect(url_for('hra_results'))
 		
 		#get HRA JSON data
-		hra_data = json.load(open("webroot/" + tc_security.get_hra_filename(current_user.get_id()),'r'))
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
@@ -358,7 +359,8 @@ def hra_results():
 	
 		if tc_security.user_did_complete_old_hra(current_user.get_id()):
 			#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
-			hra_data = json.load(open("webroot/hra_files/hra.json",'r'))
+			os.chdir(os.path.dirname(os.path.realpath(__file__)))
+			hra_data = json.load(open("hra_files/hra.json",'r'))
 			#parse out the meta survey groupings
 			hra_meta = hra_data['hra_meta']
 			#get the questions from the hra data
@@ -371,8 +373,8 @@ def hra_results():
 		return redirect(url_for('renderHRA'))
 	
 	else: # user completed the new HRA.
-		
-		hra_data = json.load(open("webroot/" + tc_security.get_hra_filename(current_user.get_id()),'r'))
+		os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 		#parse out the meta survey groupings
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
@@ -423,7 +425,8 @@ def employer_scorecard(account):
 	# get the aggregate results for the given account
 	results = tc_security.get_hra_data_for_account(account)
 	
-	hra_data = json.load(open("webroot/" + tc_security.get_hra_filename(current_user.get_id()),'r'))
+	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 	#parse out the meta survey groupings
 	hra_meta = hra_data['hra_meta']
 	#get the questions from the hra data
@@ -462,7 +465,8 @@ def export_to_pdf():
 def get_questionnaire():
 	#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
 	hra_data = {}
-	with open("webroot/" + get_hra_filename(current_user.get_id())) as hra_file:
+	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	with open(get_hra_filename(current_user.get_id())) as hra_file:
 		hra_data = json.load(hra_file)
 	#parse out the meta survey groupings
 	hra_meta = hra_data['hra_meta']
