@@ -266,7 +266,7 @@ def should_take_new_hra(tcid):
 	if employer in new_hra_employers:
 		date_created = data_transfer.get_latest_hra_date(tcid)
 		if date_created is None or date_created < (dt.today() - td(9*30)):  # if before 9 months ago
-			data_transfer.store_hra_answers(tcid, {}, 4, False)  # set a new HRA record
+			data_transfer.store_hra_answers(tcid, {}, 4, False, True)  # set a new HRA record
 			return True
 	
 	return False

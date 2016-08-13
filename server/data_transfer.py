@@ -207,7 +207,7 @@ def set_password_for_user_id(user_id, hash):
 
 
 
-def store_hra_answers(tcid, hra_answers, surveyID, completed):
+def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
 	#get the connection cursor
 	conn = getConnection()
 	cursor = conn.cursor()
@@ -223,7 +223,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed):
 			columns.append("`" + str(answer['qid']) + "`")
 			values.append(str(answer['aid']))
 		valueCount = valueCount[:-2]
-		if c > 0:
+		if c > 0 and not new_record:
 			columns[:0] = ['USER_UPDATED']
 			values[:0] = [get_user_with_tcid(tcid)['email']]
 			query = "update survey_response set %s" % "=%s, ".join(columns) + "=%s where (tcid=%s and surveyID=%s)"
