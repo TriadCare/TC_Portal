@@ -259,7 +259,7 @@ def score_hra_results(tcid="",hra_results={}):
 # Checks to make sure the user does not need to take a new HRA (returns False if no need)
 # If the user does need to take a new HRA, this function inserts a new, blank HRA record and returns True
 def should_take_new_hra(tcid):
-	new_hra_employers = ["Best Logistics Group", "Box Board Products", "Triad Care, Inc."]
+	new_hra_employers = ["Best Logistics Group", "Box Board Products", "Plum Point Energy Station", "Triad Care, Inc."]
 	
 	employer = data_transfer.get_user_account_name(tcid)
 	
