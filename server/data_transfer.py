@@ -212,7 +212,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		cursor.execute("select count(*) from survey_response where (tcid=%s and surveyID=%s)", [tcid, surveyID])
+		cursor.execute("select count(*) from survey_response where (tcid=%s and surveyID=%s) order by DATE_CREATED desc limit 1", [tcid, surveyID])
 		c = cursor.fetchall()[0][0]
 		
 		valueCount = "%s, %s, %s, %s, %s, "
@@ -226,7 +226,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
 		if c > 0 and not new_record:
 			columns[:0] = ['USER_UPDATED']
 			values[:0] = [get_user_with_tcid(tcid)['email']]
-			query = "update survey_response set %s" % "=%s, ".join(columns) + "=%s where (tcid=%s and surveyID=%s)"
+			query = "update survey_response set %s" % "=%s, ".join(columns) + "=%s where (tcid=%s and surveyID=%s) order by DATE_CREATED desc limit 1"
 			values += [tcid, surveyID]
 		else:
 			columns[:0] = ['USER_CREATED', 'DATE_CREATED', 'tcid', 'surveyID']
