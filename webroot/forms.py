@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, TextAreaField
+from wtforms import StringField, TextAreaField, RadioField
 from flask_wtf.html5 import IntegerField, EmailField, DateField, TelField
 from wtforms.validators import DataRequired, EqualTo, Regexp, Email
 
@@ -14,13 +14,14 @@ class LoginForm(Form):
 	password = StringField('password', validators=[DataRequired()])
 	
 class RegistrationForm(Form):
-	tcid = StringField('tcid', validators=[DataRequired()])
-	first_name = StringField('first_name', validators=[DataRequired()])
-	last_name = StringField('last_name', validators=[DataRequired()])
-	password = StringField('password', validators=[DataRequired(), Regexp(pw_regex, message='Please follow password complexity rules')])
-	confirm_password = StringField('confirm_password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-	email = EmailField('email', validators=[DataRequired()])
-	dob_month = IntegerField('dob_month', validators=[DataRequired()])
+	tcid = StringField('ID',  validators=[DataRequired()])
+	id_type = RadioField('id_type', choices=[('0','Triad Care ID'),('1','Employee ID')], default='0',  validators=[DataRequired()])
+	first_name = StringField('First Name',  validators=[DataRequired()])
+	last_name = StringField('Last Name', validators=[DataRequired()])
+	password = StringField('Password',  validators=[DataRequired(), Regexp(pw_regex, message='Please follow password complexity rules')])
+	confirm_password = StringField('Confirm Password',  validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
+	email = EmailField('Email',  validators=[DataRequired()])
+	dob_month = IntegerField('Date of Birth (MM/DD/YYYY)',  validators=[DataRequired()])
 	dob_day = IntegerField('dob_day', validators=[DataRequired()])
 	dob_year = IntegerField('dob_year', validators=[DataRequired()])
 

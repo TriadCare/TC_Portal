@@ -64,7 +64,7 @@ def register_user(userDict):
 		userDict['password'] = str(bcrypt.encrypt(userDict['password']))
 		# then add the user to the database and return result
 		return data_transfer.add_user(userDict)
-	return False
+	return None
 
 
 # returns the hra version the user has taken, otherwise gives the latest.

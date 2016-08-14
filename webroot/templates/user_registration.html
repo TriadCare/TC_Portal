@@ -35,12 +35,17 @@
             <form class="form-signin" action="/registration" method="post" name="register">
 	            {{ form.hidden_tag() }}
 	            
+	            {% for subfield in form.id_type %}
+				    {{ subfield }}
+				    {{ subfield.label }}
+				{% endfor %}
+				
 	            {% if form.tcid.errors %}
-	            	{{ form.tcid(class_="error form-signin form-control inputField", placeholder="TCID") }}
+	            	{{ form.tcid(class_="error form-signin form-control inputField", placeholder="ID") }}
 	            {% else %}
-	            	{{ form.tcid(class_="form-signin form-control inputField", placeholder="TCID") }}
+	            	{{ form.tcid(class_="form-signin form-control inputField", placeholder="ID") }}
 	            {% endif %}
-		        
+	            
 		        {% if form.first_name.errors %}
 		        	{{ form.first_name(class_="error form-user_name form-control inputField", placeholder="First Name") }}
 		        {% else %}
@@ -58,6 +63,7 @@
 		        {% else %}
 		        	{{ form.email(class_="form-signin form-control inputField", placeholder="Email") }}
 		        {% endif %}
+		        
 		        
 				{% if form.dob_month.errors %}
 					{{ form.dob_month(class_="error form-control form-dob inputField", placeholder="Birth Month") }}

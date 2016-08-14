@@ -56,6 +56,7 @@ def renderRegistrationPage():
 			return render_template('user_registration.html',form=form)
 		userDict = {
 			"tcid": str(form.tcid.data), #comes out of the form as unicode (needs to be str in python 2.7)
+			"id_type": str(form.id_type.data),
 			"first_name": str(form.first_name.data),
 			"last_name": str(form.last_name.data),
 			"password": str(form.password.data),
@@ -64,12 +65,12 @@ def renderRegistrationPage():
 			"dob": user_dob
 		}
 		#try to register the user with our database
-		if not tc_security.register_user(userDict):
-			#I think this is sufficient, I'll handle a lot of the form validation client-side.
-			flash('Registration failed, you may have already registered. If not, please check that your TCID is correct and you are following all of the requirements.')
+		userData = tc_security.register_user(userDict)
+		if userData is None:  # Could not register
+			flash('Registration failed, you may have already registered. If not, please check that your ID is correct and you are following all of the requirements.')
 			return render_template('user_registration.html',form=form)
 		# Create a User object
-		user = User(userDict)
+		user = User(userData)
 		# Log in the new user with the Login Manager
 		if login_user(user):
 			flash('Registration Successful, Welcome %s!' % user.first_name)

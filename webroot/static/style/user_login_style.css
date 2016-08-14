@@ -144,6 +144,10 @@ a:hover {
 	display: inline-block;
 }
 
+#id_type-1{
+	margin-left: 30px;
+}
+
 .form-dob{
 	width: 32%;
 	display: inline-block;

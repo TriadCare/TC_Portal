@@ -11,17 +11,24 @@ from conn import *
 def getConnection():
 	return mdb.connect(server, user, passwd, db)
 
-
+# Rules for Registration:
+#	1. If ID_Type is 0 check against the TCID, EmployeeID if 1
+#	2. If no record returned, fail
+#	3. If a password has already been set, fail
+#	4. If there is no stored email AND the given email does not match the stored email, fail
+#	5. If the provided DOB does not match the stored DOB, fail
+#	6. Otherwise, update with the registered information and pass
 def add_user(userDict):
 	#get the connection cursor
 	conn = getConnection() #holding onto connection so we can commit the additions later
 	cursor = conn.cursor()
-	#Should first check if the user exists (has a record with tcid in webappusers)
-	#Then, if they don't have a record, try to match on patient id, they must have a record in the Patient table to create an account.
-	#May need to log various things here and give feedback to the user based on what happens.
 	try:
 		# first check if the tcid already exists in the TCDB
-		cursor.execute("select tcid, email, dob, hash from webappusers where tcid=%s", [userDict['tcid']])
+		if userDict['id_type'] == "1":  # Need to look up by EmployeeID
+			cursor.execute("select tcid, email, dob, hash from webappusers where employeeID=%s", [userDict['tcid']])
+		else: 
+			cursor.execute("select tcid, email, dob, hash from webappusers where tcid=%s", [userDict['tcid']])
+
  		result = cursor.fetchall()
  		
  		if len(result): # already have a record, need to confirm they have their DOB right and don't already have a password
@@ -31,18 +38,26 @@ def add_user(userDict):
 				
 			result = dict(zip(desc, result[0]))
 			if result['hash'] is not None:
-				return False  # User already has a password, already registered.
+				return None  # User already has a password, already registered.
 			if (result['email'] != None and userDict['email'] != result['email']) or userDict['dob'] != result['dob']:
-				return False
+				return None
 		else:  # TCID does not exist.
-			return False
-		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], userDict['tcid']]
-		cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
+			return None
+		values = [userDict['first_name'], userDict['last_name'], userDict['password'], userDict['email'], userDict['dob'], dt.now(), userDict['email'], result['tcid']]
+		if userDict['id_type'] == 1:  # Need to update by EmployeeID
+			cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
+		else:
+			cursor.execute("update webappusers set first_name=%s, last_name=%s, hash=%s, email=%s, dob=%s, DATE_UPDATED=%s, USER_UPDATED=%s where tcid=%s", values)
 	except Exception as e:
-		return False
+		return None
 	#if no exceptions, commit the addition
 	conn.commit()
-	return True
+	# add the first name and last name, remove the hash, and return the new user
+	result['first_name'] = userDict['first_name']
+	result['last_name'] = userDict['last_name']
+	del result['hash']
+	
+	return result
 	
 def get_user_hash(email):
 	#get the connection cursor
