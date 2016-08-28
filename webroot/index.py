@@ -580,7 +580,7 @@ def render_dashboard():
 @app.route('/get_hra_data', methods=['POST'])
 @login_required
 def get_hras_for_id():
-	return jsonify(tc_security.get_hra_data_for_user(current_user.get_id(), limit_one=False))
+	return jsonify(data=tc_security.get_hra_data_for_user(current_user.get_id(), limit_one=False))
 
 @app.route('/go_to_scorecard/<int:response_id>', methods=['GET'])
 @login_required

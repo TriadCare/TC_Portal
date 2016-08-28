@@ -12,7 +12,7 @@ var jqxhr = $.ajax({
 				xhr.setRequestHeader("X-CSRFToken", csrftoken);
 			}
 		}
-}).done(function(data) { init(data) });
+}).done(function(data) { init(data.data) });
 
 var init = function(data) {
 	var needsNewHRA = true;
