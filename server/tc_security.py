@@ -102,13 +102,32 @@ def user_did_complete_old_hra(tcid):
 		return True
 	return False
 
+def get_hra_record(tcid, response_id):
+	hra = data_transfer.get_hra_record(response_id)
+	if hra is None or tcid != hra['tcid']:
+		return None
+	
+	return hra
+
+def latest_is_complete(tcid):
+	return data_transfer.latest_is_complete(tcid)
+
+
 # function to retrieve and return the hra answers
 def get_hra_results_old(tcid=""):
 	return data_transfer.get_hra_results_old(tcid)
 
 # function to retrieve and return the hra answers
-def get_hra_results(tcid=""):
-	results = data_transfer.get_hra_results(tcid)
+def get_hra_results(tcid="", limit_one=True):
+	results = data_transfer.get_hra_results(tcid, limit_one)
+	if results is None:
+		return {}
+	return results
+
+def get_hra_data_for_user(tcid='', limit_one=True):
+	data_columns = ["responseID", "surveyID", "completed", "DATE_CREATED", "DATE_UPDATED", 
+					"Overall", "`Diet & Nutrition`", "`Physical Activity`", "`Preventative Care`", "Stress", "Tobacco"]
+	results = data_transfer.get_hra_data(tcid, data_columns, limit_one)
 	if results is None:
 		return {}
 	return results
@@ -287,8 +306,8 @@ def process_hra_results(hra_results={}):
 	
 	return results
 
-def get_hra_scores_for_user(tcid=""):
-	results = data_transfer.get_hra_score(tcid)
+def get_hra_scores_for_user(tcid="", response_id=-1):
+	results = data_transfer.get_hra_score(tcid, response_id)
 	if results is None:
 		return {}
 	return results

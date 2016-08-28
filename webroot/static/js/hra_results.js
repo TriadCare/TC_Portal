@@ -4,9 +4,10 @@ var hra_bar_chart;
 var export_timer;
 
 var csrftoken = $('meta[name=csrf-token]').attr('content')
+var responseID = $("#hra_results_title").data("rid");
 var jqxhr = $.ajax({
 	type: "POST",
-	url: "/hra_data",
+	url: "/hra_data?response_id=" + responseID,
 	beforeSend: 
 		function(xhr, settings){
 			if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
@@ -173,7 +174,7 @@ var updateChart = function(data){
 	
 	hra_bar_chart.update();
 	
-	window.setTimeout(renderBarValues, 1500);
+	//window.setTimeout(renderBarValues, 1500);
 	
 	$("#scoreBarChart").click(function(e){
 		if(hra_bar_chart.getBarsAtEvent(e).length > 0){

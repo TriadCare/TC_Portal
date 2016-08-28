@@ -256,11 +256,34 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
 	conn.commit()
 	return True
 
-
-def get_hra_score(tcid):
+def get_hra_record(response_id):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
+		cursor.execute("select * from survey_response where responseID = %s", [response_id])
+		#build the return dict
+		return_dict = []
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		results = cursor.fetchall()
+		return dict(zip(desc, results[0]))
+		
+	except Exception as e:
+		return None
+	return None
+
+
+def get_hra_score(tcid, response_id=-1):
+	cursor = getConnection().cursor()
+	query = "select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where tcid = %s"
+	args = [tcid]
+	if response_id != -1:
+		query += " and responseID = %s" 
+		args.append(response_id)
+	query += " order by DATE_CREATED desc limit 1"
+		
+	try:
+		cursor.execute(query, args)
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
@@ -328,7 +351,7 @@ def get_latest_hra_date(tcid):
 def get_hra_data_for_account(account):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select * from survey_response where tcid in (select tcid from webappusers where Account=%s);", [account])
+		cursor.execute("select * from survey_response where tcid in (select tcid from webappusers where Account=%s)", [account])
 		desc = []
 		results = []
 		for d in cursor.description:
@@ -402,7 +425,20 @@ def user_did_complete_hra(tcid):
 	conn = getConnection()
 	cursor = conn.cursor()
 	try:
-		query = "select completed from survey_response where tcid = %s order by DATE_CREATED desc"
+		query = "select completed from survey_response where tcid = %s and completed = 1 order by DATE_CREATED desc"
+		cursor.execute(query, [tcid])
+		result = cursor.fetchall()[0]
+		if len(result) > 0:
+			return True
+	except Exception as e:
+		return False
+	return False
+
+def latest_is_complete(tcid):
+	conn = getConnection()
+	cursor = conn.cursor()
+	try:
+		query = "select completed from survey_response where tcid = %s order by DATE_CREATED desc limit 1"
 		cursor.execute(query, [tcid])
 		result = cursor.fetchall()[0][0]
 		if result == 1:
@@ -429,37 +465,51 @@ def get_hra_results_old(tcid):
 		return None
 	return None	
 
-def get_hra_results(tcid):
+def get_hra_results(tcid, limit_one=True):
 	conn = getConnection()
 	cursor = conn.cursor()
+	
+	query = "select * from survey_response where tcid = %s order by DATE_CREATED desc"
+	if limit_one:
+		query += " limit 1"
 	try:
-		cursor.execute("select * from survey_response where tcid = %s order by DATE_CREATED desc", [tcid])
+		cursor.execute(query, [tcid])
 		#build the return dict
+		return_dict = []
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
-		result = cursor.fetchall()
-		return dict(zip(desc, result[0]))
+		results = cursor.fetchall()
+		if limit_one:
+			return dict(zip(desc, results[0]))
+		for result in results:
+			return_dict.append(dict(zip(desc, result)))
+		return return_dict
 	except Exception as e:
 		return None
 	return None	
 
 
-def get_hra_data(columns=[]):
+
+def get_hra_data(tcid="", columns=[], limit_one=True):
 	conn = getConnection()
 	cursor = conn.cursor()
-	column_string = ""
-	for c in columns:
-		column_string += "%s, "
-	column_string = column_string[:-2]
-	query = "select %s from hra_answers" % ", ".join(columns)
+	
+	query = "select %s from survey_response" % ", ".join(columns)
+	query += " where tcid='%s'" % tcid
+	if limit_one:
+		query += " limit 1"
 	try:
 		cursor.execute(query)
 		#build the return dict
+		return_dict = []
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
-		return [desc, list(cursor.fetchall())]
+		results = cursor.fetchall()
+		for result in results:
+			return_dict.append(dict(zip(desc, result)))
+		return return_dict
 	except Exception as e:
 		return None
 	return None

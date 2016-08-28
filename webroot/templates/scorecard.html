@@ -1,0 +1,27 @@
+<div class="container">
+		<div id="nav_bar_spacer"></div>
+		<div id="overall_score_title" class="graph_title">Your Overall Score</div>
+		<div id="donutDiv" class="centered chart_container">
+			<div id="overall_score"></div>
+			<canvas id="scoreDonutChart" width="100%" height="100%"></canvas>
+		</div>
+		<div class="graph_title">
+			<span class="title_text">Section Breakdown</span>
+			<div id="chart_legend">
+				<div class="legend_key" id="user_score_key"></div>
+				<div class="legend_label" id="user_score_label">Your Score</div>
+				<div class="legend_key" id="tc_score_key"></div>
+				<div class="legend_label" id="tc_score_label">National Average</div>
+			</div>
+		</div>
+		<div id="barDiv" class="centered chart_container">
+			<canvas id="scoreBarChart" width="100%" height="100%"></canvas>
+		</div>	
+    </div>
+    
+    {% include 'questionnaire_results.html' %}
+    
+    <span id="top-link-block" class="hidden well well-sm">
+	    <i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+	</span><!-- /top-link-block -->
+</div>

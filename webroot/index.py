@@ -99,7 +99,7 @@ def loginUser():
 			flash('Log in failed, Please try again.')
 			return render_template('user_login.html',form=form)
 			
-		return redirect(request.args.get('next') or url_for('renderHRA'))
+		return redirect(request.args.get('next') or url_for('render_dashboard'))
 		#return redirect(url_for('renderHRA')) #PLEASE REVERT TO LINE ABOVE IN PRODUCTION
 	#else return with errors (TODO)
 	return render_template('user_login.html',form=form)
@@ -306,7 +306,7 @@ def renderHRA():
 	else:
 		# need to check if the user needs to take a new HRA
 		if not tc_security.should_take_new_hra(current_user.get_id()):  # this function will insert a new survey record if needed
-			if tc_security.user_did_complete_new_hra(current_user.get_id()):
+			if tc_security.latest_is_complete(current_user.get_id()) and tc_security.user_did_complete_new_hra(current_user.get_id()):
 				return redirect(url_for('hra_results'))
 		
 		#get HRA JSON data
@@ -356,6 +356,47 @@ def englishHRA():
 @app.route('/hra_results', methods=['GET','POST'])
 @login_required
 def hra_results():
+	response_id = request.args.get('response_id', -1)
+	if response_id != -1:
+		hra = tc_security.get_hra_record(current_user.get_id(), response_id)
+		if hra is None or hra['completed'] == 0:  # if no HRA or incomplete, abort
+			abort(404)
+		
+		if hra['surveyID'] < 2:
+			#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+			os.chdir(os.path.dirname(os.path.realpath(__file__)))
+			hra_data = json.load(open("hra_files/hra.json",'r'))
+			#parse out the meta survey groupings
+			hra_meta = hra_data['hra_meta']
+			#get the questions from the hra data
+			hra_questions = hra_data['hra_questions']
+			return render_template('hra_results_old.html', 
+									hra_questions=hra_questions, 
+									hra_meta=hra_meta, 
+									user_answers=hra, 
+									form=EmptyForm())
+		else:
+			filename = "hra_files/"
+			if hra['surveyID'] == 4:
+				filename += "english_02.json"
+			else:
+				filename += "english_01.json"
+			os.chdir(os.path.dirname(os.path.realpath(__file__)))
+			hra_data = json.load(open(filename,'r'))
+			#parse out the meta survey groupings
+			hra_meta = hra_data['hra_meta']
+			#get the questions from the hra data
+			hra_questions = hra_data['hra_questions']
+			return render_template('hra_results.html', 
+									hra_questions=hra_questions,
+									hra_meta=hra_meta,
+									results=tc_security.get_hra_scores_for_user(current_user.get_id(), response_id),
+									user_answers=hra, 
+									form=EmptyForm())
+	
+	if not tc_security.latest_is_complete(current_user.get_id()):
+		return redirect(url_for('renderHRA'))
+	
 	if not tc_security.user_did_complete_new_hra(current_user.get_id()):
 	
 		if tc_security.user_did_complete_old_hra(current_user.get_id()):
@@ -405,14 +446,15 @@ def hra_tc_data():
 @app.route('/hra_data', methods=['GET','POST'])
 @login_required
 def hra_data():
-	return jsonify(**{"userData": tc_security.get_hra_score(current_user.get_id()), "tcData": tc_security.get_tc_hra_score()})
+	response_id = request.args.get('response_id', -1)
+	return jsonify(**{"userData": tc_security.get_hra_scores_for_user(current_user.get_id(), response_id), "tcData": tc_security.get_tc_hra_score()})
 	
-	#Route that returns hra data for the current user AND Triad Care. Requires login.
-@app.route('/hra_data_unprotected', methods=['POST'])
-@csrf.exempt
-@login_required
-def hra_data_unprotected():
-	return jsonify(**{"userData": tc_security.get_hra_score(request.form['id']), "tcData": tc_security.get_tc_hra_score()})
+# 	#Route that returns hra data for the current user AND Triad Care. Requires login.
+# @app.route('/hra_data_unprotected', methods=['POST'])
+# @csrf.exempt
+# @login_required
+# def hra_data_unprotected():
+# 	return jsonify(**{"userData": tc_security.get_hra_score(request.form['id']), "tcData": tc_security.get_tc_hra_score()})
 
 
 #Route that returns the Employer Aggregate Scorecard
@@ -528,6 +570,22 @@ def get_help_form():
 			return json.dumps({"error": True})
 	
 	return render_template('help_form.html', form=form)
+
+#Dashboard View
+@app.route('/dashboard', methods=['GET'])
+@login_required
+def render_dashboard():
+	return render_template('dashboard.html')
+
+@app.route('/get_hra_data', methods=['POST'])
+@login_required
+def get_hras_for_id():
+	return jsonify(tc_security.get_hra_data_for_user(current_user.get_id(), limit_one=False))
+
+@app.route('/go_to_scorecard/<int:response_id>', methods=['GET'])
+@login_required
+def go_to_scorecard(response_id):
+	return redirect(url_for('hra_results', response_id=response_id))
 
 
 # @app.route('/score_hras', methods=['GET'])

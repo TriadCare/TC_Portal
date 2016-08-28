@@ -246,6 +246,90 @@ input.grid_text[type="textarea"]
 	line-height: 25vh;
 }
 
+#timelineDiv
+{
+	position: relative;
+	width: 90%;
+	height: 25vh;
+	line-height: 25vh;
+	margin-bottom: 10px;
+}
+#hra-scorecard-container
+{
+	height: 50vh;
+	overflow-x: hidden;
+}
+#scroll-container
+{
+	overflow-x: scroll;
+	height: calc(100% - 40px);
+	direction: rtl;
+}
+#card-container
+{
+	width: auto;
+	height: 100%;
+	white-space: nowrap;
+}
+.card-container-title
+{
+	display: inline;
+}
+.chart-container
+{
+	position: relative;
+	width: 90%;
+	height: 70%;
+	margin: 0 auto;
+}
+.hra-card 
+{
+	display: inline-block;
+	width: 35%;
+	height: 80%;
+    min-width: 200px;
+    min-height: 250px;
+    margin: 20px 40px;
+    background-color: #f7f7f7;
+    text-align: left;
+}
+.hra-card-header
+{
+	width: 100%;
+	height: 15%;
+	padding-top: 15px;
+	margin-bottom: 10%;
+}
+.chart-container>canvas
+{
+	display: block;
+}
+.new-hra-body
+{
+	position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 12em;
+}
+.new-hra-label
+{
+	font-size: 1.25em;
+    color: #0078b9;
+}
+.card-date-label
+{
+	font-size: 0.8em;
+}
+.card-scorecard-button
+{
+	float: right;
+}
+.tc-icon
+{
+	color: #f7f7f7;
+}
+
 #barDiv
 {
 	width: 100%;

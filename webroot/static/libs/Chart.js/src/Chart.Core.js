@@ -2145,6 +2145,7 @@
 				this.animations[i].animationObject.render(this.animations[i].chartInstance, this.animations[i].animationObject);
 				
 				if (this.animations[i].animationObject.currentStep == this.animations[i].animationObject.numSteps){
+					this.animations[i].animationObject.onAnimationComplete();
 					// executed the last frame. Remove the animation.
 					this.animations.splice(i, 1);
 					// Keep the index in place to offset the splice
