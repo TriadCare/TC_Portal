@@ -30,32 +30,36 @@ var init = function(data) {
 		var cardHTML = "";
 		var buttonHTML = "";
 		var incomplete = false;
+		var titleText = "";
+		var chartLabelText = "";
 		
 		if (hra.completed !== 1) {  // incomplete HRA
+			titleText = "Complete Assessment";
 			buttonHTML = 	"<button title='Complete Assessment' \
 								type='button' \
 								class='btn btn-default btn-xs card-scorecard-button' \
-								data-rid='" + hra.responseID + "' \
 								aria-label='Complete Assessment'> \
 								<span class='glyphicon glyphicon-edit tc-icon' aria-hidden='true'></span> \
 							</button>";
 			incomplete = true;
 		} else {
+			chartLabelText = "Your Overall Score" + get_letter_text(gpa_to_percent(hra.Overall));
+			titleText = "Go To Scorecard";
 			buttonHTML = 	"<button title='Go To Scorecard' \
 								type='button' \
 								class='btn btn-default btn-xs card-scorecard-button' \
-								data-rid='" + hra.responseID + "' \
 								aria-label='Go To Scorecard'> \
 								<span class='glyphicon glyphicon-stats tc-icon' aria-hidden='true'></span> \
 							</button>"; 
 			
 		}
 		
-		cardHTML = "<div id='hra-card-" + index + "' class='hra-card panel panel-default'> \
+		cardHTML = "<div title='" + titleText + "' id='hra-card-" + index + "' class='hra-card panel panel-default' data-rid='" + hra.responseID + "' \> \
 						<div class='panel-heading hra-card-header'> \
 							<span class='card-date-label'>" + formatDateString(hra.DATE_CREATED) + "</span> \
 							" + buttonHTML + " \
 						</div> \
+						<div class='chart-label'>" + chartLabelText + "</div> \
 						<div class='chart-container'> \
 							<canvas id='hra-card-chart-" + hra.responseID + "' width='90%' height='90%'></canvas> \
 						</div> \
@@ -103,13 +107,12 @@ var init = function(data) {
 	
 	//add a new HRA card if needed
 	if(needsNewHRA) {
-		var newHRACard =	"<div id='hra-card-" + -1 + "' class='hra-card panel panel-default'> \
+		var newHRACard =	"<div title='Start New Assessment' data-rid='-1' id='hra-card-" + -1 + "' class='hra-card panel panel-default'> \
 								<div class='panel-heading hra-card-header'> \
 									<span class='card-date-label'>" + formatDateString(new Date()) + "</span> \
 									<button title='Start New Assessment' \
 										type='button' \
 										class='btn btn-default btn-xs card-scorecard-button' \
-										data-rid='-1' \
 										aria-label='Start New Assessment'> \
 										<span class='glyphicon glyphicon-plus tc-icon' aria-hidden='true'></span> \
 									</button> \
@@ -125,7 +128,7 @@ var init = function(data) {
 	}
 	
 	//register card click events
-	$(".card-scorecard-button").on("click", function(){
+	$(".hra-card").on("click", function(){
 		var responseID = $(this).data("rid");
 		var url = "";
 		
@@ -138,6 +141,7 @@ var init = function(data) {
 		window.location.href = url;
 	});
 }
+
 
 var hra_timeline = function(hra_data) {
 	chartData = [];
@@ -232,72 +236,5 @@ var renderChartValues = function(){
     })
 }
 
-/*
-$(document).ready(function(){
-	// set up the donut and bar chart, will be updated aynchronously
-	var donutChartContext = $("#scoreDonutChart").get(0).getContext("2d");
-	
-	var emptyDonutChartData = [
-		{
-			value: 4,
-			color: "rgba(220,220,220,0.5)",
-			highlight: "rgba(220,220,220,0.75)",
-			label: ""
-		}
-	]
-		
-	overall_donut_chart = new Chart(donutChartContext).Doughnut(emptyDonutChartData, {
-																						"responsive":true, 
-																						"maintainAspectRatio":false,
-																						"showTooltips":false
-																					});
-
-
-});
-
-
-
-
-
-var get_chart_text = function(value){
-	if (value >= 90) return value + " | A";
-	if (value >= 80) return value + " | B";
-	if (value >= 70) return value + " | C";
-	if (value >= 60) return value + " | D";
-	return value + " | F";
-}
-
-
-var updateChart = function(data){
-	var overallData = [data['userData']['Overall']]
-	delete data['userData']['Overall']
-	delete data['tcData']['Overall']
-	
-	if(overallData[0] === undefined){
-		$("#overall_score").text("No Data to Display");
-	} else {
-		var overall_percentage = gpa_to_percent(overallData[0]);
-		var overall_letter_text = get_letter_text(overall_percentage);
-		
-		$("#overall_score_title").text("Your Overall Score" + overall_letter_text);
-		$("#overall_score").text(gpa_to_percent(overallData[0]).toString() + "%");
-		
-		overall_donut_chart.removeData();
-		overall_donut_chart.removeData();  //removed twice to remove both pie sections
-		
-		overall_donut_chart.addData({
-			value: overallData[0],
-			color: "rgba(151,187,205,0.5)",
-			label: "Overall HRA Score"
-		});
-		overall_donut_chart.addData({
-			value: (4-overallData[0]).toFixed(1),
-			color: "rgba(220,220,220,0.5)",
-			label: ""
-		});
-	}
-
-}
-*/
 
 

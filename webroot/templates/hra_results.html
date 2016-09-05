@@ -15,6 +15,9 @@
 		{{ super() }}
 		<span id="hra_results_title" data-rid='{{ user_answers.responseID }}' >{{ current_user.first_name }} {{ current_user.last_name }}'s HRA Results</span>
 		<div class="tc-heading">
+			<span class="signup-btn btn btn-sm btn-default" id="back-to-dashboard">
+				<a href="/dashboard">Dashboard</a>
+			</span>
 			<span class="signup-btn btn btn-sm btn-default" id="export_pdf">
 				<a href="#" onclick="export_to_pdf()">Export PDF</a>
 			</span>
