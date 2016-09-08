@@ -249,7 +249,8 @@ var export_to_pdf = function(){
 	
 	
 	data['html'] = $("html").html();
-	var filename = $("#hra_results_title").text().replace(/ /g, "") + ".pdf"
+	var hraDate = $("#hra_date_label").data('date');
+	var filename = $("#hra_results_title").text().replace(/ /g, "") + "." + hraDate + ".pdf"
 	
 	convert_to_pdf(data, filename, function(){$("#export_pdf>a").text("Done");})
 	
@@ -260,7 +261,7 @@ var export_to_pdf = function(){
 	$("#tc-brand_img").remove();
 	
 	$("#scorecard_navbar").addClass("navbar-fixed-top");
-	$("#overall_score_title").before(nav_spacer);
+	$("#hra_date_label").before(nav_spacer);
 	
 	$("#donutChartImage").after(donut_canvas);
 	$("#donutChartImage").remove();

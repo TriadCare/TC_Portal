@@ -400,6 +400,7 @@ input.grid_text[type="textarea"]
 	/*.hra_results_navbar{display: none;}*/
 	#top-link-block{display: none;}
 	.hra-submit{display: none;}
+	#back-to-dashboard{display: none;}
 	#hra-logout{display: none;}
 	#export_pdf{display: none;}
 	.grid_text_question{display: none;}

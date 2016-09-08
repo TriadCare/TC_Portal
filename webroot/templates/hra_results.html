@@ -32,6 +32,7 @@
 {% block content %}
 	<div class="container">
 		<div id="nav_bar_spacer"></div>
+		<div id="hra_date_label" data-date="{{ user_answers.DATE_CREATED.strftime('%m-%d-%Y') }}">{{ user_answers.DATE_CREATED.strftime('%a %b %d, %Y') }}</div>
 		<div id="overall_score_title" class="graph_title">Your Overall Score</div>
 		<div id="donutDiv" class="centered chart_container">
 			<div id="overall_score"></div>
