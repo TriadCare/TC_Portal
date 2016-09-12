@@ -54,7 +54,7 @@ var init = function(data) {
 			
 		}
 		
-		cardHTML = "<div title='" + titleText + "' id='hra-card-" + index + "' class='hra-card panel panel-default' data-rid='" + hra.responseID + "' \> \
+		cardHTML = "<div title='" + titleText + "' id='hra-card-" + index + "' class='hra-card panel panel-default' data-rid='" + hra.responseID + "'> \
 						<div class='panel-heading hra-card-header'> \
 							<span class='card-date-label'>" + formatDateString(hra.DATE_CREATED) + "</span> \
 							" + buttonHTML + " \

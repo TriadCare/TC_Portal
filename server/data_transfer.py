@@ -347,11 +347,11 @@ def get_latest_hra_date(tcid):
 		return None
 	return None 
 
-
-def get_hra_data_for_account(account):
+def get_hra_participation_data_for_account(account, user_id, int_year):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select * from survey_response where tcid in (select tcid from webappusers where Account=%s)", [account])
+		query = "select u.first_name, u.last_name, u.email, r.completed from webappusers as u left join survey_response as r on u.tcid=r.tcid where u.Account=%s and r.DATE_CREATED > '%s-01-01 00:00:00' and r.DATE_CREATED < '%s-01-01 00:00:00'"
+		cursor.execute(query, [account, int_year, (int_year+1)])
 		desc = []
 		results = []
 		for d in cursor.description:
@@ -361,7 +361,31 @@ def get_hra_data_for_account(account):
 			results.append(dict(zip(desc, datum)))
 		return results
 	except Exception as e:
-		return e
+		return None
+
+def get_account_count(account):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select COUNT(*) from webappusers where Account=%s", [account])
+		result =  cursor.fetchall()[0][0]
+		return result
+	except Exception as e:
+		return None
+
+def get_hra_data_for_account(account):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select * from survey_response where tcid in (select tcid from webappusers where Account=%s) order by DATE_CREATED desc", [account])
+		desc = []
+		results = []
+		for d in cursor.description:
+			desc.append(d[0])
+		data = cursor.fetchall()
+		for datum in data:
+			results.append(dict(zip(desc, datum)))
+		return results
+	except Exception as e:
+		return None
 
 def get_hra_filename(tcid):
 	conn = getConnection()

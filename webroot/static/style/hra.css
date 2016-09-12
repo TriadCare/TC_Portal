@@ -232,7 +232,12 @@ input.grid_text[type="textarea"]
     right: 0;
     color: rgb(0,120,185);
 }
-
+.completes-label
+{
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+}
 #completesSpan
 {
 	font-size: .8em;
@@ -275,6 +280,12 @@ input.grid_text[type="textarea"]
 {
 	display: inline;
 }
+.card-label-container
+{
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
 .chart-container
 {
 	position: relative;
@@ -291,9 +302,9 @@ input.grid_text[type="textarea"]
     min-height: 250px;
     margin: 20px 40px;
     background-color: #f7f7f7;
-    text-align: left;
     cursor: pointer;
     position: relative;
+	direction: ltr; 
 }
 .hra-card-header
 {
@@ -333,9 +344,15 @@ input.grid_text[type="textarea"]
 {
 	font-size: 0.8em;
 }
+.aggregate-card-date-label
+{
+	font-size: 1.2em;
+	position: absolute;
+	bottom: 0px;
+}
 .card-scorecard-button
 {
-	float: right;
+	display: inline-block;
 }
 .tc-icon
 {
@@ -346,6 +363,22 @@ input.grid_text[type="textarea"]
 {
 	width: 100%;
 	height: 45vh;
+}
+#hra-participation-container
+{
+}
+#participation-container
+{
+	text-align: left;
+	font-size: 14px;
+	padding: 5px;
+}
+#participation-download-button{
+	float: right;
+}
+.completed-column
+{
+	text-align: center;
 }
 
 #scoreBarChart

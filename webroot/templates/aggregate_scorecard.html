@@ -17,8 +17,11 @@
 {% block header %}
 	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
 		{{ super() }}
-		<div id="hra_results_title"> {{ account }} Aggregate Results</div>
+		<div id="hra_results_title">{{ year }} {{ account }} Aggregate Results</div>
 		<div class="tc-heading">
+			<span class="signup-btn btn btn-sm btn-default" id="back-to-dashboard">
+				<a href="/aggregate_dashboard\{{ account }}">Dashboard</a>
+			</span>
 			<span class="signup-btn btn btn-sm btn-default" id="export_pdf">
 				<a href="#" onclick="export_to_pdf()">Export PDF</a>
 			</span>
@@ -63,8 +66,8 @@
 
 {% block footer %}{% endblock footer %}
 {% block script_section %}
-	<script src="../static/libs/Chart.js/src/Chart.Core.js"></script>
-	<script src="../static/libs/Chart.js/src/Chart.Bar.js"></script>
-	<script src="../static/libs/Chart.js/src/Chart.Doughnut.js"></script>
-	<script src="../static/js/employer_scorecard.js"></script>
+	<script src="../../static/libs/Chart.js/src/Chart.Core.js"></script>
+	<script src="../../static/libs/Chart.js/src/Chart.Bar.js"></script>
+	<script src="../../static/libs/Chart.js/src/Chart.Doughnut.js"></script>
+	<script src="../../static/js/aggregate_scorecard.js"></script>
 {% endblock script_section %}

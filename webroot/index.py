@@ -458,15 +458,15 @@ def hra_data():
 
 
 #Route that returns the Employer Aggregate Scorecard
-@app.route('/employer_scorecard/<account>', methods=['GET'])
+@app.route('/aggregate_scorecard/<account>/<int:year>', methods=['GET'])
 @login_required
-def employer_scorecard(account):
+def aggregate_scorecard(account, year):
 	account = str(account)
 	if account is None:
 		return redirect(url_for("loginUser"))
 	
 	# get the aggregate results for the given account
-	results = tc_security.get_hra_data_for_account(account)
+	results = tc_security.get_hra_data_for_account(account, current_user.get_id(), year)
 	
 	os.chdir(os.path.dirname(os.path.realpath(__file__)))
 	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
@@ -475,8 +475,9 @@ def employer_scorecard(account):
 	#get the questions from the hra data
 	hra_questions = hra_data['hra_questions']
 	
-	return render_template('employer_scorecard.html', 
+	return render_template('aggregate_scorecard.html', 
 							account=account,
+							year=year,
 							hra_questions=hra_questions, 
 							hra_meta=hra_meta, 
 							results=results, 
@@ -586,6 +587,22 @@ def get_hras_for_id():
 @login_required
 def go_to_scorecard(response_id):
 	return redirect(url_for('hra_results', response_id=response_id))
+
+#Admin Dashboard View
+@app.route('/aggregate_dashboard/<account>', methods=['GET'])
+@login_required
+def render_aggregate_dashboard(account):
+	return render_template('aggregate_dashboard.html', account=account)
+
+@app.route('/get_aggregate_hra_data/<account>', methods=['POST'])
+@login_required
+def get_hras_for_account(account):
+	return jsonify(data=tc_security.get_hra_data_for_account(str(account), current_user.get_id()))
+	
+@app.route('/get_hra_participation_data/<account>', methods=['POST'])
+@login_required
+def get_hra_participation_for_account(account):
+	return jsonify(data=tc_security.get_hra_participation_data_for_account(str(account), current_user.get_id()))
 
 
 # @app.route('/score_hras', methods=['GET'])

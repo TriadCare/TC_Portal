@@ -311,103 +311,128 @@ def get_hra_scores_for_user(tcid="", response_id=-1):
 	if results is None:
 		return {}
 	return results
-
-
-def get_hra_data_for_account(account=""):
+	
+def get_hra_participation_data_for_account(account, user_id, int_year=-1):
+	# Need to check here if the user has access to the account data
+	if user_id != "0000000001":
+		return {}
 	if account == "" or account is None or type(account) is not str:
 		return {}
 		
-	answer_counts = {'1': 0}
-	section_scores = {
-		"Overall": 0,
-		"Tobacco": 0,
-		"Diet & Nutrition": 0,
-		"Physical Activity": 0,
-		"Stress": 0,
-		"Preventative Care": 0
-	}
-	total_completed = 0
-	no_age = 0
-	
+	if int_year == -1:
+		int_year = dt.now().year
+		
+	return {"user_count": data_transfer.get_account_count(account),
+			"data": data_transfer.get_hra_participation_data_for_account(account, user_id, int_year)}
+
+def get_hra_data_for_account(account, user_id, int_year=-1):
+	# Need to check here if the user has access to the account data
+	if user_id != "0000000001":
+		return {}
+	if account == "" or account is None or type(account) is not str:
+		return {}
 	hra_data = data_transfer.get_hra_data_for_account(account)
+	sorted_data = {}
+	# need to process these by year...	
+	for record in hra_data:
+		if record['DATE_CREATED'] is not None:
+			year = record['DATE_CREATED'].year
+		if year in sorted_data:
+			sorted_data[year].append(record)
+		else:
+			sorted_data[year] = [record]
+	result_data = {}
+	for year_data in sorted_data.keys():
 	
-	for datum in hra_data:
-		total_completed += datum['completed']  # completed is a 0 if not completed, a 1 if it is.
+		answer_counts = {'1': 0}
+		section_scores = {
+			"Overall": 0,
+			"Tobacco": 0,
+			"Diet & Nutrition": 0,
+			"Physical Activity": 0,
+			"Stress": 0,
+			"Preventative Care": 0
+		}
+		total_completed = 0
+		no_age = 0
 		
-		for key in datum.keys():
-			if key.isdigit():	# only count the questions
-				if key == '1':  # if this is the age question, just add them up
-					if datum[key].isdigit():
-						answer_counts['1'] += int(datum[key])
+			
+		for datum in sorted_data[year_data]:
+			total_completed += datum['completed']  # completed is a 0 if not completed, a 1 if it is.
+			
+			for key in datum.keys():
+				if key.isdigit():	# only count the questions
+					if key == '1':  # if this is the age question, just add them up
+						if datum[key].isdigit():
+							answer_counts['1'] += int(datum[key])
+						else:
+							no_age += 1
+					elif int(key) in range(38,63):
+						if key in answer_counts.keys():
+							if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
+								if '1' in answer_counts[key].keys():
+									answer_counts[key]['1'] += 1
+								else:
+									answer_counts[key]['1'] = 1
+								if '2' in answer_counts[key].keys():
+									answer_counts[key]['2'] += 1
+								else:
+									answer_counts[key]['2'] = 1
+							else: 
+								if datum[key] in answer_counts[key].keys():
+									answer_counts[key][datum[key]] += 1
+								else:
+									answer_counts[key][datum[key]] = 1
+						else:
+							if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
+								answer_counts[key] = {'1': 1}
+								answer_counts[key] = {'2': 1}
+							else: 
+								answer_counts[key] = {datum[key]: 1}
+							
+					elif key in answer_counts.keys():
+						if datum[key] in answer_counts[key].keys():
+							answer_counts[key][datum[key]] += 1
+						else:
+							answer_counts[key][datum[key]] = 1
 					else:
-						no_age += 1
-				elif int(key) in range(38,63):
-					if key in answer_counts.keys():
-						if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
-							if '1' in answer_counts[key].keys():
-								answer_counts[key]['1'] += 1
-							else:
-								answer_counts[key]['1'] = 1
-							if '2' in answer_counts[key].keys():
-								answer_counts[key]['2'] += 1
-							else:
-								answer_counts[key]['2'] = 1
-						else: 
-							if datum[key] in answer_counts[key].keys():
-								answer_counts[key][datum[key]] += 1
-							else:
-								answer_counts[key][datum[key]] = 1
-					else:
-						if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
-							answer_counts[key] = {'1': 1}
-							answer_counts[key] = {'2': 1}
-						else: 
-							answer_counts[key] = {datum[key]: 1}
-						
-				elif key in answer_counts.keys():
-					if datum[key] in answer_counts[key].keys():
-						answer_counts[key][datum[key]] += 1
-					else:
-						answer_counts[key][datum[key]] = 1
+						answer_counts[key] = {datum[key]: 1}
 				else:
-					answer_counts[key] = {datum[key]: 1}
+					if datum['completed'] == 1:  # only count if the survey was completed
+						if key == "Overall":
+							section_scores['Overall'] += datum[key]
+						elif key == "Tobacco":
+							section_scores['Tobacco'] += datum[key]
+						elif key == "Diet & Nutrition":
+							section_scores['Diet & Nutrition'] += datum[key]
+						elif key == "Physical Activity":
+							section_scores['Physical Activity'] += datum[key]
+						elif key == "Stress":
+							section_scores['Stress'] += datum[key]
+						elif key == "Preventative Care":
+							section_scores['Preventative Care'] += datum[key]
+		
+		for key in answer_counts.keys():
+			if key == '1' and (len(sorted_data[year_data])-no_age) != 0:
+				answer_counts['1'] = round(answer_counts['1']/(len(sorted_data[year_data])-no_age), 0)
 			else:
-				if datum['completed'] == 1:  # only count if the survey was completed
-					if key == "Overall":
-						section_scores['Overall'] += datum[key]
-					elif key == "Tobacco":
-						section_scores['Tobacco'] += datum[key]
-					elif key == "Diet & Nutrition":
-						section_scores['Diet & Nutrition'] += datum[key]
-					elif key == "Physical Activity":
-						section_scores['Physical Activity'] += datum[key]
-					elif key == "Stress":
-						section_scores['Stress'] += datum[key]
-					elif key == "Preventative Care":
-						section_scores['Preventative Care'] += datum[key]
-	
-	for key in answer_counts.keys():
-		if key == '1' and (len(hra_data)-no_age) != 0:
-			answer_counts['1'] = round(answer_counts['1']/(len(hra_data)-no_age), 0)
-		else:
-			total = sum(answer_counts[key].values())  # get total answers for this question
-			if total > 0:
-				answer_counts[key].update([(x, "{0:.0f}%".format((float(y)/total)*100)) for x, y in answer_counts[key].items()])
+				total = sum(answer_counts[key].values())  # get total answers for this question
+				if total > 0:
+					answer_counts[key].update([(x, "{0:.0f}%".format((float(y)/total)*100)) for x, y in answer_counts[key].items()])
+			
 		
-	
-	for key in section_scores.keys():
-		if total_completed != 0:
-			section_scores[key] = round(section_scores[key] / total_completed, 1)
-		else:
-			{}
-	
-	return {"total_completed": total_completed, "answer_counts": answer_counts, "section_scores": section_scores}
-	
-	
-		#Need to get the total answer counts for each question {...qid: [aid: #, aid: #,...]...}
-		#Also need to get the scores for each section.
-		#Need to figure out the best way to format the data here, so that these calculations will be easiest.
+		for key in section_scores.keys():
+			if total_completed != 0:
+				section_scores[key] = round(section_scores[key] / total_completed, 1)
+			else:
+				{}
 		
+		result_data[year_data] = {"total_completed": total_completed, "answer_counts": answer_counts, "section_scores": section_scores}
+	
+	if int_year == -1:
+		return result_data
+		
+	return result_data[int_year]		
 
 
 # Given the tcid of the user, returns the scores as follows:
