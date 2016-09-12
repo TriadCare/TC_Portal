@@ -314,8 +314,8 @@ def get_hra_scores_for_user(tcid="", response_id=-1):
 	
 def get_hra_participation_data_for_account(account, user_id, int_year=-1):
 	# Need to check here if the user has access to the account data
-	if user_id != "0000000001":
-		return {}
+	#if user_id != "0000000001":
+	#	return {}
 	if account == "" or account is None or type(account) is not str:
 		return {}
 		
@@ -327,8 +327,8 @@ def get_hra_participation_data_for_account(account, user_id, int_year=-1):
 
 def get_hra_data_for_account(account, user_id, int_year=-1):
 	# Need to check here if the user has access to the account data
-	if user_id != "0000000001":
-		return {}
+	#if user_id != "0000000001":
+	#	return {}
 	if account == "" or account is None or type(account) is not str:
 		return {}
 	hra_data = data_transfer.get_hra_data_for_account(account)
