@@ -6,6 +6,9 @@ from flask_weasyprint import HTML, CSS, render_pdf
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeSerializer, BadSignature
 
+#Twilio
+import twilio.twiml
+
 
 #import python commons
 import sys, os, json, datetime, time
@@ -35,6 +38,16 @@ registration_uss = URLSafeSerializer(app.config['SECRET_KEY'], salt='registratio
 #import locals
 from forms import *
 from User import User
+
+
+## TWILIO API ##
+@app.route("/voice", methods=['GET', 'POST'])
+def hello_monkey():
+    """Respond to incoming requests."""
+    resp = twilio.twiml.Response()
+    resp.say("Hello Monkey")
+
+    return str(resp)
 
 
 ##Flask Routing##
