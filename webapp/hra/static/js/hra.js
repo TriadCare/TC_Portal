@@ -45,10 +45,16 @@ var englishHRA = function(){
 }
 
 $(document).ready(function() {
-  $(window).keydown(function(event){
-    if(event.keyCode == 13 || event.keyCode == 8) {  // enter or delete keys
+  $("input").keydown(function(event){
+    if(event.keyCode == 13) {  // enter or delete keys
       event.preventDefault();
       return false;
+    }
+    if(this.type == "radio" || this.type == "checkbox"){
+	    if(event.keyCode == 8){  // delete key
+ 		    event.preventDefault();
+ 		    return false;
+	    }
     }
   });
 });

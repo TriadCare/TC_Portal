@@ -1,7 +1,6 @@
 ### This file holds security-related helper functions for the Triad Care Web Application. ###
 from datetime import datetime as dt
 from binascii import hexlify
-from passlib.hash import bcrypt
 import os
 import json
 import re
@@ -44,18 +43,6 @@ def user_is_registered(email):
 		return False
 	return True
 
-
-
-# function to call to verify the user's creds. Provides sanitization via other functions in this file.
-def authenticate_user(email, password):
-	#sanitize inputs and validate the user
-	if is_sanitary(email):
- 		try:
-			return bcrypt.verify(password, data_transfer.get_user_hash(email))
- 		except Exception as e:
- 			#TODO Log and count incorrect password attempt. Limit to three.
- 			return False
-	return False
 
 def register_user(userDict):
 	if validate_password(userDict['password']):
@@ -499,16 +486,6 @@ def set_password(user_id, password):
 	if not validate_password(password):
 		return False
 	return data_transfer.set_password_for_user_id(user_id, str(bcrypt.encrypt(password)))
-
-
-
-#this function should be called for ANY user input that should abide by the following rules:
-#  1. Only contains alphanumerics and @ and .
-# Please add more rules to this list as you see fit. May need to add options list to turn on/off tests
-def is_sanitary(input):
-	if re.match("^[A-Za-z0-9@\.]*$", input):
-		return True
-	return False
 
 
 def get_users_with_account(account=""):

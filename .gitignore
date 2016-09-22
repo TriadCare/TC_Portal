@@ -1,3 +1,5 @@
 *.pyc
 .DS_STORE
 instance/
+node_modules
+npm-debug.log

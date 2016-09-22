@@ -39,7 +39,7 @@ body {
 	margin-left: auto;
 	width: 50px;
 	height: 50px;
-	background-image: url("../media/triadcare_logo.png");/*("../media/TC_Web_Logo.png");*/
+	background-image: url("~!file!media/triadcare_logo.png");/*("../media/TC_Web_Logo.png");*/
 	background-size: contain;
 	display: inline-block;
 	float: left;

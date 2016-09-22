@@ -5,37 +5,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <!--  Flask-WTF CSRF Protection. Send this in ajax beforeSend for EVERY request. >
-    <--   See https://flask-wtf.readthedocs.org/en/latest/csrf.html for help. -->
-    <meta name="csrf-token" content="{{ csrf_token() }}"
-    
+    <!--  Flask-WTF CSRF Protection. Send this in ajax beforeSend for EVERY request. -->
+    <!--   See https://flask-wtf.readthedocs.org/en/latest/csrf.html for help. -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-	
-	
-	<link rel="icon" href="{{ url_for('static', filename='media/triadcare_logo.png') }}">
-	<!-- Custom styles for this template -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
-	
+	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">-->
+
+
+	<!--<link rel="icon" href="{{ url_for('static', filename='media/triadcare_logo.png') }}">-->
+
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+
 		{% block head %}
 			<title>
-				TriadCare | 
+				TriadCare |
 				{% block title %}
 					This is the Title
 				{% endblock title %}
 			</title>
-			
+
 			<!-- Call super() in this block when inheriting to get this title. -->
 		{% endblock head %}
-		
+
 	</head>
-	
+
 	<body>
 		<div id="header">
 			{% block header %}
@@ -62,11 +60,8 @@
 			<h3>This is the Footer</h3>
 			{% endblock footer %}
 		</div>
-		
-		<!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    {{ javascript_tag('common.js') | safe }}
 	{% block script_section %}{% endblock script_section %}
 	</body>
 </html5>

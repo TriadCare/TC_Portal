@@ -77,18 +77,19 @@ def loginUser():
 	if form.validate_on_submit():
 		email = str(form.email.data) #comes out of the form as unicode (needs to be str in python 2.7)
 		password = str(form.password.data)
-		if not tc_security.authenticate_user(email, password):
+		
+		user = User.query.filter_by(email=email).first()
+		if not user.authenticate(password):#tc_security.authenticate_user(email, password):
 			#need to call a auth_failure function here (TODO)
 			flash('Authentication failed. Please try again or Sign Up!')
 			return render_template('user_login.html',form=form)
-		#contruct a user object to log in.
-		user = User(tc_security.get_web_app_user(email=email))
 
 		if not login_user(user):
 			flash('Log in failed, Please try again.')
 			return render_template('user_login.html',form=form)
 
-		return redirect(request.args.get('next') or url_for('hra.renderHRA'))
+		# Should get role and direct to correct dashboard.
+		return redirect(request.args.get('next') or url_for('patient.dashboard'))
 	#else return with errors (TODO)
 	return render_template('user_login.html',form=form)
 
@@ -194,7 +195,7 @@ def emailRegistration(id):
 #callback used by Flask-Login to reload a user object from a userid in a session
 @login_manager.user_loader
 def load_user(userid): #callback used by Login Manager, passes a unicode string userid
-	user = User(tc_security.get_web_app_user(tcid=str(userid)))
+	user = User.query.filter_by(tcid=userid).first()
 	if not user:
 		return None #this callback must return None if the user does not exist
 	return user

@@ -1,0 +1,48 @@
+{% extends "layout_template.html" %}
+
+{% import 'macros.html' as macros %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block head %}
+	{{ super() }}
+{% endblock head %}
+
+{% block header %}{% endblock header %}
+{% block messages %}{{ super() }}{% endblock messages %}
+
+{% block content %}
+
+	<div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+	          <div  class="tc-brand"></div>
+            </div>
+          </div>
+
+          <div class="inner cover">
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+{% endblock content %}
+
+{% block footer %}{% endblock footer %}
+
+{% block script_section %}
+	{{ super() }}
+	{{ javascript_tag('common.js') | safe }}
+	{{ javascript_tag('patient') | safe }}
+
+{% endblock script_section %}
