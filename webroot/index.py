@@ -43,9 +43,14 @@ from User import User
 ## TWILIO API ##
 @app.route("/voice", methods=['GET', 'POST'])
 def hello_monkey():
-    """Respond to incoming requests."""
+	# Get the caller's phone number from the incoming Twilio request
+    from_number = request.values.get('From', None)
+    message = "Hello Jeremy!"
+    if from_number == "+13364093610":
+    	message = "Hello Jack!"
+    # Respond to incoming requests.
     resp = twilio.twiml.Response()
-    resp.say("Hello Monkey")
+    resp.say(message, voice="female", loop=5)
 
     return str(resp)
 
