@@ -58,14 +58,13 @@ def twilio_webhook():
 	fasting = " Fasting is required. " if fasting is not None else " Fasting is not required. "
 	
 	# Get the caller's phone number from the incoming Twilio request
-	message = ("This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + "."
-		+ fasting + "Please contact 336-541-6475 should you have questions or concerns. Thank you.")
-	
-    # Respond to incoming requests.
-    resp = twilio.twiml.Response()
-    resp.say(message, voice="female")
+	message = ("This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + "." + fasting + "Please contact 336-541-6475 should you have questions or concerns. Thank you.")
 
-    return str(resp)
+	# Respond to incoming requests.
+	resp = twilio.twiml.Response()
+	resp.say(message, voice="female")
+
+	return str(resp)
 
 
 ##Flask Routing##
