@@ -58,8 +58,7 @@ def twilio_webhook():
 	fasting = " Fasting is required. " if fasting is not None else " Fasting is not required. "
 	
 	# Get the caller's phone number from the incoming Twilio request
-	message = ("This is Triad Care reminding you of your appointment scheduled 
-		on " + date + " at " + time + " at " + location + " with " + provider + "."
+	message = ("This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + "."
 		+ fasting + "Please contact 336-541-6475 should you have questions or concerns. Thank you.")
 	
     # Respond to incoming requests.
