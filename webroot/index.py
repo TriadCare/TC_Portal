@@ -47,7 +47,7 @@ def twilio_webhook():
 	# TODO:
 	# 	Need to retrieve the variables form the request and build the script.
 	
-	data = json.loads(request.values.get('data', "{}"))
+	data = json.loads(request.values.get('data', "{}").replace("'","\""))
 	
 	patient_name 	= data.get('patient_name', "")
 	phone_number 	= data.get('phone_number', "")
