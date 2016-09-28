@@ -46,19 +46,12 @@ def twilio_webhook():
 	
 	# TODO:
 	# 	Need to retrieve the variables form the request and build the script.
+	data = request.values.get('data',"")
 	
-	data = json.loads(request.values.get('data', "{}").replace("'","\""))
+	date, time, location, provider, fasting = data.split(',')
+	fasting = "Fasting is required." if fasting == "yes" else "Fasting is not required."
 	
-	patient_name 	= data.get('patient_name', "")
-	phone_number 	= data.get('phone_number', "")
-	fasting 		= data.get('fasting', " Fasting is not required. ")
-	date 			= data.get('date', "")
-	time 			= data.get('time', "")
-	location 		= data.get('location', "")
-	provider 		= data.get('provider', "")
-		
-	# Get the caller's phone number from the incoming Twilio request
-	message = ("This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + "." + fasting + "Please contact 336-541-6475 should you have questions or concerns. Thank you.")
+	message = "This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + ". " + fasting + " Please contact 336-541-6475 should you have questions or concerns. Thank you."
 
 	# Respond to incoming requests.
 	resp = twilio.twiml.Response()
