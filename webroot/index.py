@@ -41,22 +41,20 @@ from User import User
 
 
 ## TWILIO API ##
-@app.route("/voice", methods=['GET'])
+@app.route("/voice", methods=['GET', 'POST'])
 def twilio_webhook():
 	
 	# TODO:
 	# 	Need to retrieve the variables form the request and build the script.
 	
-	patient_name = request.values.get('patient_name', None)
-	phone_number = request.values.get('phone_number', None)
-	fasting = request.values.get('fasting', None)
-	date = request.values.get('date', None)
-	time = request.values.get('time', None)
-	location = request.values.get('location', None)
-	provider = request.values.get('provider', None)
-	
-	fasting = " Fasting is required. " if fasting is not None else " Fasting is not required. "
-	
+	patient_name = request.values.get('patient_name', "")
+	phone_number = request.values.get('phone_number', "")
+	fasting = request.values.get('fasting', " Fasting is not required. ")
+	date = request.values.get('date', "")
+	time = request.values.get('time', "")
+	location = request.values.get('location', "")
+	provider = request.values.get('provider', "")
+		
 	# Get the caller's phone number from the incoming Twilio request
 	message = ("This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + "." + fasting + "Please contact 336-541-6475 should you have questions or concerns. Thank you.")
 
