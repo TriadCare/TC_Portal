@@ -222,7 +222,7 @@ def set_password_for_user_id(user_id, hash):
 
 
 
-def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
+def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False, created_by="", paper_hra=0):
 	#get the connection cursor
 	conn = getConnection()
 	cursor = conn.cursor()
@@ -230,7 +230,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
 		cursor.execute("select count(*) from survey_response where (tcid=%s and surveyID=%s) order by DATE_CREATED desc limit 1", [tcid, surveyID])
 		c = cursor.fetchall()[0][0]
 		
-		valueCount = "%s, %s, %s, %s, %s, "
+		valueCount = "%s, %s, %s, %s, %s, %s, "
 		columns = ['completed']
 		values = ['1'] if completed else ['0']
 		for answer in sorted(hra_answers, key=lambda k: k['qid']):
@@ -239,19 +239,20 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False):
 			values.append(str(answer['aid']))
 		valueCount = valueCount[:-2]
 		if c > 0 and not new_record:
-			columns[:0] = ['USER_UPDATED']
-			values[:0] = [get_user_with_tcid(tcid)['email']]
+			columns[:0] = ['USER_UPDATED', 'PaperHra']
+			values[:0] = [created_by if created_by is not "" else get_user_with_tcid(tcid)['email'], paper_hra]
 			query = "update survey_response set %s" % "=%s, ".join(columns) + "=%s where (tcid=%s and surveyID=%s) order by DATE_CREATED desc limit 1"
 			values += [tcid, surveyID]
 		else:
-			columns[:0] = ['USER_CREATED', 'DATE_CREATED', 'tcid', 'surveyID']
-			values[:0] = [get_user_with_tcid(tcid)['email'], dt.now(), tcid, surveyID]
+			columns[:0] = ['USER_CREATED', 'DATE_CREATED', 'tcid', 'surveyID', 'PaperHra']
+			values[:0] = [(created_by if created_by is not "" else get_user_with_tcid(tcid)['email']), dt.now(), tcid, surveyID, paper_hra]
 			query = "insert into survey_response (%s) values (" % ", ".join(columns)
 			query += valueCount + ")"
-		#return {"query": query, "values": values, "columnCount": len(columns), "valueCount": len(values)}
+		#print( {"query": query, "values": values, "columnCount": len(columns), "valueCount": len(values)} )
 		cursor.execute(query, values)
 	except Exception as e:
-		return e
+		print(str(e))
+		return False
 	
 	conn.commit()
 	return True

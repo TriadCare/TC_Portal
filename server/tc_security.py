@@ -134,7 +134,7 @@ def get_hra_data_for_user(tcid='', limit_one=True):
 
 
 # called to store the HRA results for a particular patient.
-def store_hra_results(tcid="", hra_results={}):
+def store_hra_results(tcid="", hra_results={}, new_record=False, created_by="", paper_hra=0):
 	#first, check if it completed
 	with open(os.path.dirname(os.path.abspath(__file__)) + "/../webroot/" + get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
@@ -165,7 +165,7 @@ def store_hra_results(tcid="", hra_results={}):
 	hra_results.append({'qid': 'Preventative Care', 'aid': score['Preventative Care']})
 	hra_results.append({'qid': 'Overall', 'aid': score['Overall']})
 	
-	return data_transfer.store_hra_answers(tcid, hra_results, get_survey_id_for_user(tcid), completed)
+	return data_transfer.store_hra_answers(tcid, hra_results, get_survey_id_for_user(tcid), completed, new_record, created_by, paper_hra)
 
 # takes hra_results and returns a score object:
 #	{
@@ -295,7 +295,7 @@ def process_hra_results(hra_results={}):
 	results = []
 	for r in hra_results:
 		try:
-			if r != 'csrf_token':
+			if r != 'csrf_token' and r != 'tcid':
 				if len(hra_results.getlist(r)) > 1:
 					results.append({"qid": str(r), "aid": str(sum(map(int, hra_results.getlist(r))))})
 				else:

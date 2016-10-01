@@ -408,6 +408,24 @@ input.grid_text[type="textarea"]
 }
 
 
+/* Admin HRA Entry Styles */
+
+#formButtonContainer{
+	width: 100%;
+	height: 50px;
+}
+#backButton {
+	float: left;
+	color: whitesmoke;
+}
+#nextButton{
+	float: right;
+	color: whitesmoke;
+}
+.finalPanelDiv{
+	padding: 15px;
+}
+
 /* Styles used to help with formatting the scorecard for printing 
 @page
 {

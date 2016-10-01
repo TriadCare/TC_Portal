@@ -349,6 +349,34 @@ def renderHRA():
 			form=form	
 		)
 
+## Admin View to enter new paper HRAs ##
+@app.route('/admin/hra_entry', methods =['GET', 'POST'])
+@login_required
+def hra_entry_view():
+	admins = ['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'lking@triadcare.com', 'aellington@triadcare.com', 'mvaughn@triadcare.com']
+	if current_user.get_email() not in admins:
+		return redirect(url_for('logoutUser'))
+	
+	form = EmptyForm()
+	if form.validate_on_submit():
+		completed_form = request.form
+		tcid = str(completed_form['tcid'])
+		
+		if tc_security.store_hra_results(tcid, tc_security.process_hra_results(completed_form), new_record=True, created_by=current_user.get_email(), paper_hra=1):
+			flash('HRA has been saved for ' + tcid)
+		else:
+			flash('Error saving HRA for ' + tcid)
+	
+	#get HRA JSON data
+	os.chdir(os.path.dirname(os.path.realpath(__file__)))
+	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
+	#parse out the meta survey groupings
+	hra_meta = hra_data['hra_meta']
+	#get the questions from the hra data
+	hra_questions = hra_data['hra_questions']
+	
+	return render_template('hra_entry.html', hra_questions=hra_questions, form=form)
+
 #Route that saves a partial HRA. Requires login.
 @app.route('/save_hra', methods=['POST'])
 @login_required
