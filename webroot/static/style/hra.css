@@ -425,6 +425,11 @@ input.grid_text[type="textarea"]
 .finalPanelDiv{
 	padding: 15px;
 }
+#message{
+	color: whitesmoke;
+	margin-top: -25px;
+	display: none;
+}
 
 /* Styles used to help with formatting the scorecard for printing 
 @page

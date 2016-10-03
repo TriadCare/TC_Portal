@@ -27,8 +27,10 @@
 				<button title='BACKSPACE' id='backButton' class='btn btn-default'>Back</button>
 				<button title='ENTER' id='nextButton' class='btn btn-default'>Next</button>
 			</div>
+			<div id='message'>Oops! You missed this one.</div>
 			<form action="/admin/hra_entry" method="post" name="hra_entry" enc-type="application/json">
 				{{ form.hidden_tag() }}
+				{% set panelIndex = 0 %}
 				{% for question in hra_questions %}
 				
 					{% if question.type == "GRID" or question.type == "CHECKBOX_GRID"%}
@@ -54,8 +56,9 @@
 						<input type="textarea" class="grid_text" name="{{ question.qid }}">
 						</div></div>
 					{% else %}
-					
-						<div class="panel panel-default">
+						
+						<div class="panel panel-default" data-panel-index='{{ panelIndex }}'>
+							{% set panelIndex = panelIndex + 1 %}
 							<div class="panel-heading question-text">{{ question.text|safe }}</div>
 							<div class="panel-body mc_answer_area">
 								

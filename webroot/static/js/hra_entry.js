@@ -44,12 +44,53 @@ $(document).ready(function() {
 		
 	});
 	
-	$(".grid_cell").click(function() {
-		$($(this).children()[0]).prop("checked", true);
+	$(".grid_cell").click(function(e) {
+		if(e.target.type == "radio" || e.target.type == "checkbox"){
+			return;
+		}
+		$($(this).children()[0]).click();
+		
 	});
 	$("#tcid_input").keydown(function(){
 		if($(this).val().length > 0)
 			$("#submitButton").prop("disabled", false);
+	});
+	
+	$("#submitButton").click(function(e){
+		var questionIndex = 1;
+		// check that each required question has an answer
+		if($(":input[name='1']").val() === ""){
+			$("#message").show();
+			showQuestion(0);  
+			e.preventDefault();
+			return false;
+		} else {
+			var completed;
+			for(questionIndex = 2; questionIndex <= 77; questionIndex++) {
+				completed = false;
+				if(questionIndex === 38){ //skip questions 38-63
+					questionIndex = 63;
+					continue;
+				}
+				if(questionIndex === 77){ // skip question 77
+					continue;
+				}
+				$(":input[name=" + questionIndex + "]").each(function(){
+					if($(this).prop("checked")){
+						completed = true;
+						return false;
+					} 
+				});
+				if(!completed){
+					$("#message").show();
+					var i = $($(":input[name=" + questionIndex + "]")[0]).closest('.panel').data("panelIndex");
+					showQuestion(i); 
+					e.preventDefault();
+					return false;
+				}
+			}
+		}
+		
 	});
 	
 	$("#nextButton").click(showNextQuestion);
@@ -58,6 +99,7 @@ $(document).ready(function() {
 
 
 var showNextQuestion = function() {
+	$("#message").hide();
 	if(panelIndex === (questionPanelList.length - 1)) 
 		return;
 	
@@ -74,12 +116,19 @@ var showNextQuestion = function() {
 }
 
 var showPreviousQuestion = function() {
+	$("#message").hide();
 	if(panelIndex === 0) 
 		return;
 	$(questionPanelList[panelIndex]).slideToggle(200);
 	panelIndex = panelIndex - 1;
 	$(questionPanelList[panelIndex]).slideToggle(200, focusOnQuestion);
 	
+}
+
+var showQuestion = function(questionIndex) {
+	$(questionPanelList[panelIndex]).slideToggle(200);
+	panelIndex = questionIndex;
+	$(questionPanelList[panelIndex]).slideToggle(200, focusOnQuestion);
 }
 
 var focusOnQuestion = function() {
