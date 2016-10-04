@@ -22,7 +22,7 @@ $(document).ready(function() {
 		  	return false;
 		}
 		if(event.keyCode == 8) {  // delete
-			if($focus.type !== "number" && $focus.type !== "text") {
+			if(event.target.type !== "number" && event.target.type !== "text") {
 				showPreviousQuestion();
 				event.preventDefault();
 				return false;
