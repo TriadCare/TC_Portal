@@ -60,6 +60,9 @@ $(document).ready(function() {
 		var questionIndex = 1;
 		// check that each required question has an answer
 		if($(":input[name='1']").val() === ""){
+			if(window.confirm("You are about to submit an incomplete questionnaire. Click 'Cancel' to be taken to the first incomplete question.")) {
+				return true;
+			}
 			$("#message").show();
 			showQuestion(0);  
 			e.preventDefault();
@@ -82,6 +85,9 @@ $(document).ready(function() {
 					} 
 				});
 				if(!completed){
+					if(window.confirm("You are about to submit an incomplete questionnaire. Click 'Cancel' to be taken to the first incomplete question.")) {
+						return true;
+					}
 					$("#message").show();
 					var i = $($(":input[name=" + questionIndex + "]")[0]).closest('.panel').data("panelIndex");
 					showQuestion(i); 
@@ -103,10 +109,12 @@ var showNextQuestion = function() {
 	if(panelIndex === (questionPanelList.length - 1)) 
 		return;
 	
+/*
 	if(optionalQuestions.indexOf(panelIndex) == -1){  //this question is NOT optional
 		if($(questionPanelList[panelIndex]).find(":checked").length === 0 && $(questionPanelList[panelIndex]).find(":input[type=number]").length === 0)
 			return;
 	}
+*/
 	
 	$(questionPanelList[panelIndex]).slideToggle(200);
 	panelIndex = panelIndex + 1;
