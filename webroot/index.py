@@ -11,7 +11,7 @@ import twilio.twiml
 
 
 #import python commons
-import sys, os, json, datetime, time
+import sys, os, json, datetime, time, re
 
 #import data class
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'server'))
@@ -49,13 +49,14 @@ def twilio_webhook():
 	data = request.values.get('data',"")
 	
 	date, time, location, provider, fasting = data.split(',')
+	provider = re.sub("([a-z])([A-Z])","\g<1> \g<2>", provider)
 	fasting = "Fasting is required." if fasting == "yes" else "Fasting is not required."
 	
 	message = "This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + ". " + fasting + " Please contact 336-541-6475 should you have questions or concerns. Thank you."
 
 	# Respond to incoming requests.
 	resp = twilio.twiml.Response()
-	resp.say(message, voice="female")
+	resp.say(message, voice="female", loop=2)
 
 	return str(resp)
 
