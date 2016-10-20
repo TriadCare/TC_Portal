@@ -43,22 +43,27 @@ from User import User
 ## TWILIO API ##
 @app.route("/voice", methods=['GET', 'POST'])
 def twilio_webhook():
+	try:
+		data = request.values.get('data',"")
+		
+		name, date, time, location, provider, fasting = data.split(',')
+		provider = re.sub("([a-z])([A-Z])","\g<1> \g<2>", provider)
+		fasting = "Fasting is required." if fasting == "yes" else "Fasting is not required."
+		
+		message = "Hello, " + name + ". This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + ". " + fasting + " Please contact 336-541-6475 should you have questions or concerns. Thank you and have a great day."
+		message = message + " This message will now repeat. " + message
 	
-	# TODO:
-	# 	Need to retrieve the variables form the request and build the script.
-	data = request.values.get('data',"")
+		# Respond to incoming requests.
+		resp = twilio.twiml.Response()
+		resp.say(message, voice="female")
 	
-	date, time, location, provider, fasting = data.split(',')
-	provider = re.sub("([a-z])([A-Z])","\g<1> \g<2>", provider)
-	fasting = "Fasting is required." if fasting == "yes" else "Fasting is not required."
-	
-	message = "This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + ". " + fasting + " Please contact 336-541-6475 should you have questions or concerns. Thank you."
-
-	# Respond to incoming requests.
-	resp = twilio.twiml.Response()
-	resp.say(message, voice="female", loop=2)
-
-	return str(resp)
+		return str(resp)
+	except Exception as e:
+		sys.stderr.write("ROBO-CALL ERROR: " + str(e))
+		# Respond to incoming requests.
+		resp = twilio.twiml.Response()
+		resp.say("This is a reminder for an upcoming appointment with Triad Care. Please call 336-541-6475 should you have questions or concerns. Thank you and have a great day.", voice="female", loop=2)
+		return str(resp)
 
 
 ##Flask Routing##
