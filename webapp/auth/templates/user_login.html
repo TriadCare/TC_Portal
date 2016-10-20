@@ -4,10 +4,10 @@
 
 {% block title %}Login{% endblock title %}
 
-{% block head %}
+{% block stylesheet_section %}
 	{{ super() }}
 	{{ stylesheet_tag('auth') | safe }}
-{% endblock head %}
+{% endblock stylesheet_section %}
 
 {% block header %}{% endblock header %}
 {% block messages %}{{ super() }}{% endblock messages %}

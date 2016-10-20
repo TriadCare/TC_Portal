@@ -1,4 +1,4 @@
-require('js/vendor')
+require('js/vendor');
 
 require('css/style');
 require('css/dashboard');

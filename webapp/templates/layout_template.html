@@ -21,7 +21,11 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-		{% block head %}
+    {% block stylesheet_section %}
+      {{ stylesheet_tag('common') | safe }}
+    {% endblock stylesheet_section %}
+
+    {% block head %}
 			<title>
 				TriadCare |
 				{% block title %}
@@ -61,7 +65,8 @@
 			{% endblock footer %}
 		</div>
 
-    {{ javascript_tag('common.js') | safe }}
-	{% block script_section %}{% endblock script_section %}
+	{% block script_section %}
+    {{ javascript_tag('common') | safe }}
+  {% endblock script_section %}
 	</body>
 </html5>

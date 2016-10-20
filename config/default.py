@@ -6,4 +6,3 @@ DEBUG = False
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 #Flask-Webpack
 WEBPACK_MANIFEST_PATH = "../bundle/webpack_manifest.json"
-WEBPACK_ASSETS_URL = "/bundle/"
