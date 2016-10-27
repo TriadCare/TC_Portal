@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% import 'macros.html' as macros %}
+
+{% block title %}Executive{% endblock title %}
+
+{% block stylesheet_section %}
+	{{ super() }}
+	{{ stylesheet_tag('executive') | safe }}
+{% endblock stylesheet_section %}
+
+{% block header %}{% endblock header %}
+{% block messages %}{{ super() }}{% endblock messages %}
+
+{% block content %}{% endblock content %}
+
+{% block footer %}{% endblock footer %}
+
+{% block script_section %}
+	{{ super() }}
+	{{ javascript_tag('executive') | safe }}
+{% endblock script_section %}

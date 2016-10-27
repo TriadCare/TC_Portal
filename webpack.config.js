@@ -7,6 +7,7 @@ const SRC_COMMON 		= path.resolve(__dirname, 'webapp/static/');
 const SRC_ADMIN 		= path.resolve(__dirname, 'webapp/admin/static/');
 const SRC_AUTH 			= path.resolve(__dirname, 'webapp/auth/static/');
 const SRC_PATIENT 	= path.resolve(__dirname, 'webapp/patient/static/');
+const SRC_EXECUTIVE 	= path.resolve(__dirname, 'webapp/executive/static/');
 const NODE_MODULES 	= path.resolve(__dirname, 'node_modules/');
 
 const ExtractTextPlugin 			= require('extract-text-webpack-plugin');
@@ -21,7 +22,8 @@ module.exports = {
   entry: {
     // admin: 'admin/static/src/admin.js',
     auth: `${rootAssetPath}/js/auth.js`,
-    patient: `${rootAssetPath}/js/patient.js`,
+    executive: `${rootAssetPath}/js/executive.js`,
+    //patient: `${rootAssetPath}/js/patient.js`,
     //provider: 'provider/static/src/provider.js'
   },
   output: {
@@ -35,7 +37,9 @@ module.exports = {
   },
   resolve: {
     // Allows requiring files without supplying the extensions
-    root: [SRC_ASSETS, SRC_COMMON, SRC_ADMIN, SRC_AUTH, SRC_PATIENT, NODE_MODULES],
+    root: [
+      SRC_ASSETS, SRC_COMMON, SRC_ADMIN, SRC_AUTH, SRC_PATIENT, SRC_EXECUTIVE, NODE_MODULES,
+    ],
     extensions: ['', '.js', '.jsx', '.json', '.css'],
   },
   devtool: 'source-map',
@@ -72,9 +76,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: process.env.NODE_ENV,
-      },
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
     }),
     new ManifestRevisionPlugin(path.join('bundle', 'webpack_manifest.json'), {
       rootAssetPath,

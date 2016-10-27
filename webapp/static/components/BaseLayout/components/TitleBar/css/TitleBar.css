@@ -1,0 +1,21 @@
+.titleBar {
+  width: 100vw;
+  height: 5vh;
+  background-color: #23a849;
+}
+
+.tcLogo {
+  width: 5vw;
+  height: 5vw;
+  background-color: #2d34e7;
+}
+
+.titleBarText {
+  font-size: 24px;
+  color: #f233cf;
+}
+
+.userStatus {
+  font-size: 28px;
+  color: #06834a;
+}

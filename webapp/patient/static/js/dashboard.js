@@ -1,3 +1,3 @@
-var HRA_Collection = require('js/hra_models')['HRA_Collection'];
+const HRACollection = require('js/hra_models').HRACollection;
 
-var hras = new HRA_Collection();
+let hras = new HRACollection();

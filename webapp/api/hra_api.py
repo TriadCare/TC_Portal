@@ -6,12 +6,15 @@ from ..models.HRA import HRA
 
 
 class HRA_API(MethodView):
-	
-	def get(self, response_id):
-		# need to check RoleID here.
-		tcid = current_user.get_id()
-		if response_id is None:
-			return jsonify([hra.to_dict() for hra in HRA.query.filter_by(tcid=tcid)])
-		else:
-			return jsonify(HRA.query.filter_by(tcid=tcid).filter_by(responseID=response_id).first_or_404().to_dict())
 
+    def get(self, response_id):
+        # need to check RoleID here.
+        tcid = current_user.get_id()
+        if response_id is None:
+            return jsonify([
+                hra.to_dict() for hra in HRA.query.filter_by(tcid=tcid)
+            ])
+        else:
+            return jsonify(HRA.query.filter_by(tcid=tcid)
+                           .filter_by(responseID=response_id)
+                           .first_or_404().to_dict())

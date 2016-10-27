@@ -1,5 +1,16 @@
 {
-  "extends": "airbnb",
-  'rules': {
-   }
+  extends: "airbnb",
+  rules: {},
+  # uses 'eslint-import-resolver-webpack':
+  settings: {
+    import/resolver: webpack
+  },
+  "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
 }

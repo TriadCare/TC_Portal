@@ -1,16 +1,14 @@
-var HRA = Backbone.Model.extend({
-  urlRoot: '/hras',
-  //initialize: function() { get new, unsaved HRA from server}
+const Backbone = require('backbone');
 
+const HRA = Backbone.Model.extend({
+  urlRoot: '/hras',
+  // initialize: function() { get new, unsaved HRA from server}
 });
 
-
-
-var HRA_Collection = Backbone.Collection.extend({
+const HRACollection = Backbone.Collection.extend({
   model: HRA,
   url: '/hras',
-  comparison: "DATE_CREATED"
+  comparison: 'DATE_CREATED',
 });
 
-
-module.exports = {HRA: HRA, HRA_Collection: HRA_Collection}
+module.exports = { HRA, HRACollection };
