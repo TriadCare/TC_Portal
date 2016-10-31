@@ -1,4 +1,5 @@
 {
+  parser: "babel-eslint",
   extends: "airbnb",
   rules: {},
   # uses 'eslint-import-resolver-webpack':
@@ -6,7 +7,7 @@
     import/resolver: webpack
   },
   "parserOptions": {
-        "ecmaVersion": 6,
+        "ecmaVersion": 7,
         "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true,

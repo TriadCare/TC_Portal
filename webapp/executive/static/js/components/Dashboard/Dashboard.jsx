@@ -3,24 +3,35 @@ import { connect } from 'react-redux';
 
 import './css/Dashboard';
 
-import DashletContainer from './components/DashletContainer';
+import AddDashletButton from './components/AddDashletButton';
+import Dashlet from './components/Dashlet';
 
-const Dashboard = (props) => (
-  <div className="spaceComponent dashboardComponent">
-    {props.dashlets.map((dashlet) => (
-      <DashletContainer
-        title={dashlet.title}
-      />
-    ))}
-  </div>
-);
+class Dashboard extends React.Component {
+  addNewDashlet = (e) => {
+    alert(e.type);
+  }
+
+  render() {
+    return (
+      <div className="spaceComponent dashboardComponent">
+        <h3>"ACME Dashboard"</h3>
+        <AddDashletButton onClick={this.addNewDashlet} />
+        {this.props.dashlets.map((dashlet) => (
+          <Dashlet
+            title={dashlet.title}
+          />
+        ))}
+      </div>
+    );
+  }
+}
 
 Dashboard.propTypes = {
-  dashlets: React.PropTypes.array,
+  dashlets: React.PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (reduxStore) => ({
-  dashlets: reduxStore.dashboardState.data,
+  dashlets: reduxStore.dashboardState.dashlets,
 });
 
 export default connect(mapStateToProps)(Dashboard);

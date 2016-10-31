@@ -1,3 +1,3 @@
-const dashboardReducer = (state = {}) => state;
+const dashboardReducer = (state = { dashlets: [] }) => state;
 
 export default dashboardReducer;
