@@ -5,9 +5,13 @@ require('./css/TitleBar');
 
 const TitleBar = (props) => (
   <div className="titleBar">
-    <span className="tcLogo"></span>
-    <span className="titleBarText">{props.titleBarText}</span>
-    <span className="userStatus">Logged In</span>
+    <div className="titleBar__logo"></div>
+    <div className="titleBar__label">
+      <span className="titleBar__text">{props.titleBarText}</span>
+    </div>
+    <div className="titleBar__log-out">
+      <span className="log-out__icon fa fa-power-off"></span>
+    </div>
   </div>
 );
 

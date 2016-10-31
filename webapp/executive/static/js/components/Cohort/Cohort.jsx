@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 require('./css/Cohort');
 
 const Cohort = () => (
-  <div className="cohortComponent"></div>
+  <div className="spaceComponent cohortComponent"></div>
 );
 
 const mapStateToProps = (store) => ({

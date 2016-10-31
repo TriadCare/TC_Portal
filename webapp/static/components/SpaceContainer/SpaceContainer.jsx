@@ -3,7 +3,7 @@ import React from 'react';
 require('./css/SpaceContainer');
 
 const SpaceContainer = (props) => (
-  <div className="SpaceContainer">
+  <div className="spaceContainer">
     {props.children}
   </div>
 );

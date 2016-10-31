@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 require('./css/Reporting');
 
 const Reporting = () => (
-  <div className="reportingComponent"></div>
+  <div className="spaceComponent reportingComponent"></div>
 );
 
 const mapStateToProps = (store) => ({

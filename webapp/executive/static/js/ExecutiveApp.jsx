@@ -1,42 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRedirect, browserHistory } from 'react-router';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+import { syncHistoryWithStore } from 'react-router-redux';
 
 import BaseLayout from 'components/BaseLayout';
 import SpaceContainer from 'components/SpaceContainer';
 
-import appReducer from './appReducer';
-import { Dashboard, dashboardReducer } from './components/Dashboard';
-import { Reporting, reportingReducer } from './components/Reporting';
-import { Cohort, cohortReducer } from './components/Cohort';
-import { Profile, profileReducer } from './components/Profile';
+import ExecutiveReduxStore from './ExecutiveReduxStore';
 
-// Use this to "rehydrate" the store or provide initial configuration
-const initialState = {};
-const store = createStore(combineReducers({
-  appState: appReducer,
-  dashboardState: dashboardReducer,
-  reportingState: reportingReducer,
-  cohortState: cohortReducer,
-  profileState: profileReducer,
-  routing: routerReducer,
-}), initialState);
+import { dashboardComponent } from './components/Dashboard';
+import { reportingComponent } from './components/Reporting';
+import { cohortComponent } from './components/Cohort';
+import { profileComponent } from './components/Profile';
 
-const history = syncHistoryWithStore(browserHistory, store);
+const history = syncHistoryWithStore(browserHistory, ExecutiveReduxStore);
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={ExecutiveReduxStore}>
     <Router history={history}>
       <Route path="/executive" component={BaseLayout}>
         <IndexRedirect to="dashboard" />
         <Route component={SpaceContainer}>
-          <Route path="dashboard" component={Dashboard} />
-          <Route path="reporting" component={Reporting} />
-          <Route path="cohort" component={Cohort} />
-          <Route path="profile" component={Profile} />
+          <Route path="dashboard" component={dashboardComponent} />
+          <Route path="reporting" component={reportingComponent} />
+          <Route path="cohort" component={cohortComponent} />
+          <Route path="profile" component={profileComponent} />
         </Route>
       </Route>
     </Router>

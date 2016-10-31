@@ -6,23 +6,37 @@ require('./css/SpaceExplorer');
 
 const SpaceExplorer = (props) => {
   let spaceLinks = [];
+  let profileLink = undefined;
+  // Compile the spaces into the space explorer
   props.spaces.forEach((space) => {
     spaceLinks.push(
-      <Link
-        to={space}
-        className="spaceLink"
-        activeClassName="spaceLinkActive"
-        key={space}
-      >
-        {space}
-      </Link>
+      <div key={space.label} className="spaceExplorer__item">
+        <span
+          className={"sr-only"}
+          id={`${space.label}-label`}
+        >{space.label}</span>
+        <Link
+          to={space.uri}
+          className={`spaceLink spaceIcon fa fa-${space.icon}`}
+          activeClassName="spaceLinkActive"
+          aria-labelledby={`${space.label}-label`}
+        />
+      </div>
     );
+    if (space.label === 'Profile') {  // Profile goes at the end
+      profileLink = spaceLinks.pop();
+    }
   });
+
   return (
-    <div className="spaceExplorer">
-      <span className="spaceExplorerExpanderButton"></span>
-      <div className="spaceList">{spaceLinks}</div>
-      <span className="spaceExplorerLogOutButton"></span>
+    <div className="spaceExplorer__container">
+      <div className="spaceExplorer">
+        <div className="spaceExplorer__item spaceExplorer__toggle">
+          <span className="spaceIcon fa fa-bars"></span>
+        </div>
+        <div className="spaceExplorer__list">{spaceLinks}</div>
+        {profileLink}
+      </div>
     </div>
   );
 };

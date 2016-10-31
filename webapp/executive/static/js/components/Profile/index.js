@@ -1,5 +1,5 @@
 import Profile from './Profile';
 import reducer from './reducer';
 
-export default Profile;
+export const profileComponent = Profile;
 export const profileReducer = reducer;

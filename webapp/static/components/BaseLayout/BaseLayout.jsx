@@ -7,7 +7,7 @@ const BaseLayout = (props) => (
   <div>
     <TitleBar />
     <SpaceExplorer />
-    <div className="mainChildrenContainer">
+    <div className="mainContainer">
       {props.children}
     </div>
   </div>
