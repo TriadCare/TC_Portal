@@ -1,12 +1,12 @@
 # Set up the Blueprint for this file/namespace
 from flask import Blueprint
 
-auth = Blueprint(
-    "auth",
+executive = Blueprint(
+    "executive",
     __name__,
-    template_folder='templates',
     static_folder='static',
-    static_url_path='/auth'
+    template_folder='templates',
+    static_url_path='/executive'
 )
 
 from . import views

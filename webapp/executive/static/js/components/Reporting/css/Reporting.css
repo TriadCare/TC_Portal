@@ -1,0 +1,46 @@
+.reportingComponent {
+  background-color: #ddd;
+}
+
+.reportContainer {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.reportTitle {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.reportTitle__label {
+  font-size: 1.5em;
+  margin: 20px;
+}
+
+.configPanel {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f7f7f7;
+  border: 2px solid #fff;
+  margin: 5px 15px;
+}
+
+.configPanel__controlset {
+  margin: 10px;
+  padding: 5px;
+}
+
+.reportChart{
+  margin: 15px;
+  background-color: #f7f7f7;
+  border: 2px solid #fff;
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+}
+
+.reactChartContainer {
+  flex: 1;
+}

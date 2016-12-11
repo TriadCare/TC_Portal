@@ -1,9 +1,5 @@
-#Set up the Blueprint for this file/namespace
-from flask import Blueprint
+from .hra_api import HRA_API
+from .user_api import User_API
 
-api = Blueprint(
-	"api", 
-	__name__
-)
-
-from . import views
+hra_view = HRA_API.as_view('hra_api')
+user_view = User_API.as_view('user_api')

@@ -1,0 +1,35 @@
+.titleBar {
+  display: flex;
+  width: 100vw;
+  justify-content: flex-start;
+  background-color: rgb(247,247,247);
+  border-bottom: 4px solid rgb(255,255,255);
+  border-bottom: 4px solid rgba(255,255,255,0.8);
+}
+
+.titleBar__logo {
+  width: 50px;
+  height: 50px;
+  margin: 10px 10px;
+  background-image: url("~!file!media/triadcare_logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.titleBar__label {
+  padding: 15px;
+}
+
+.titleBar__text {
+  font-size: 1.7em;
+}
+
+.titleBar__log-out {
+  margin-left: auto;
+  padding: 15px;
+  font-size: 1.25em;
+}
+
+.titleBar__log-out > .log-out__icon:before {
+  font-size: 1.7em;
+}

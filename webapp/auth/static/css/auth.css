@@ -1,0 +1,100 @@
+body {
+  padding-top: 50px;
+}
+
+.titleBar__logo {
+  width: 160px;
+  height: 40px;
+  background-image: url("~!file!media/TC_Web_Logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+@media (max-width: 400px) {
+  .titleBar__logo {
+    width: 100px;
+    height: 25px;
+  }
+}
+@media (max-width: 350px) {
+  .nav-divider {
+    display: none;
+  }
+}
+
+.baseContainer {
+  width: 100vw;
+  height: calc(100vh - 50px);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+.nav__item-active {
+  display: none;
+}
+
+.formTitle {
+  font-family: Raleway, serif;
+}
+.formContainer {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 500px;
+}
+
+.formContainer.formSmall {
+  min-height: 400px;
+}
+
+.formContainer.formLarge {
+  min-height: 700px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form__label {
+  display: block;
+  text-align: left;
+  font-weight: inherit;
+  margin-bottom: 20px;
+}
+
+.form__label-inline {
+  display: inline;
+  text-align: left;
+  font-weight: inherit;
+  margin-bottom: 20px;
+}
+
+.form__radio {
+  display: flex;
+  justify-content: space-around;
+  height: 1em;
+  margin-bottom: 20px;
+}
+.form__submit-button {
+  margin-top: 20px;
+  width: initial;
+  margin: auto;
+}
+
+.pt-popover-target {
+  width: 100%;
+}
+
+.form-callout {
+  text-align: left;
+}
+.form-callout.h5 {
+  font-size: 20px;
+}
+
+.fieldError {
+  color: #db3737; /*$pt-intent-danger;*/
+  float: right;
+}
