@@ -80,4 +80,8 @@ def getAuthToken(request):
                 404
             )
         return jsonify(jwt=user.authenticate(pw))
-    abort(401)
+    api_error(
+        AttributeError,
+        "Authorization Headers are missing.",
+        401
+    )
