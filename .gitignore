@@ -1,3 +1,4 @@
+*.sh
 *.pyc
 .DS_STORE
 instance/
