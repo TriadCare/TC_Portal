@@ -1,0 +1,32 @@
+{
+  "Base": {
+    "ControlSets": [
+      {
+        "id": 1,
+        "label": "Data Set",
+        "type": "select",
+        "values": ["Insurance Claims", "Biometric Data", "Health Scores"]
+      },
+      {
+        "id": 2,
+        "label": "Chart Type",
+        "type": "select",
+        "values": ["Bar", "Line", "Pie"]
+      },
+      {
+        "id": 3,
+        "label": "Date Range",
+        "type": "date"
+      },
+      {
+        "id": 4,
+        "label": "Time Period",
+        "type": "select",
+        "values": ["3 months", "6 months", "12 months"]
+      }
+    ]
+  },
+  "Bar": {},
+  "Line": {},
+  "Pie": {}
+}

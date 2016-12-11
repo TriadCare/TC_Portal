@@ -7,9 +7,7 @@ import AddDashletButton from './components/AddDashletButton';
 import Dashlet from './components/Dashlet';
 
 class Dashboard extends React.Component {
-  addNewDashlet = (e) => {
-    alert(e.type);
-  }
+  addNewDashlet = () => {}
 
   render() {
     return (

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Executive{% endblock title %}
+{% block title %}Login{% endblock title %}
 
 {% block stylesheet_section %}
 	{{ super() }}
-	{{ stylesheet_tag('executive') | safe }}
+	{{ stylesheet_tag('auth') | safe }}
 {% endblock stylesheet_section %}
 
 {% block header %}{% endblock header %}
@@ -16,5 +16,5 @@
 
 {% block script_section %}
 	{{ super() }}
-	{{ javascript_tag('executive') | safe }}
+	{{ javascript_tag('auth') | safe }}
 {% endblock script_section %}

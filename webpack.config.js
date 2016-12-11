@@ -4,10 +4,8 @@ const rootAssetPath = './assets';
 
 const SRC_ASSETS 		= path.resolve(__dirname, 'assets/');
 const SRC_COMMON 		= path.resolve(__dirname, 'webapp/static/');
-const SRC_ADMIN 		= path.resolve(__dirname, 'webapp/admin/static/');
 const SRC_AUTH 			= path.resolve(__dirname, 'webapp/auth/static/');
-const SRC_PATIENT 	= path.resolve(__dirname, 'webapp/patient/static/');
-const SRC_EXECUTIVE 	= path.resolve(__dirname, 'webapp/executive/static/');
+const SRC_EXECUTIVE = path.resolve(__dirname, 'webapp/executive/static/');
 const NODE_MODULES 	= path.resolve(__dirname, 'node_modules/');
 
 const ExtractTextPlugin 			= require('extract-text-webpack-plugin');
@@ -20,29 +18,23 @@ const PATHS = {
 
 module.exports = {
   entry: {
-    // admin: 'admin/static/src/admin.js',
     auth: `${rootAssetPath}/js/auth.js`,
     executive: `${rootAssetPath}/js/executive.js`,
-    //patient: `${rootAssetPath}/js/patient.js`,
-    //provider: 'provider/static/src/provider.js'
   },
   output: {
     path: PATHS.dist,  // Build Destination
-    publicPath: 'http://localhost:8080/bundle/',
+    publicPath: 'https:stage.triadcare.com/bundle/',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[id].[chunkhash].js',
-  },
-  eslint: {
-    emitWarning: true,
   },
   resolve: {
     // Allows requiring files without supplying the extensions
     root: [
-      SRC_ASSETS, SRC_COMMON, SRC_ADMIN, SRC_AUTH, SRC_PATIENT, SRC_EXECUTIVE, NODE_MODULES,
+      SRC_ASSETS, SRC_COMMON, SRC_AUTH,
+      SRC_EXECUTIVE, NODE_MODULES,
     ],
     extensions: ['', '.js', '.jsx', '.json', '.css'],
   },
-  devtool: 'source-map',
   module: {
     preLoaders: [
       {
@@ -55,7 +47,11 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        loaders: ['react-hot', 'babel-loader'],
+        loaders: ['babel-loader'],
+      },
+      {
+        test: /\.json$/,
+        loader: 'json',
       },
       {
         test: /\.css$/,
@@ -92,7 +88,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
     }),
     new ManifestRevisionPlugin(path.join('bundle', 'webpack_manifest.json'), {
       rootAssetPath,

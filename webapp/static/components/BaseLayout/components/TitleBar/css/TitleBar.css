@@ -30,8 +30,6 @@
   font-size: 1.25em;
 }
 
-.log-out__icon {
-  display: block;
+.titleBar__log-out > .log-out__icon:before {
   font-size: 1.7em;
-  line-height: 40px;
 }
