@@ -67,6 +67,8 @@ def load_user_from_request(request):
 
 def getAuthToken(request):
     user_creds = request.headers.get('Authorization')
+    if user_creds is None:
+        user_creds = request.headers.get('authorization')
     if user_creds:
         user_creds = base64_decode(user_creds.replace('Basic ', '', 1))
         email, pw = user_creds.split(':')
