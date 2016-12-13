@@ -45,18 +45,18 @@ from User import User
 def twilio_webhook():
 	try:
 		data = request.values.get('data',"")
-		
+
 		name, date, time, location, provider, fasting = data.split(',')
 		provider = re.sub("([a-z])([A-Z])","\g<1> \g<2>", provider)
 		fasting = "Fasting is required." if fasting == "yes" else "Fasting is not required."
-		
+
 		message = "Hello, " + name + ". This is Triad Care reminding you of your appointment scheduled on " + date + " at " + time + " at " + location + " with " + provider + ". " + fasting + " Please contact 336-541-6475 should you have questions or concerns. Thank you and have a great day."
 		message = message + " This message will now repeat. " + message
-	
+
 		# Respond to incoming requests.
 		resp = twilio.twiml.Response()
 		resp.say(message, voice="female")
-	
+
 		return str(resp)
 	except Exception as e:
 		sys.stderr.write("ROBO-CALL ERROR: " + str(e))
@@ -127,7 +127,7 @@ def loginUser():
 		if not login_user(user):
 			flash('Log in failed, Please try again.')
 			return render_template('user_login.html',form=form)
-			
+
 		return redirect(request.args.get('next') or url_for('render_dashboard'))
 		#return redirect(url_for('renderHRA')) #PLEASE REVERT TO LINE ABOVE IN PRODUCTION
 	#else return with errors (TODO)
@@ -150,10 +150,10 @@ def forgotPassword():
 		email_addr = str(form.email.data)
 		#first check if the email exists
 		if tc_security.email_exists(email_addr):
-	
+
 			password_session_id = tc_security.generateSession(user=email_addr, duration="20")
 			password_session_digest = password_uss.dumps(password_session_id)
-			
+
 			email = Message(
 				"Triad Care Portal - Reset Password",
 				recipients=[email_addr],
@@ -161,7 +161,7 @@ def forgotPassword():
 				<div><a href='https://my.triadcare.com/reset_password/" + password_session_digest + "'>Reset Password</a></div>")
 			)
 			mail.send(email)
-			
+
 			flash('An email has been sent (check your spam folder). Please follow the instructions in the email to reset your password.')
 			return redirect(url_for('loginUser'))
 		else:
@@ -182,7 +182,7 @@ def resetPassword(id):
 	user_email = tc_security.get_user_from_valid_session(session_id)
 	if not user_email is None:
 		user = User(tc_security.get_web_app_user(email=user_email))
-	
+
 		if login_user(user):
 			form = SetPasswordForm()
 			if form.validate_on_submit():
@@ -196,7 +196,7 @@ def resetPassword(id):
 					return ("", 204)
 			else:
 				return render_template('set_password.html', form=form)
-	tc_security.remove_session(session_id) 
+	tc_security.remove_session(session_id)
 	flash('Reset code has expired. Please try again.')
 	return redirect(url_for('loginUser'))
 
@@ -213,7 +213,7 @@ def emailRegistration(id):
 	user_email = tc_security.get_user_from_valid_session(session_id)
 	if not user_email is None:
 		user = User(tc_security.get_web_app_user(email=user_email))
-	
+
 		if login_user(user):
 			form = SetPasswordForm()
 			if form.validate_on_submit():
@@ -227,7 +227,7 @@ def emailRegistration(id):
 					return ("", 204)
 			else:
 				return render_template('set_password.html', form=form)
-	tc_security.remove_session(session_id) 
+	tc_security.remove_session(session_id)
 	flash('Registration Error. It seems that we don\'t have you in our records.')
 	return redirect(url_for('loginUser'))
 
@@ -244,7 +244,7 @@ def bulkRegisterUsers(account):
 				if user['email'] is not None:
 					registration_session_id = tc_security.generateSession(user=user['email'], duration="-1")
 					registration_session_digest = registration_uss.dumps(registration_session_id)
-				
+
 					email = Message(
 						"Register for Triad Care Portal and Complete Your Health Asssessment",
 						recipients=[user['email']],
@@ -273,7 +273,7 @@ def bulkRegisterUsers(account):
 		)
 		mail.send(summary)
 		return "Finished."
-		
+
 	else:
 		flash("You are not authorized to access this page.")
 		return redirect(url_for("logoutUser"))
@@ -288,7 +288,7 @@ def bulkRemindUsers(account):
 		with mail.connect() as conn:
 		    for user in users:
 				if user['email'] is not None:
-				
+
 					email = Message(
 						"Reminder to complete your Triad Care Health Assessment",
 						recipients=[user['email']],
@@ -311,7 +311,7 @@ def bulkRemindUsers(account):
 		)
 		mail.send(summary)
 		return "Finished."
-		
+
 	else:
 		flash("You are not authorized to access this page.")
 		return redirect(url_for("logoutUser"))
@@ -326,7 +326,7 @@ def renderHRA():
 			#if the the user has completed the HRA, redirect to the scorecard.
 			if tc_security.user_did_complete_new_hra(current_user.get_id()):
 				return redirect(url_for('hra_results'))
-			else: 
+			else:
 				flash("Please complete your Health Assessment to see your Scorecard.")
 				return redirect(url_for('renderHRA'))
 		else:
@@ -337,7 +337,7 @@ def renderHRA():
 		if not tc_security.should_take_new_hra(current_user.get_id()):  # this function will insert a new survey record if needed
 			if tc_security.latest_is_complete(current_user.get_id()) and tc_security.user_did_complete_new_hra(current_user.get_id()):
 				return redirect(url_for('hra_results'))
-		
+
 		#get HRA JSON data
 		os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
@@ -345,34 +345,91 @@ def renderHRA():
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
 		hra_questions = hra_data['hra_questions']
-		
+
 		#passing the empty form in here for the csrf key implementation
 		return render_template(
-			'hra.html', 
-			hra_questions=hra_questions, 
-			user_answers=tc_security.get_hra_results(current_user.get_id()), 
-			user_language=tc_security.get_hra_language(current_user.get_id()), 
-			form=form	
+			'hra.html',
+			hra_questions=hra_questions,
+			user_answers=tc_security.get_hra_results(current_user.get_id()),
+			user_language=tc_security.get_hra_language(current_user.get_id()),
+			form=form
 		)
+
+
+# Admin View to view HRA Scorecards ##
+@app.route('/admin_hra_view', methods=['GET'])
+@login_required
+def admin_hra_view():
+	if not current_user.get_email().endswith("@triadcare.com"):
+		return redirect(url_for('logoutUser'))
+	response_id = request.args.get('response_id', -1)
+	if response_id != -1:
+		hra = tc_security.get_hra_record_for_admin(response_id)
+		user = tc_security.get_web_app_user(tcid=hra['tcid'])
+		if hra is None:  # if no HRA or incomplete, abort
+			return "<h1>HRA not found with that ID</h1>"
+
+		if hra['surveyID'] < 2:
+			#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
+			os.chdir(os.path.dirname(os.path.realpath(__file__)))
+			hra_data = json.load(open("hra_files/hra.json",'r'))
+			#parse out the meta survey groupings
+			hra_meta = hra_data['hra_meta']
+			#get the questions from the hra data
+			hra_questions = hra_data['hra_questions']
+			return render_template('hra_results_old.html',
+									hra_questions=hra_questions,
+									hra_meta=hra_meta,
+									user_name=user['first_name'],
+									user_answers=hra,
+									form=EmptyForm())
+		else:
+			filename = "hra_files/"
+			if hra['surveyID'] == 4:
+				filename += "english_02.json"
+			else:
+				filename += "english_01.json"
+			os.chdir(os.path.dirname(os.path.realpath(__file__)))
+			hra_data = json.load(open(filename,'r'))
+			#parse out the meta survey groupings
+			hra_meta = hra_data['hra_meta']
+			#get the questions from the hra data
+			hra_questions = hra_data['hra_questions']
+			return render_template('hra_results.html',
+									hra_questions=hra_questions,
+									hra_meta=hra_meta,
+									results=tc_security.get_hra_scores_for_admin(response_id),
+									user_name=(user['first_name'] + " " + user['last_name']),
+									user_answers=hra,
+									form=EmptyForm())
+	tcid = request.args.get('tcid', -1)
+	if tcid != -1:
+		responses = tc_security.get_hra_responses_for_admin(tcid)
+		if responses is None:
+			return "<h1>No responses for this TCID</h1>"
+		html = "<h1>Here are the dates and links to responses for TCID " + str(tcid) + "</h1>"
+		for response in responses:
+			html += ("<h3><a href='/admin_hra_view?response_id=" + str(response['responseID']) + "'>Date Created: " + response['DATE_CREATED'].strftime("%m/%d/%Y") + "</a></h3>")
+		return html
+	return "<h1>Please provide an HRA ID, example:<h1><h3>internal.triadcare.com/admin_hra_view?response_id=3390</h3>"
 
 ## Admin View to enter new paper HRAs ##
 @app.route('/admin/hra_entry', methods =['GET', 'POST'])
 @login_required
 def hra_entry_view():
-	admins = ['jwhite@triadcare.com', 'jpatterson@triadcare.com', 'lking@triadcare.com', 'aellington@triadcare.com', 'mvaughn@triadcare.com']
-	if current_user.get_email() not in admins:
+	if not current_user.get_email().endswith("@triadcare.com"):
 		return redirect(url_for('logoutUser'))
-	
+
 	form = EmptyForm()
 	if form.validate_on_submit():
 		completed_form = request.form
 		tcid = str(completed_form['tcid'])
-		
+
 		if tc_security.store_hra_results(tcid, tc_security.process_hra_results(completed_form), new_record=True, created_by=current_user.get_email(), paper_hra=1):
 			flash('HRA has been saved for ' + tcid)
 		else:
 			flash('Error saving HRA for ' + tcid)
-	
+
 	#get HRA JSON data
 	os.chdir(os.path.dirname(os.path.realpath(__file__)))
 	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
@@ -380,7 +437,7 @@ def hra_entry_view():
 	hra_meta = hra_data['hra_meta']
 	#get the questions from the hra data
 	hra_questions = hra_data['hra_questions']
-	
+
 	return render_template('hra_entry.html', hra_questions=hra_questions, form=form)
 
 #Route that saves a partial HRA. Requires login.
@@ -400,7 +457,7 @@ def saveHRA():
 def spanishHRA():
 	tc_security.set_to_spanish(current_user.get_id())
 	return "Success"
-	
+
 #Route that sets the user's HRA to English. Requires login.
 @app.route('/english_hra', methods=['POST'])
 @login_required
@@ -418,7 +475,7 @@ def hra_results():
 		hra = tc_security.get_hra_record(current_user.get_id(), response_id)
 		if hra is None or hra['completed'] == 0:  # if no HRA or incomplete, abort
 			abort(404)
-		
+
 		if hra['surveyID'] < 2:
 			#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
 			os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -427,10 +484,10 @@ def hra_results():
 			hra_meta = hra_data['hra_meta']
 			#get the questions from the hra data
 			hra_questions = hra_data['hra_questions']
-			return render_template('hra_results_old.html', 
-									hra_questions=hra_questions, 
-									hra_meta=hra_meta, 
-									user_answers=hra, 
+			return render_template('hra_results_old.html',
+									hra_questions=hra_questions,
+									hra_meta=hra_meta,
+									user_answers=hra,
 									form=EmptyForm())
 		else:
 			filename = "hra_files/"
@@ -444,18 +501,18 @@ def hra_results():
 			hra_meta = hra_data['hra_meta']
 			#get the questions from the hra data
 			hra_questions = hra_data['hra_questions']
-			return render_template('hra_results.html', 
+			return render_template('hra_results.html',
 									hra_questions=hra_questions,
 									hra_meta=hra_meta,
 									results=tc_security.get_hra_scores_for_user(current_user.get_id(), response_id),
-									user_answers=hra, 
+									user_answers=hra,
 									form=EmptyForm())
-	
+
 	if not tc_security.latest_is_complete(current_user.get_id()):
 		return redirect(url_for('renderHRA'))
-	
+
 	if not tc_security.user_did_complete_new_hra(current_user.get_id()):
-	
+
 		if tc_security.user_did_complete_old_hra(current_user.get_id()):
 			#get HRA JSON data (duped code from renderHRA),TODO: break this out to stay DRY
 			os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -464,13 +521,13 @@ def hra_results():
 			hra_meta = hra_data['hra_meta']
 			#get the questions from the hra data
 			hra_questions = hra_data['hra_questions']
-			return render_template('hra_results_old.html', 
-									hra_questions=hra_questions, 
-									hra_meta=hra_meta, 
-									user_answers=tc_security.get_hra_results_old(current_user.get_id()), 
+			return render_template('hra_results_old.html',
+									hra_questions=hra_questions,
+									hra_meta=hra_meta,
+									user_answers=tc_security.get_hra_results_old(current_user.get_id()),
 									form=EmptyForm())
 		return redirect(url_for('renderHRA'))
-	
+
 	else: # user completed the new HRA.
 		os.chdir(os.path.dirname(os.path.realpath(__file__)))
 		hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
@@ -478,11 +535,11 @@ def hra_results():
 		hra_meta = hra_data['hra_meta']
 		#get the questions from the hra data
 		hra_questions = hra_data['hra_questions']
-		return render_template('hra_results.html', 
+		return render_template('hra_results.html',
 								hra_questions=hra_questions,
 								hra_meta=hra_meta,
 								results=tc_security.get_hra_scores_for_user(current_user.get_id()),
-								user_answers=tc_security.get_hra_results(current_user.get_id()), 
+								user_answers=tc_security.get_hra_results(current_user.get_id()),
 								form=EmptyForm())
 
 #Route that returns hra data for the current user. Requires login.
@@ -490,22 +547,22 @@ def hra_results():
 @login_required
 def hra_user_data():
 	return jsonify(**tc_security.get_hra_score(current_user.get_id()))
-	
-	
+
+
 #Route that returns Triad Care hra data. Requires login.
 @app.route('/hra_tc_data', methods=['GET','POST'])
 @login_required
 def hra_tc_data():
 	return jsonify(**tc_security.get_tc_hra_score())
-	
-	
+
+
 #Route that returns hra data for the current user AND Triad Care. Requires login.
 @app.route('/hra_data', methods=['GET','POST'])
 @login_required
 def hra_data():
 	response_id = request.args.get('response_id', -1)
-	return jsonify(**{"userData": tc_security.get_hra_scores_for_user(current_user.get_id(), response_id), "tcData": tc_security.get_tc_hra_score()})
-	
+	return jsonify(**{"userData": tc_security.get_hra_scores_for_admin(response_id), "tcData": tc_security.get_tc_hra_score()})
+
 # 	#Route that returns hra data for the current user AND Triad Care. Requires login.
 # @app.route('/hra_data_unprotected', methods=['POST'])
 # @csrf.exempt
@@ -521,23 +578,23 @@ def aggregate_scorecard(account, year):
 	account = str(account)
 	if account is None:
 		return redirect(url_for("loginUser"))
-	
+
 	# get the aggregate results for the given account
 	results = tc_security.get_hra_data_for_account(account, current_user.get_id(), year)
-	
+
 	os.chdir(os.path.dirname(os.path.realpath(__file__)))
 	hra_data = json.load(open(tc_security.get_hra_filename(current_user.get_id()),'r'))
 	#parse out the meta survey groupings
 	hra_meta = hra_data['hra_meta']
 	#get the questions from the hra data
 	hra_questions = hra_data['hra_questions']
-	
-	return render_template('aggregate_scorecard.html', 
+
+	return render_template('aggregate_scorecard.html',
 							account=account,
 							year=year,
-							hra_questions=hra_questions, 
-							hra_meta=hra_meta, 
-							results=results, 
+							hra_questions=hra_questions,
+							hra_meta=hra_meta,
+							results=results,
 							form=EmptyForm())
 
 
@@ -550,7 +607,7 @@ def export_to_pdf():
 		pdf_data = json.loads(request.data)
 		pdf_html = pdf_data['html']
 		pdf = HTML(string=pdf_html).write_pdf()
-	
+
 		return Response(pdf, mimetype='arraybuffer', content_type='arraybuffer')
 	except Exception as e:
 		if app.debug == True:
@@ -573,7 +630,7 @@ def get_questionnaire():
 	hra_meta = hra_data['hra_meta']
 	#get the questions from the hra data
 	hra_questions = hra_data['hra_questions']
-	
+
 	last_id = request.form['id']
 	this_id = tc_security.get_next_id(last_id)
 	user = data_transfer.get_user_with_tcid(this_id)
@@ -581,11 +638,11 @@ def get_questionnaire():
 		this_name = this_id
 	else:
 		this_name = user['first_name'] + " " + user['last_name']
-	
+
 	return render_template('questionnaire_results.html',
-							hra_questions=hra_questions, 
+							hra_questions=hra_questions,
 							hra_meta=hra_meta,
-							results=tc_security.get_hra_scores_for_user(this_id), 
+							results=tc_security.get_hra_scores_for_user(this_id),
 							user_answers=tc_security.get_hra_results(this_id),
 							this_id=this_id,
 							this_name=this_name,
@@ -599,7 +656,7 @@ def get_help_form():
 	if request.method == 'GET':
 		form.dob['errors'] = []
 		return render_template('help_form.html', form=form)
-		
+
 	if form.validate_on_submit():
 		try:
 			user_dob = datetime.datetime.strptime(str(form.dob_month.data) + "/" + str(form.dob_day.data) + "/" + str(form.dob_year.data), "%m/%d/%Y").date()
@@ -608,7 +665,7 @@ def get_help_form():
 				recipients=[request.form['email']],
 				cc= ['customercare@triadcare.com'],
 				bcc=['jwhite@triadcare.com'],
-				html = ("<div><h3>Help Request Details:</h3></div>" + 
+				html = ("<div><h3>Help Request Details:</h3></div>" +
 						"<table>" +
 							"<tr><td>Name</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['name'] + "</td></tr>" +
 							"<tr><td>Email</td><td>&nbsp;&nbsp;&nbsp;</td><td>" + request.form['email'] + "</td></tr>" +
@@ -619,14 +676,14 @@ def get_help_form():
 						"</table>")
 			)
 			mail.send(email)
-			
+
 			flash("Your help request has been received. We'll contact you with a solution as soon as we can.")
 			return json.dumps({"error": False})
-			
+
 		except Exception as e:
 			flash("There was an error when submitting your request. Please try again.")
 			return json.dumps({"error": True})
-	
+
 	return render_template('help_form.html', form=form)
 
 #Dashboard View
@@ -655,7 +712,7 @@ def render_aggregate_dashboard(account):
 @login_required
 def get_hras_for_account(account):
 	return jsonify(data=tc_security.get_hra_data_for_account(str(account), current_user.get_id()))
-	
+
 @app.route('/get_hra_participation_data/<account>', methods=['POST'])
 @login_required
 def get_hra_participation_for_account(account):

@@ -13,11 +13,8 @@
 {% block header %}
 	<div id="scorecard_navbar" class="container-fluid navbar-fixed-top hra_results_navbar">
 		{{ super() }}
-		<span id="hra_results_title" data-rid='{{ user_answers.responseID }}' >{{ current_user.first_name }} {{ current_user.last_name }}'s HRA Results</span>
+		<span id="hra_results_title" data-rid='{{ user_answers.responseID }}' >{{ user_name }}'s HRA Results</span>
 		<div class="tc-heading">
-			<span class="signup-btn btn btn-sm btn-default" id="back-to-dashboard">
-				<a href="/dashboard">Dashboard</a>
-			</span>
 			<span class="signup-btn btn btn-sm btn-default" id="export_pdf">
 				<a href="#" onclick="export_to_pdf()">Export PDF</a>
 			</span>
@@ -49,15 +46,15 @@
 		</div>
 		<div id="barDiv" class="centered chart_container">
 			<canvas id="scoreBarChart" width="100%" height="100%"></canvas>
-		</div>	
+		</div>
     </div>
-    
+
     {% include 'questionnaire_results.html' %}
-    
+
     <span id="top-link-block" class="hidden well well-sm">
 	    <i class="glyphicon glyphicon-chevron-up"></i> Back to Top
 	</span><!-- /top-link-block -->
-	
+
 {% endblock content %}
 
 {% block footer %}{% endblock footer %}

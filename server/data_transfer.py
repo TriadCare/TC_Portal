@@ -26,16 +26,16 @@ def add_user(userDict):
 		# first check if the tcid already exists in the TCDB
 		if userDict['id_type'] == "1":  # Need to look up by EmployeeID
 			cursor.execute("select tcid, email, dob, hash from webappusers where employeeID=%s", [userDict['tcid']])
-		else: 
+		else:
 			cursor.execute("select tcid, email, dob, hash from webappusers where tcid=%s", [userDict['tcid']])
 
  		result = cursor.fetchall()
- 		
+
  		if len(result): # already have a record, need to confirm they have their DOB right and don't already have a password
 	 		desc = []
 	 		for d in cursor.description: #get a list of the column names
 				desc.append(d[0])
-				
+
 			result = dict(zip(desc, result[0]))
 			if result['hash'] is not None:
 				return None  # User already has a password, already registered.
@@ -56,9 +56,9 @@ def add_user(userDict):
 	result['first_name'] = userDict['first_name']
 	result['last_name'] = userDict['last_name']
 	del result['hash']
-	
+
 	return result
-	
+
 def get_user_hash(email):
 	#get the connection cursor
 	cursor = getConnection().cursor()
@@ -80,11 +80,11 @@ def get_user_with_email(email):
 		result = cursor.fetchall()
 		if len(result) > 1:
 			return None
-			
+
 		return dict(zip(desc, result[0]))
 	except:
 		return None
-	
+
 	return None
 
 def get_user_with_tcid(tcid):
@@ -98,12 +98,12 @@ def get_user_with_tcid(tcid):
 		result = cursor.fetchall()
 		if len(result) > 1:
 			return None
-		
+
 		return dict(zip(desc, result[0]))
 
 	except Exception as e:
 		return None
-	
+
 	return None
 
 def get_users_with_account(account):
@@ -121,7 +121,7 @@ def get_users_with_account(account):
 
 	except Exception as e:
 		return None
-	
+
 	return None
 
 def get_incompletes_with_account(account):
@@ -139,7 +139,7 @@ def get_incompletes_with_account(account):
 
 	except Exception as e:
 		return e
-	
+
 	return None
 
 
@@ -150,7 +150,7 @@ def store_session(session_id="", user_id="", timeout=""):
 		cursor.execute("insert into session (sid, user, time_created, timeout) values (%s, %s, %s, %s)", [session_id, user_id, dt.now(), timeout])
 	except Exception as e:
 		return None
-	
+
 	conn.commit()
 	return True
 
@@ -165,11 +165,11 @@ def retrieve_session(session_id=""):
 		result = cursor.fetchall()
 		if len(result) != 1:
 			return None
-			
+
 		return dict(zip(desc, result[0]))
 	except Exception as e:
 		return None
-	
+
 	return None
 
 def retrieve_user_session(email=""):
@@ -182,11 +182,11 @@ def retrieve_user_session(email=""):
 		result = cursor.fetchall()
 		if len(result) != 1:
 			return None
-			
+
 		return dict(zip(desc, result[0]))
 	except Exception as e:
 		return None
-	
+
 	return None
 
 def remove_session(session_id):
@@ -229,7 +229,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False, 
 	try:
 		cursor.execute("select count(*) from survey_response where (tcid=%s and surveyID=%s) order by DATE_CREATED desc limit 1", [tcid, surveyID])
 		c = cursor.fetchall()[0][0]
-		
+
 		valueCount = "%s, %s, %s, %s, %s, %s, "
 		columns = ['completed']
 		values = ['1'] if completed else ['0']
@@ -253,7 +253,7 @@ def store_hra_answers(tcid, hra_answers, surveyID, completed, new_record=False, 
 	except Exception as e:
 		print(str(e))
 		return False
-	
+
 	conn.commit()
 	return True
 
@@ -268,23 +268,61 @@ def get_hra_record(response_id):
 			desc.append(d[0])
 		results = cursor.fetchall()
 		return dict(zip(desc, results[0]))
-		
+
 	except Exception as e:
 		return None
 	return None
 
+def get_hra_responses_for_admin(tcid):
+	cursor = getConnection().cursor()
+	try:
+		cursor.execute("select DATE_CREATED, responseID from survey_response where tcid = %s", [tcid])
+		#build the return dict
+		return_list = []
+		desc = []
+		for d in cursor.description:  # get a list of the column names
+			desc.append(d[0])
+		results = cursor.fetchall()
+		result_count = 0
+		for result in results:
+			return_list.append(dict(zip(desc, results[result_count])))
+			result_count = result_count + 1
+		return return_list
+	except Exception as e:
+		return None
+	return None
 
 def get_hra_score(tcid, response_id=-1):
 	cursor = getConnection().cursor()
 	query = "select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where tcid = %s"
 	args = [tcid]
 	if response_id != -1:
-		query += " and responseID = %s" 
+		query += " and responseID = %s"
 		args.append(response_id)
 	query += " order by DATE_CREATED desc limit 1"
-		
+
 	try:
 		cursor.execute(query, args)
+		desc = []
+		for d in cursor.description: #get a list of the column names
+			desc.append(d[0])
+		result = cursor.fetchall()
+		return dict(zip(desc, result[0]))
+	except Exception as e:
+		return None
+	return None
+
+def get_hra_score_for_admin(response_id=-1):
+	if response_id is None or response_id == -1:
+		return None
+
+	cursor = getConnection().cursor()
+	query = "select `Diet & Nutrition`, `Tobacco`, `Physical Activity`, `Stress`, `Preventative Care`, `Overall` from survey_response where responseID = %s"
+
+	query += " order by DATE_CREATED desc limit 1"
+
+	try:
+		cursor.execute(query, [response_id])
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
@@ -336,7 +374,7 @@ def get_user_account_name(tcid):
 		return cursor.fetchall()[0][0]
 	except Exception as e:
 		return None
-	return None 
+	return None
 
 def get_latest_hra_date(tcid):
 	conn = getConnection()
@@ -346,7 +384,7 @@ def get_latest_hra_date(tcid):
 		return cursor.fetchall()[0][0]
 	except Exception as e:
 		return None
-	return None 
+	return None
 
 def get_hra_participation_data_for_account(account, user_id, int_year):
 	cursor = getConnection().cursor()
@@ -424,7 +462,7 @@ def set_to_spanish(tcid):
 			cursor.execute("insert into survey_response (USER_CREATED, DATE_CREATED, tcid, surveyID) values (%s, %s, %s, '3')", [get_user_with_tcid(tcid)['email'], dt.now(), tcid])
 	except Exception as e:
 		return e
-	
+
 	conn.commit()
 	return True
 
@@ -441,7 +479,7 @@ def set_to_english(tcid):
 			cursor.execute("insert into survey_response (USER_CREATED, DATE_CREATED, tcid, surveyID) values (%s, %s, %s, '4')", [get_user_with_tcid(tcid)['email'], dt.now(), tcid])
 	except Exception as e:
 		return e
-	
+
 	conn.commit()
 	return True
 
@@ -488,12 +526,12 @@ def get_hra_results_old(tcid):
 		return dict(zip(desc, result[0]))
 	except Exception as e:
 		return None
-	return None	
+	return None
 
 def get_hra_results(tcid, limit_one=True):
 	conn = getConnection()
 	cursor = conn.cursor()
-	
+
 	query = "select * from survey_response where tcid = %s order by DATE_CREATED desc"
 	if limit_one:
 		query += " limit 1"
@@ -512,14 +550,14 @@ def get_hra_results(tcid, limit_one=True):
 		return return_dict
 	except Exception as e:
 		return None
-	return None	
+	return None
 
 
 
 def get_hra_data(tcid="", columns=[], limit_one=True):
 	conn = getConnection()
 	cursor = conn.cursor()
-	
+
 	query = "select %s from survey_response" % ", ".join(columns)
 	query += " where tcid='%s'" % tcid
 	if limit_one:
@@ -550,7 +588,7 @@ def get_all_hra_results():
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
 		results = [desc, list(cursor.fetchall())]
-		
+
 		return results
 	except Exception as e:
 		return None
@@ -573,7 +611,7 @@ def get_all_hra_results():
 #			return False
 #	except Exception as e:
 #		return e
-#	
+#
 #	conn.commit()
 #	return True
 
@@ -614,8 +652,7 @@ def get_user_address(tcid):
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
-		
+
 		return dict(zip(desc, cursor.fetchall()[0]))
 	except Exception as e:
 		return e
-

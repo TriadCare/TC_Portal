@@ -5,7 +5,7 @@ from binascii import hexlify
 from passlib.hash import bcrypt
 import os
 import json
-import re 
+import re
 MIN_PASSWORD_LENGTH = "8"
 MAX_PASSWORD_LENGTH = "128"
 
@@ -34,17 +34,17 @@ def get_web_app_user(email="", tcid=""):
 def email_exists(email=""):
 	if email == "" or email is None:
 		return False
-	
+
 	if data_transfer.get_user_with_email(email) is None:
 		return False
-	
+
 	return True
 
 def user_is_registered(email):
 	if data_transfer.get_user_hash(email) is None:
 		return False
 	return True
-		
+
 
 
 # function to call to verify the user's creds. Provides sanitization via other functions in this file.
@@ -106,8 +106,19 @@ def get_hra_record(tcid, response_id):
 	hra = data_transfer.get_hra_record(response_id)
 	if hra is None or tcid != hra['tcid']:
 		return None
-	
+
 	return hra
+
+def get_hra_record_for_admin(response_id):
+	hra = data_transfer.get_hra_record(response_id)
+	return hra
+
+def get_hra_responses_for_admin(tcid):
+	hras = data_transfer.get_hra_responses_for_admin(tcid)
+	if hras is None:
+		print("hras is None")
+		return []
+	return hras
 
 def latest_is_complete(tcid):
 	return data_transfer.latest_is_complete(tcid)
@@ -125,7 +136,7 @@ def get_hra_results(tcid="", limit_one=True):
 	return results
 
 def get_hra_data_for_user(tcid='', limit_one=True):
-	data_columns = ["responseID", "surveyID", "completed", "DATE_CREATED", "DATE_UPDATED", 
+	data_columns = ["responseID", "surveyID", "completed", "DATE_CREATED", "DATE_UPDATED",
 					"Overall", "`Diet & Nutrition`", "`Physical Activity`", "`Preventative Care`", "Stress", "Tobacco"]
 	results = data_transfer.get_hra_data(tcid, data_columns, limit_one)
 	if results is None:
@@ -139,7 +150,7 @@ def store_hra_results(tcid="", hra_results={}, new_record=False, created_by="", 
 	with open(os.path.dirname(os.path.abspath(__file__)) + "/../webroot/" + get_hra_filename(tcid)) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
 	questions = hra_data['hra_questions']
-	
+
 	question_count = 0
 	dont_count = []
 	for question in questions:
@@ -148,53 +159,53 @@ def store_hra_results(tcid="", hra_results={}, new_record=False, created_by="", 
 				dont_count.append(question['qid'])
 			else:
 				question_count += 1
-		
+
 	result_count = 0
 	for r in hra_results:
 		if r['qid'] not in dont_count:
 			result_count += 1
-			
+
 	completed = result_count == question_count
-	
+
 	score = score_hra_results(tcid, hra_results)
-	
+
 	hra_results.append({'qid': 'Diet & Nutrition', 'aid': score['Diet & Nutrition']})
 	hra_results.append({'qid': 'Tobacco', 'aid': score['Tobacco']})
 	hra_results.append({'qid': 'Physical Activity', 'aid': score['Physical Activity']})
 	hra_results.append({'qid': 'Stress', 'aid': score['Stress']})
 	hra_results.append({'qid': 'Preventative Care', 'aid': score['Preventative Care']})
 	hra_results.append({'qid': 'Overall', 'aid': score['Overall']})
-	
+
 	return data_transfer.store_hra_answers(tcid, hra_results, get_survey_id_for_user(tcid), completed, new_record, created_by, paper_hra)
 
 # takes hra_results and returns a score object:
 #	{
-#		"Overall": #, 
-#		"Diet & Nutrition": #, 
-#		"Physical Activity": #, 
-#		"Stress": #, 
-#		"Tobacco": #, 
+#		"Overall": #,
+#		"Diet & Nutrition": #,
+#		"Physical Activity": #,
+#		"Stress": #,
+#		"Tobacco": #,
 #		"Screening and Preventative Care": #
 #	}
 def score_hra_results(tcid="",hra_results={}):
 	if hra_results is None or hra_results == {}:
 		return None
-	
+
 	answer_dict = dict((x['qid'], x['aid']) for x in hra_results)
-	
+
 	score = {}
-	
+
 	filename = get_hra_filename(tcid)
 	with open(os.path.dirname(os.path.abspath(__file__)) + "/../webroot/" + filename) as hra_file:  # Need the meta data from this file.
 		hra_data = json.load(hra_file)
-	
+
 	groupings = hra_data['hra_meta']['groupings']
 	questions = hra_data['hra_questions']
 
 	answers = {}
 	for question in questions:
 		r = {}
-		try:					
+		try:
 			for a in question['answers']:
 				if a['value'] is None and 'conditionalValue' in a:
 					r[a['aid']] = a['conditionalValue']
@@ -203,7 +214,7 @@ def score_hra_results(tcid="",hra_results={}):
 			answers[question['qid']] = r
 		except:
 			continue
-	
+
 	for group in groupings:
 		if group['graded']:
 			data = 0
@@ -244,7 +255,7 @@ def score_hra_results(tcid="",hra_results={}):
 								# value is None, don't count and continue
 								value = None
 								continue
-						
+
 						if value not in grade_scores:  # don't count if the grade is not in the grade_scores array
 							dont_score += 1
 						else:
@@ -252,7 +263,7 @@ def score_hra_results(tcid="",hra_results={}):
 			else:
 				# I need to get a score for each graded section.
 				for q in group['questions']:
-					
+
 					if q not in answer_dict.keys() or answer_dict[q] is None or answer_dict[q] == '': # If there is no answer, increment dont_count and break
 						dont_score += 1
 					else:
@@ -261,33 +272,33 @@ def score_hra_results(tcid="",hra_results={}):
 							dont_score += 1
 						else:
 							data += grade_scores[g]  # Add the grade points together
-						
+
 			questions_to_score = (len(group['questions'])-dont_score)
 			if data > 0 and questions_to_score > 0:
 				data /= questions_to_score  # Divide to get the average for this section
 			score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
-	
+
 	# Lastly, calculate the Overall Score
 	overall_total = 0
 	for s in score.values():
 		overall_total += s
 	score["Overall"] = round(overall_total/len(score.values()),1)
-	
+
 	return score
 
 # Checks to make sure the user does not need to take a new HRA (returns False if no need)
 # If the user does need to take a new HRA, this function inserts a new, blank HRA record and returns True
 def should_take_new_hra(tcid):
 	new_hra_employers = ["Best Logistics Group", "Box Board Products", "Plum Point Energy Station", "Triad Care, Inc."]
-	
+
 	employer = data_transfer.get_user_account_name(tcid)
-	
+
 	if employer in new_hra_employers:
 		date_created = data_transfer.get_latest_hra_date(tcid)
 		if date_created is None or date_created < (dt.today() - td(9*30)):  # if before 9 months ago
 			data_transfer.store_hra_answers(tcid, {}, 4, False, True)  # set a new HRA record
 			return True
-	
+
 	return False
 
 def process_hra_results(hra_results={}):
@@ -300,10 +311,10 @@ def process_hra_results(hra_results={}):
 					results.append({"qid": str(r), "aid": str(sum(map(int, hra_results.getlist(r))))})
 				else:
 					results.append({"qid": str(r), "aid": str(hra_results[r])})
-				
+
 		except ValueError as e:
 			continue
-	
+
 	return results
 
 def get_hra_scores_for_user(tcid="", response_id=-1):
@@ -311,17 +322,23 @@ def get_hra_scores_for_user(tcid="", response_id=-1):
 	if results is None:
 		return {}
 	return results
-	
+
+def get_hra_scores_for_admin(response_id=-1):
+	results = data_transfer.get_hra_score_for_admin(response_id)
+	if results is None:
+		return {}
+	return results
+
 def get_hra_participation_data_for_account(account, user_id, int_year=-1):
 	# Need to check here if the user has access to the account data
 	#if user_id != "0000000001":
 	#	return {}
 	if account == "" or account is None or type(account) is not str:
 		return {}
-		
+
 	if int_year == -1:
 		int_year = dt.now().year
-		
+
 	return {"user_count": data_transfer.get_account_count(account),
 			"data": data_transfer.get_hra_participation_data_for_account(account, user_id, int_year)}
 
@@ -333,7 +350,7 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 		return {}
 	hra_data = data_transfer.get_hra_data_for_account(account)
 	sorted_data = {}
-	# need to process these by year...	
+	# need to process these by year...
 	for record in hra_data:
 		if record['DATE_CREATED'] is not None:
 			year = record['DATE_CREATED'].year
@@ -343,7 +360,7 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 			sorted_data[year] = [record]
 	result_data = {}
 	for year_data in sorted_data.keys():
-	
+
 		answer_counts = {'1': 0}
 		section_scores = {
 			"Overall": 0,
@@ -355,11 +372,11 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 		}
 		total_completed = 0
 		no_age = 0
-		
-			
+
+
 		for datum in sorted_data[year_data]:
 			total_completed += datum['completed']  # completed is a 0 if not completed, a 1 if it is.
-			
+
 			for key in datum.keys():
 				if key.isdigit():	# only count the questions
 					if key == '1':  # if this is the age question, just add them up
@@ -378,7 +395,7 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 									answer_counts[key]['2'] += 1
 								else:
 									answer_counts[key]['2'] = 1
-							else: 
+							else:
 								if datum[key] in answer_counts[key].keys():
 									answer_counts[key][datum[key]] += 1
 								else:
@@ -387,9 +404,9 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 							if datum[key] == '3':	# for chronic condition section, the answer is a checkbox grid that can have 3 different options. Option 3 is both 1 and 2 are checked...
 								answer_counts[key] = {'1': 1}
 								answer_counts[key] = {'2': 1}
-							else: 
+							else:
 								answer_counts[key] = {datum[key]: 1}
-							
+
 					elif key in answer_counts.keys():
 						if datum[key] in answer_counts[key].keys():
 							answer_counts[key][datum[key]] += 1
@@ -411,7 +428,7 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 							section_scores['Stress'] += datum[key]
 						elif key == "Preventative Care":
 							section_scores['Preventative Care'] += datum[key]
-		
+
 		for key in answer_counts.keys():
 			if key == '1' and (len(sorted_data[year_data])-no_age) != 0:
 				answer_counts['1'] = round(answer_counts['1']/(len(sorted_data[year_data])-no_age), 0)
@@ -419,103 +436,103 @@ def get_hra_data_for_account(account, user_id, int_year=-1):
 				total = sum(answer_counts[key].values())  # get total answers for this question
 				if total > 0:
 					answer_counts[key].update([(x, "{0:.0f}%".format((float(y)/total)*100)) for x, y in answer_counts[key].items()])
-			
-		
+
+
 		for key in section_scores.keys():
 			if total_completed != 0:
 				section_scores[key] = round(section_scores[key] / total_completed, 1)
 			else:
 				{}
-		
+
 		result_data[year_data] = {"total_completed": total_completed, "answer_counts": answer_counts, "section_scores": section_scores}
-	
+
 	if int_year == -1:
 		return result_data
-		
-	return result_data[int_year]		
+
+	return result_data[int_year]
 
 
 # Given the tcid of the user, returns the scores as follows:
 #	{
-#		"Overall": #, 
-#		"Diet & Nutrition": #, 
-#		"Physical Activity": #, 
-#		"Stress": #, 
-#		"Tobacco": #, 
+#		"Overall": #,
+#		"Diet & Nutrition": #,
+#		"Physical Activity": #,
+#		"Stress": #,
+#		"Tobacco": #,
 #		"Screening and Preventative Care": #
 #	}
 def get_hra_score(tcid=""):
 	if not user_did_complete_new_hra(tcid):
-		
+
 		try:
 			hra_results = get_hra_results_old(tcid)
-			
+
 			score = {}
-			
+
 			dont_score = 0  # Count the number of answers that shouldn't scored
-			
+
 			with open(os.path.dirname(os.path.abspath(__file__)) + '/../webroot/hra_files/hra.json') as hra_file:  # Need the meta data from this file. Should probably come from TCDB in the future.
 				hra_data = json.load(hra_file)
-			
+
 			groupings = hra_data['hra_meta']['groupings']
-			
+
 			for group in groupings:
 				if group['graded']:
 					data = 0
 					# I need to get a score for each graded section.
-					
+
 					for q in group['questions']:
 						q_name = "question_" + str(q)  # Build the question names from the meta
-						
+
 						if hra_results[q_name] is None: # If there is no answer, increment dont_count and break
 							dont_score += 1
 							break
-						
+
 						g = hra_results[q_name][:1]	# Get the letter grade from the hra_results for each answer ([:1] gets the first character of the grade string.)
 						if g not in grade_scores:  # don't count if the grade is not in the grade_scores array
 							dont_score += 1
 							break
-						
+
 						data += grade_scores[g]  # Add the grade points together
 					questions_to_score = (len(group['questions'])-dont_score)
 					if data > 0 and questions_to_score > 0:
 						data /= questions_to_score  # Divide to get the average for this section
 					score[group['group']] = round(data,1)	# Add the average to the score dict with the title of the section as the key
-			
+
 			# Lastly, calculate the Overall Score
 			overall_total = 0
 			for s in score.values():
 				overall_total += s
 			score["Overall"] = round(overall_total/len(score.values()),1)
-			
+
 			return score
 		except Exception as e:
 			return {}
-	
+
 	else:
-	
+
 		try:
 			return data_transfer.get_hra_score(tcid)
 		except Exception as e:
 			return None
-	
+
 	return {'Nope'}
 
 
 # This function returns the average HRA scores for everyone who has completed the HRA
 def get_tc_hra_score():
 	scores = data_transfer.get_all_completed_hra_scores()
-	
+
 	if len(scores) == 0:
 		return {}
-	
+
 	overall_score = 0
 	dn_score = 0
 	tobacco_score = 0
 	stress_score = 0
 	screening_score = 0
 	physical_score = 0
-	
+
 	for score in scores:
 		overall_score += score['Overall']
 		dn_score += score['Diet & Nutrition']
@@ -523,13 +540,13 @@ def get_tc_hra_score():
 		stress_score += score['Stress']
 		screening_score += score['Preventative Care']
 		physical_score += score['Physical Activity']
-		
+
 	return {
-		'Overall': round(overall_score/len(scores),1), 
-		'Diet & Nutrition': round(dn_score/len(scores),1), 
-		'Tobacco': round(tobacco_score/len(scores),1), 
-		'Stress': round(stress_score/len(scores),1), 
-		'Preventative Care': round(screening_score/len(scores),1), 
+		'Overall': round(overall_score/len(scores),1),
+		'Diet & Nutrition': round(dn_score/len(scores),1),
+		'Tobacco': round(tobacco_score/len(scores),1),
+		'Stress': round(stress_score/len(scores),1),
+		'Preventative Care': round(screening_score/len(scores),1),
 		'Physical Activity': round(physical_score/len(scores),1)
 	}
 
@@ -564,7 +581,7 @@ def set_password(user_id, password):
 #this function should be called for ANY user input that should abide by the following rules:
 #  1. Only contains alphanumerics and @ and .
 # Please add more rules to this list as you see fit. May need to add options list to turn on/off tests
-def is_sanitary(input): 
+def is_sanitary(input):
 	if re.match("^[A-Za-z0-9@\.]*$", input):
 		return True
 	return False
@@ -573,7 +590,7 @@ def is_sanitary(input):
 def get_users_with_account(account=""):
 	if account == "" or account is None:
 		return None
-	
+
 	return data_transfer.get_users_with_account(account)
 
 
@@ -591,7 +608,7 @@ def get_next_fifty_users_for(account):
 					if count == 50:
 						break
 	return next_fifty
-	
+
 def get_reminder_email_addresses(account):
 	next_fifty = []
 	# get all employees ordered by date created (newest first)
@@ -614,21 +631,21 @@ def user_has_session(email):
 def get_user_from_valid_session(session_id=""):
 	if session_id == "" or session_id is None:
 		return None
-		
+
 	session_object = data_transfer.retrieve_session(session_id)
 	if session_object is None:
 		return None
-	
+
 	# if the session has timed out, return None (if it is -1, this session does not expire.)
 	if session_object['timeout'] != "-1" and (dt.now() - session_object['time_created']).seconds > (int(session_object['timeout']) * 60):
 		return None
-	
+
 	return session_object['user']
 
 #This function removes all session records with the provided user email.
 def remove_user_session(user_email):
 	return data_transfer.remove_user_session(user_email)
-	
+
 #This function removes the session with the provided session_id.
 def remove_session(session_id):
 	return data_transfer.remove_session(session_id)
@@ -666,4 +683,3 @@ def score_hras():
 # 	except Exception as e:
 # 		return e
 # 	return True
-
