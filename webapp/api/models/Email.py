@@ -73,13 +73,13 @@ class Email():
         'cc': {
             'required': False,
             'validationFunction': lambda s: (
-                str(s) if isValidEmail(s) else None
+                [str(s)] if isValidEmail(s) else None
             )
         },
         'bcc': {
             'required': False,
             'validationFunction': lambda s: (
-                str(s) if isValidEmail(s) else None
+                [str(s)] if isValidEmail(s) else None
             )
         },
         'body': {
