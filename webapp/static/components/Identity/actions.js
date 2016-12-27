@@ -70,7 +70,8 @@ export function updateJWT() {
       dispatch(invalidJWT());
       return;
     }
-    fetch('/api_token', {
+    fetch('/token', {
+      method: 'POST',
       headers: {
         Authorization: `Basic ${btoa(jwt)}`,
       },
@@ -85,7 +86,7 @@ export function fetchJWT(email, password) {
   return (dispatch) => {
     sessionStorage.removeItem('tc_jwt');
     dispatch(requestJWT());
-    fetch('/api_token', {
+    fetch('/token', {
       headers: {
         Authorization: `Basic ${authString}`,
       },

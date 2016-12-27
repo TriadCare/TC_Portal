@@ -1,0 +1,28 @@
+<div style="text-align:center;">
+  <a href="https://my.triadcare.com">
+    <img
+    src="{{ asset_url_for('media/TC_Web_Logo.png') }}"
+    alt="Triad Care, Inc."
+    >
+  </a>
+</div>
+<div style="margin:20px;">
+  <br/>
+</p>Hello {{ help_data.full_name }},</p>
+  <br/>
+  <p>We have received your Help Request:</p>
+  <table>
+    <tr><td>Name</td><td>&nbsp;&nbsp;&nbsp;</td><td>  {{ help_data.full_name }}  </td></tr>
+    <tr><td>Email</td><td>&nbsp;&nbsp;&nbsp;</td><td>  {{ help_data.email }}  </td></tr>
+    <tr><td>Phone</td><td>&nbsp;&nbsp;&nbsp;</td><td>  {{ help_data.phone }}  </td></tr>
+    <tr><td>DOB</td><td>&nbsp;&nbsp;&nbsp;</td><td>  {{ help_data.dob }}  </td></tr>
+    <tr><td>Company</td><td>&nbsp;&nbsp;&nbsp;</td><td>  {{ help_data.employer }}  </td></tr>
+    <tr><td>Comment</td><td>&nbsp;&nbsp;&nbsp;</td><td>  {{ help_data.comment }}  </td></tr>
+  </table>
+  <br/>
+  <p>Hang tight, we'll have this solved in no time.</p>
+  <p>Sincerely,<br/>
+  Triad Care, Inc.</p>
+  <br/>
+  As always, if you need any assistance, give us a call at 866-885-7931.
+</div>

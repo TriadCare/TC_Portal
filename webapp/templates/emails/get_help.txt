@@ -1,0 +1,17 @@
+Hello {{ help_data.full_name }},
+
+We have received your Help Request:
+
+Name:     {{ help_data.full_name }}
+Email:    {{ help_data.email }}
+Phone:    {{ help_data.phone }}
+DOB:      {{ help_data.dob }}
+Company:  {{ help_data.employer }}
+Comment:  {{ help_data.comment }}
+
+Hang tight, we'll have this solved in no time.
+
+Sincerely,
+Triad Care, Inc.
+
+As always, if you need anything, give us a call at 866-885-7931.

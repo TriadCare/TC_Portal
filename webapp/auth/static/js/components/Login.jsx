@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { validation, loginUser } from '../util.js';
+import { validation, validateEmail, loginUser } from '../util.js';
 
 const fields = [
   {
@@ -17,8 +17,7 @@ const fields = [
         isValid = false;
         message = 'Your email is required.';
       } else {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        isValid = re.test(value);
+        isValid = validateEmail(value);
         message = isValid ? '' : 'This email address is invalid.';
       }
 
@@ -30,6 +29,7 @@ const fields = [
     label: 'Password',
     type: 'password',
     icon: 'lock',
+    showPassword: false,
     validationFunction: (value) => {
       let isValid = true;
       let message = '';
@@ -54,11 +54,22 @@ class loginPage extends React.Component {
           value: '',
           fieldStatus: undefined,
           valid: false,
-          errorMesage: '',
+          errorMessage: '',
+          type: d.type,
         },
       }))
     );
   }
+
+  togglePasswordVisibility = () => this.setState(
+    {
+      password: {
+        ...this.state.password,
+        showPassword: !this.state.password.showPassword,
+        type: !this.state.password.showPassword ? 'text' : 'password',
+      },
+    }
+  );
 
   loginSuccess = (data) => {
     this.setState({
@@ -148,6 +159,7 @@ class loginPage extends React.Component {
       .validationFunction(e.target.value);
     this.setState({
       [e.target.name]: {
+        ...this.state[e.target.name],
         value: e.target.value,
         fieldStatus: (
           isValid ? validation.DEFAULT : validation.WARNING
@@ -180,12 +192,24 @@ class loginPage extends React.Component {
           `}
           id={fieldProps.name}
           name={fieldProps.name}
-          type={fieldProps.type}
+          type={this.state[fieldProps.name].type}
           dir="auto"
           onChange={this.handleChange}
           value={this.state[fieldProps.name].value}
         />
-        {(this.state.formSubmitted &&
+        {(fieldProps.name === 'password') &&
+          (<span
+            className={
+              `pt-icon pt-icon-${this.state.password.showPassword ?
+                'eye-off' : 'eye-open'}
+                ${(this.state.formSubmitted &&
+                  this.state.password.errorMessage !== '') ? ' fieldError' : ''}`
+            }
+            onClick={this.togglePasswordVisibility}
+          ></span>)
+        }
+        {(fieldProps.name !== 'password' &&
+          this.state.formSubmitted &&
           this.state[fieldProps.name].errorMessage !== '' &&
           <span className="pt-icon pt-icon-error fieldError"></span>)}
       </div>

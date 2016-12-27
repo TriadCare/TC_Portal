@@ -1,5 +1,47 @@
-from json import dumps
-import inspect
+import json
+from threading import Thread
+
+
+def async(f):
+    def wrapper(*args, **kwargs):
+        thr = Thread(target=f, args=args, kwargs=kwargs)
+        thr.start()
+    return wrapper
+
+
+def get_request_data(request):
+    form_data = request.form.to_dict()
+    if len(form_data) != 0:
+        return form_data
+
+    content_type = request.headers['Content-Type']
+
+    if content_type is None or content_type == '':
+        api_error(
+            AttributeError,
+            'Required Headers are missing: \'Content-Type\'',
+            400
+        )
+
+    if 'text/plain' in content_type:
+        if request.data is None or request.data == '':
+            return {}
+        try:
+            return json.loads(request.data)
+        except ValueError:
+            api_error(ValueError, 'JSON string expected.', 400)
+
+    if 'application/json' in content_type:
+        try:
+            return request.json
+        except ValueError:
+            api_error(ValueError, 'JSON string expected.', 400)
+
+    api_error(
+        AttributeError,
+        'Unsupported Content Type: "' + content_type + '"',
+        415
+    )
 
 
 def logError(e, request):

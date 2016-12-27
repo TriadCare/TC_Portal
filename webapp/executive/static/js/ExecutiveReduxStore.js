@@ -15,6 +15,7 @@ import { profileReducer } from './components/Profile';
 const initialState = {};
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+/* eslint-enable */
 const store = createStore(
   combineReducers({
     identity: IdentityReducer,

@@ -2,30 +2,18 @@ from passlib.hash import bcrypt
 import re
 import json
 from datetime import datetime
-from itsdangerous import (TimedJSONWebSignatureSerializer,
-                          SignatureExpired, BadSignature)
 
 from webapp import app, db
+from .Email import isValidEmail
 from webapp.server.util import api_error
 
 MIN_PASSWORD_LENGTH = "8"
 MAX_PASSWORD_LENGTH = "128"
 
-jwt_tjwss = TimedJSONWebSignatureSerializer(
-    app.config['SECRET_KEY'],
-    salt='jwt'
-)
-
-
-def is_sanitary(input):
-    if re.match("^[A-Za-z0-9@\.]*$", input):
-        return True
-    return False
-
 
 # helper function to sanitize and validate the password. Rules are as follows:
 # 1. Between min and max length (globals set at top of file)
-# 2. Contains at least one upper and lower case letter, number,
+# 2. Contains at least one upper and lower case letter,
 # and special character (including spaces)
 def validate_password(password):
     if not re.match(
@@ -57,34 +45,34 @@ class User(db.Model):
     __registration_fields__ = {
         'id': {
             'required': True,
-            'validationFunction': lambda value: value,
+            'validationFunc': lambda value: value,
         },
         'id_type': {
             'required': True,
-            'validationFunction': lambda value: value,
+            'validationFunc': lambda value: value,
         },
         'first_name': {
             'required': True,
-            'validationFunction': lambda value: value,
+            'validationFunc': lambda value: value,
         },
         'last_name': {
             'required': True,
-            'validationFunction': lambda value: value,
+            'validationFunc': lambda value: value,
         },
         'dob': {
             'required': True,
-            'validationFunction': lambda d: (
+            'validationFunc': lambda d: (
                 datetime.strptime(d, '%Y-%m-%d').date()
                 if isinstance(d, unicode) else d
             )
         },
         'email': {
             'required': True,
-            'validationFunction': lambda value: value
+            'validationFunc': lambda value: value
         },
         'password': {
             'required': True,
-            'validationFunction': lambda pw: (
+            'validationFunc': lambda pw: (
                 str(bcrypt.encrypt(pw)) if validate_password(pw)
                 else api_error(
                     ValueError,
@@ -109,6 +97,10 @@ class User(db.Model):
     def __setitem__(self, key, item):
         if key in User.__immutable_fields__:
             raise TypeError("Cannot change an immutable field: " + k)
+        if key in User.__registration_fields__:
+            item = User.__registration_fields__[key]['validationFunc'](item)
+        # password becomes hash after validationFunc
+        key = key if key != 'password' else 'hash'
         setattr(self, key, item)
 
     def __repr__(self):
@@ -163,29 +155,7 @@ class User(db.Model):
         for k, v in data.iteritems():
             if k in User.__immutable_fields__:
                 continue
-            k = k if k != 'password' else 'hash'
             self[k] = v
-            print(k)
-            print(v)
-            print(self.to_json())
-
-    # This instance method generates a signed Timed JSON Web Token
-    # for use in future API access requests
-    def genJWToken(self, expires_in):
-        if expires_in is not None:
-            jwt_tjwss.expires_in = expires_in
-        return jwt_tjwss.dumps(self.to_json())
-
-    # This static method takes a token and returns a User
-    @staticmethod
-    def verify_auth_token(token):
-        try:
-            user = jwt_tjwss.loads(token)
-        except SignatureExpired:
-            api_error(AttributeError, "This token has expired.", 401)
-        except BadSignature:
-            api_error(ValueError, "Bad Signature was provided.", 400)
-        return user
 
     # function to call to verify the user's creds.
     # Provides sanitization via other functions in this file.
@@ -193,13 +163,12 @@ class User(db.Model):
         if not self.is_enabled():
             api_error(ValueError, "User is not enabled.", 403)
         # sanitize inputs and validate the user
-        if is_sanitary(self.email):
+        if isValidEmail(self.email):
             if bcrypt.verify(password, self.hash):
-                # basic login token expires after 15 minutes
-                return self.genJWToken(900)
+                return True
             else:
                 api_error(ValueError, "Unauthorized, Wrong Password.", 401)
-        abort(400)
+        return False
 
     def to_json(self):
         return_dict = {}
@@ -233,7 +202,7 @@ class User(db.Model):
             if k in user_data:
                 v = user_data[k]
                 # Use the registration field's validation/format function
-                value = field['validationFunction'](v)
+                value = field['validationFunc'](v)
                 if (field['required'] and
                    (value is None or value is '')):
                     api_error(

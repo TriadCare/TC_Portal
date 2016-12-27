@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Position, RadioGroup, Radio, Popover, Dialog } from '@blueprintjs/core';
 import { DateInput } from '@blueprintjs/datetime';
 
-import { validation, registerNewUser } from '../util.js';
+import { validation, validateEmail, validatePassword, registerNewUser } from '../util.js';
 
 const fields = [
   {
@@ -61,8 +61,7 @@ const fields = [
         isValid = false;
         message = 'Your email is required.';
       } else {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        isValid = re.test(value);
+        isValid = validateEmail(value);
         message = isValid ? '' : 'This email address is invalid.';
       }
 
@@ -86,21 +85,19 @@ const fields = [
     type: 'password',
     popoverIsOpen: false,
     popoverContent:
-      `Your password must contain at least 8 characters,
-      one upper-case character, one lower-case character,
-      and one special character (!, $, &, etc).`,
+      `Your password must contain one upper-case character,
+      one lower-case character, one special character (!, $, &, etc),
+      and it must be at least 8 characters long.`,
     validationFunction: (value) => {
       if (!value) {
         return [value, false, 'You have to set your password.'];
       }
 
-      const pwRE = new RegExp(/^(?=.{8,128})(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+\\|{}\[\];:'"<>,.?/]).*$/);
-
-      if (!pwRE.test(value)) {
+      if (!validatePassword(value)) {
         return [
           value,
           false,
-          ('This password does not meet complexity requirements'),
+          ('Does not meet complexity requirements'),
         ];
       }
 

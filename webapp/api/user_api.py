@@ -1,9 +1,10 @@
 import json
-from flask import make_response, jsonify, abort, request
+from flask import jsonify, request
 from flask.views import MethodView
 from datetime import datetime
 from webapp import csrf, db
-from webapp.server.util import api_error
+from webapp.api.auth_api import load_user_from_request
+from webapp.server.util import api_error, get_request_data
 from .models.User import User
 
 
@@ -11,7 +12,7 @@ class User_API(MethodView):
     # Decorator list here (auth hook)
     decorators = [csrf.exempt]
 
-    def get(self, user_id):
+    def get(self, user_id=None):
         print(user_id)
         if user_id is None:
             # Need to narrow scope to AccountID of current user, here.
@@ -23,7 +24,7 @@ class User_API(MethodView):
             user = User.query.filter_by(userID=user_id).first()
             if user is None:
                 api_error(ValueError, "User ID not found.", 404)
-            return jsonify(user)
+            return jsonify(user.to_json())
 
     # Registering a new user
     # (Registering other users will require another endpoint.
@@ -70,3 +71,15 @@ class User_API(MethodView):
         db.session.commit()
 
         return jsonify(id=preloaded_user['userID']), 200
+
+    # Update an existing User. Needs Authorization.
+    def put(self, user_id):
+        user_data = get_request_data(request)
+        update_type = 'PASSWORD_SET' if 'password' in user_data else 'API'
+        user = load_user_from_request(request, update_type, throws=True)
+        if user_id != user.userID:
+            api_error(ValueError, "Unauthorized update.", 403)
+
+        user.update(user_data)
+        db.session.commit()
+        return jsonify(error=False)
