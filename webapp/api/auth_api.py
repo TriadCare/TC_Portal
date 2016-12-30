@@ -7,7 +7,8 @@ from flask.views import MethodView
 
 from webapp import app, csrf, db
 from webapp.server.util import api_error
-from .models.User import User
+
+from webapp.api_fm.models.FM_User import FM_User as User
 
 # init Flask Login manager
 login_manager = LoginManager()
@@ -72,7 +73,7 @@ def authorize(*roles):
 # callback used by Flask-Login to load a user object from a userid in a session
 @login_manager.user_loader
 def load_user(userid):
-    user = User.query.filter_by(tcid=userid).first()
+    user = User.query(tcid=userid)
     if not user:
         api_error(ValueError, "Could not find user with this ID.", 404)
     return user
@@ -88,7 +89,9 @@ def load_user_from_request(request, token_type='API', throws=False):
         # token is in the 'username' position and discard the other part.
         if ':' in auth_token:
             auth_token = auth_token.split(":")[0]
-        user = User.query.get(verify_jwt(auth_token, token_type)['userID'])
+        user = User.query(
+            recordID=verify_jwt(auth_token, token_type)['recordID']
+        )
         if user and user.is_enabled():
             return user
         else:
@@ -131,7 +134,7 @@ class Auth_API(MethodView):
                         "Authorization values are missing.",
                         400
                     )
-                user = User.query.filter_by(email=email).first()
+                user = User.query(email=email)
                 if user is None:
                     api_error(
                         ValueError,

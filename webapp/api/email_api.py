@@ -7,14 +7,15 @@ from webapp import csrf
 from webapp.server.util import api_error, get_request_data
 from webapp.api.auth_api import generate_jwt, TOKEN_TYPES
 from .models.Email import Email, isValidEmail
-from .models.User import User
+# from .models.User import User
+from webapp.api_fm.models.FM_User import FM_User as User
 
 
 def email_forgot_password(email_address):
     if not isValidEmail(email_address):
         api_error(ValueError, "Invalid Email Address.", 400)
 
-    user = User.query.filter_by(email=email_address).first()
+    user = User.query(email=email_address)
     if user is None:
         api_error(
             AttributeError,

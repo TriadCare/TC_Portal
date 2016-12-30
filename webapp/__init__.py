@@ -30,7 +30,10 @@ webpack.init_app(app)
 
 # import modules
 from .executive import executive
-from .api import auth_view, user_view, hra_view, email_view
+# Using the File Maker User API as a RestFM Proxy
+from .api_fm import fm_user_view as user_view
+# from .api import user_view
+from .api import auth_view, email_view
 from .auth import auth as auth_app
 
 # register modules
@@ -42,25 +45,7 @@ app.add_url_rule('/email/', view_func=email_view,)
 
 app.add_url_rule('/users/', view_func=user_view,)
 
-app.add_url_rule('/users/<int:user_id>', view_func=user_view,)
-
-# app.add_url_rule('/hras/',
-#                  defaults={'response_id': None},
-#                  view_func=hra_view,
-#                  methods=['GET'])
-#
-# app.add_url_rule('/hras/<int:response_id>',
-#                  view_func=hra_view,
-#                  methods=['GET'])
-
-
-# def register_api(view, endpoint, url, pk='id', pk_type='int'):
-#     view_func = view.as_view(endpoint)
-#     app.add_url_rule(url, defaults={pk: None},
-#                      view_func=view_func, methods=['GET'])
-#     app.add_url_rule(url, view_func=view_func, methods=['POST'])
-#     app.add_url_rule('%s<%s:%s>' % (url, pk_type, pk), view_func=view_func,
-#                      methods=['GET', 'PUT', 'DELETE'])
+app.add_url_rule('/users/<string:record_id>', view_func=user_view,)
 
 
 @app.errorhandler(Exception)

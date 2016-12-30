@@ -106,7 +106,8 @@ export const submitForgotPassword = (email, successCallback, errorCallback, fail
 };
 
 export const submitSetPassword = (pw, token, successCallback, errorCallback, failureCallback) => {
-  const userID = jwtPayload(token).userID;
+  const payload = jwtPayload(token);
+  const userID = payload.userID || payload.recordID;
   const request = new Request(`/users/${userID}`, {
     method: 'PUT',
     headers: {

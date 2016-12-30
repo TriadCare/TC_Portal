@@ -336,6 +336,7 @@ class helpForm extends React.Component {
               <p>Check your email for a request ticket.</p>
               <p>If you don't get one after a while, you might want to give
               us a call. (866) 885-7931</p>
+              <p><a href="/login">Go back to Log In.</a></p>
             </div>
           </Dialog>
         </div>
