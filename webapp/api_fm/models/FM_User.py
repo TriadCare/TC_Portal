@@ -250,7 +250,7 @@ class FM_User():
                 return True
             else:
                 api_error(ValueError, "Unauthorized, Wrong Password.", 401)
-        return False
+        api_error(ValueError, "Unauthorized, Invalid Username", 401)
 
     def to_json(self):
         return_dict = {}

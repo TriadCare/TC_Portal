@@ -1,2 +1,2 @@
 from webapp import app
-app.run()
+app.run(threaded=True)

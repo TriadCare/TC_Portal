@@ -1,3 +1,4 @@
+import { submitRequest } from 'js/util';
 // Action Types and Creators
 export const REQUEST_JWT = 'REQUEST_JWT';
 export function requestJWT() {
@@ -7,10 +8,10 @@ export function requestJWT() {
 }
 
 export const RECEIVE_JWT = 'RECEIVE_JWT';
-export function receiveJWT(jwt) {
+export function receiveJWT(response) {
   return {
     type: RECEIVE_JWT,
-    jwt,
+    response,
   };
 }
 
@@ -22,42 +23,49 @@ export function invalidJWT() {
 }
 
 export const REQUEST_DATA = 'REQUEST_DATA';
-export function requestData(endpoint) {
+export function requestData(dataName) {
   return {
     type: REQUEST_DATA,
-    endpoint,
+    dataName,
     isFetching: true,
   };
 }
 
+export const REQUEST_ERROR = 'REQUEST_ERROR';
+export function requestError(dataName, errorResponse) {
+  return {
+    type: REQUEST_ERROR,
+    dataName,
+    isFetching: false,
+    data: errorResponse,
+  };
+}
+
+export const REQUEST_FAILURE = 'REQUEST_FAILURE';
+export function requestFailure(dataName) {
+  return {
+    type: REQUEST_FAILURE,
+    dataName,
+    isFetching: false,
+    data: [],
+  };
+}
+
 export const RECEIVE_DATA = 'RECEIVE_DATA';
-export function receiveData(endpoint, data) {
+export function receiveData(dataName, data) {
   return {
     type: RECEIVE_DATA,
-    endpoint,
+    dataName,
     isFetching: false,
     data,
     receivedAt: Date.now(),
   };
 }
 
-// helper function for checking cached
-function shouldFetchData(state, endpoint) {
-  const data = state[endpoint];
-  if (!data) {
-    return true;
-  }
-  if (data.isFetching) {
-    return false;
-  }
-  return data.isInvalidated;
-}
-
 // Async Action Creators! - Uses Redux-Thunk
 
 // Use this to invalidate the JWT
 export function invalidateJWT() {
-  sessionStorage.removeItem('tc_jwt');
   return (dispatch) => dispatch(invalidJWT());
 }
 
@@ -66,55 +74,67 @@ export function updateJWT() {
   // try to update JWT if we have an existing one
   return (dispatch, getState) => {
     const jwt = getState().identity.jwt;
-    if (jwt === undefined) {
-      dispatch(invalidJWT());
+    if (jwt === undefined || jwt === 'undefined') {
+      invalidateJWT();
       return;
     }
-    fetch('/token', {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${btoa(jwt)}`,
-      },
-    })
-    .then(response => response.json())
-    .then(json => dispatch(receiveJWT(json.jwt)));
+    const request = new Request('/token/', { method: 'POST' });
+    submitRequest(
+      request,
+      jwt,
+      json => dispatch(receiveJWT(json)),
+      json => dispatch(receiveJWT(json)),
+      json => dispatch(receiveJWT(json))
+    );
   };
 }
 
-export function fetchJWT(email, password) {
-  const authString = btoa(`${email}:${password}`);
+export function fetchJWT(email, password, onLogin) {
   return (dispatch) => {
-    sessionStorage.removeItem('tc_jwt');
     dispatch(requestJWT());
-    fetch('/token', {
-      headers: {
-        Authorization: `Basic ${authString}`,
+    const request = new Request('/token/', { method: 'POST' });
+    submitRequest(
+      request,
+      `${email}:${password}`,
+      json => {
+        dispatch(receiveJWT(json));
+        if (typeof onLogin === 'function') {
+          dispatch(onLogin());
+        }
       },
-    })
-    .then(response => response.json())
-    .then(json => {
-      sessionStorage.setItem('tc_jwt', json.jwt);
-      dispatch(receiveJWT(json.jwt));
-    });
+      json => dispatch(receiveJWT(json)),
+      json => dispatch(receiveJWT(json))
+    );
   };
+}
+
+// helper function for checking cache
+function shouldFetchData(state, dataName) {
+  const data = state[dataName];
+  if (!data || !data.items || data.items.length === 0) {
+    return true;
+  }
+  if (data.isFetching) {
+    return false;
+  }
+  return !data.isFresh;
 }
 
 // Use for fetching data if needed
-export function fetchDataFrom(endpoint) {
+export function fetchData(dataName, request) {
   return (dispatch, getState) => {
     const state = getState();
-    if (shouldFetchData(state, endpoint)) {
+    if (shouldFetchData(state, dataName)) {
       const jwt = state.identity.jwt;
       // Let Redux know we are now requesting data from the given endpoint
-      dispatch(requestData(endpoint));
+      dispatch(requestData(dataName));
       // Then build and make the request
-      return fetch(`/${endpoint}`, {
-        headers: {
-          Authorization: `Basic ${btoa(jwt)}`,
-        },
-      })
-      .then(response => response.json())
-      .then(json => dispatch(receiveData(endpoint, json))
+      submitRequest(
+        request,
+        jwt,
+        json => dispatch(receiveData(dataName, json)),
+        json => dispatch(requestError(dataName, json)),
+        () => dispatch(requestFailure(dataName))
       );
     }
     return Promise.resolve();

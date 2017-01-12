@@ -1,5 +1,5 @@
 require('js/vendor');
+require('css/base');
 
-require('css/style');
-require('css/dashboard');
-require('js/dashboard');
+require('css/patient');
+require('js/PatientApp');

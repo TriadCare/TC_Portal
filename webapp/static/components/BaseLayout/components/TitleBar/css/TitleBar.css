@@ -1,7 +1,10 @@
 .titleBar {
   display: flex;
   width: 100vw;
+  height: 70px;
+  box-sizing: content-box;
   justify-content: flex-start;
+  flex: none;
   background-color: rgb(247,247,247);
   border-bottom: 4px solid rgb(255,255,255);
   border-bottom: 4px solid rgba(255,255,255,0.8);

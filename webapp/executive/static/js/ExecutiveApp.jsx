@@ -9,10 +9,10 @@ import SpaceContainer from 'components/SpaceContainer';
 
 import ExecutiveReduxStore from './ExecutiveReduxStore';
 
-import { dashboardComponent } from './components/Dashboard';
+import { dashboardComponent } from 'components/Dashboard';
 import { reportingComponent } from './components/Reporting';
 import { cohortComponent } from './components/Cohort';
-import { profileComponent } from './components/Profile';
+import { profileComponent } from 'components/Profile';
 
 const history = syncHistoryWithStore(browserHistory, ExecutiveReduxStore);
 

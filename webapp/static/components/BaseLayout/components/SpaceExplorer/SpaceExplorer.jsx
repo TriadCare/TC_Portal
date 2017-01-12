@@ -7,6 +7,10 @@ require('./css/SpaceExplorer');
 const SpaceExplorer = (props) => {
   let spaceLinks = [];
   let profileLink = undefined;
+  // If no spaces, don't render
+  if (props.spaces.length === 0) {
+    return null;
+  }
   // Compile the spaces into the space explorer
   props.spaces.forEach((space) => {
     spaceLinks.push(
@@ -29,14 +33,12 @@ const SpaceExplorer = (props) => {
   });
 
   return (
-    <div className="spaceExplorer__container">
-      <div className="spaceExplorer">
-        <div className="spaceExplorer__item spaceExplorer__toggle">
-          <span className="spaceIcon fa fa-bars"></span>
-        </div>
-        <div className="spaceExplorer__list">{spaceLinks}</div>
-        {profileLink}
+    <div className="spaceExplorer">
+      <div className="spaceExplorer__item spaceExplorer__toggle">
+        <span className="spaceIcon fa fa-bars"></span>
       </div>
+      <div className="spaceExplorer__list">{spaceLinks}</div>
+      {profileLink}
     </div>
   );
 };

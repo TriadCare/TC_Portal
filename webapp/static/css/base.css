@@ -4,6 +4,7 @@
 
 html,
 body {
+  width :100%;
   height: 100%;
   background-color: rgb(247,247,247);
 }
@@ -18,15 +19,44 @@ a:hover, a:visited, a:link, a:active
   text-decoration: none;
 }
 
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.baseLayout {
+  display: flex;
+  flex-direction: column;
+}
+
 .mainContainer {
-  display: inline-block;
-  width: calc(100vw - 75px);
-  height: calc(100vh - 75px); /* Subtract the Title Bar height*/
+  display: flex;
+  flex-flow: row wrap;
+  flex: auto;
+}
+
+.spaceExplorer {
+  /* subtract the text-size, the padding, and the border size from the total height */
+  width: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 0 auto;
+  background-color: rgb(247,247,247);
+  border-right: 4px solid rgb(255,255,255);
+  border-right: 4px solid rgba(255,255,255,0.8);
+}
+
+.appletContainer {
+  flex: auto;
+  display: flex;
 }
 
 .spaceComponent{
-  width: 100%;
-  height: 100%;
+  flex: auto;
+  display: flex;
+  overflow-y: auto;
 }
 
 /*

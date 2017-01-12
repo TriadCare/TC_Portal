@@ -9,5 +9,7 @@ require('backbone');
 require('react');
 require('react-dom');
 require('font-awesome/css/font-awesome');
+require('react-chartist');
+require('chartist/dist/chartist.min.css');
 // polyfill
 import 'whatwg-fetch';  // may need a promise polyfill for older browsers

@@ -1,49 +1,40 @@
 const webpack 			= require('webpack');
+const webpackConfig = require('webpack-config');
 const path 					= require('path');
+
+const APP_ROOT 			= path.resolve(__dirname, '../');
 const rootAssetPath = './assets';
 
-const SRC_ASSETS 		= path.resolve(__dirname, 'assets/');
-const SRC_COMMON 		= path.resolve(__dirname, 'webapp/static/');
-const SRC_ADMIN 		= path.resolve(__dirname, 'webapp/admin/static/');
-const SRC_AUTH 			= path.resolve(__dirname, 'webapp/auth/static/');
-const SRC_PATIENT 	= path.resolve(__dirname, 'webapp/patient/static/');
-const SRC_EXECUTIVE = path.resolve(__dirname, 'webapp/executive/static/');
-const NODE_MODULES 	= path.resolve(__dirname, 'node_modules/');
+const SRC_ASSETS 		= path.resolve(APP_ROOT, 'assets/');
+const SRC_COMMON 		= path.resolve(APP_ROOT, 'webapp/static/');
+const SRC_AUTH 			= path.resolve(APP_ROOT, 'webapp/auth/static/');
+const SRC_EXECUTIVE = path.resolve(APP_ROOT, 'webapp/executive/static/');
+const NODE_MODULES 	= path.resolve(APP_ROOT, 'node_modules/');
 
-const ExtractTextPlugin 			= require('extract-text-webpack-plugin');
 const ManifestRevisionPlugin 	= require('manifest-revision-webpack-plugin');
 const CleanWebpackPlugin 			= require('clean-webpack-plugin');
 
-const PATHS = {
-  dist: path.join(__dirname, 'bundle'),
-};
-
-module.exports = {
+module.exports = new webpackConfig.Config().merge({
   entry: {
     // admin: 'admin/static/src/admin.js',
     auth: `${rootAssetPath}/js/auth.js`,
     executive: `${rootAssetPath}/js/executive.js`,
-    patient: `${rootAssetPath}/js/patient.js`,
+    //patient: `${rootAssetPath}/js/patient.js`,
     //provider: `${rootAssetPath}/js/provider.js`,
   },
   output: {
-    path: PATHS.dist,  // Build Destination
-    publicPath: 'http://localhost:8080/bundle/',
+    path: '/bundle',  // Build Destination
     filename: '[name].[chunkhash].js',
     chunkFilename: '[id].[chunkhash].js',
-  },
-  eslint: {
-    emitWarning: true,
   },
   resolve: {
     // Allows requiring files without supplying the extensions
     root: [
-      SRC_ASSETS, SRC_COMMON, SRC_ADMIN, SRC_AUTH,
-      SRC_PATIENT, SRC_EXECUTIVE, NODE_MODULES,
+      SRC_ASSETS, SRC_COMMON, SRC_AUTH,
+      SRC_EXECUTIVE, NODE_MODULES,
     ],
     extensions: ['', '.js', '.jsx', '.json', '.css'],
   },
-  devtool: 'source-map',
   module: {
     preLoaders: [
       {
@@ -64,7 +55,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style', 'css', 'resolve-url'),
+        loader: 'style!css!resolve-url',
       },
       {
         test: /\.(jpe?g|png|gif([\?]?.*))$/i,
@@ -97,32 +88,20 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
     }),
-    new ManifestRevisionPlugin(path.join('bundle', 'webpack_manifest.json'), {
+    new ManifestRevisionPlugin('bundle/webpack_manifest.json', {
       rootAssetPath,
       ignorePaths: ['/js', '/css', '/fonts'],
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-      },
-      output: {
-        comments: false,
-      },
+    new CleanWebpackPlugin(['bundle'], {
+      root: APP_ROOT,
+      verbose: true,
+      exclude: ['webpack_manifest.json'],
     }),
-    new ExtractTextPlugin('[name].[chunkhash].css'),
     new webpack.optimize.CommonsChunkPlugin({
       filename: 'common.js',
       name: 'common',
     }),
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-    }),
-    new CleanWebpackPlugin(['bundle'], {
-      verbose: true,
-      exclude: ['webpack_manifest.json'],
-    }),
   ],
-};
+});

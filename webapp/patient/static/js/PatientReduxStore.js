@@ -3,13 +3,10 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import { reducer as formReducer } from 'redux-form';
 
-import { /* IdentityActions, */ IdentityReducer } from 'components/Identity';
+import { IdentityReducer } from 'components/Identity';
+import { fetchData } from 'components/Identity/actions';
 
-import appReducer from './ExecutiveReducer';
-import { dashboardReducer } from 'components/Dashboard';
-import { reportingReducer } from './components/Reporting';
-import { cohortReducer } from './components/Cohort';
-import { profileReducer } from 'components/Profile';
+import appReducer from './PatientReducer';
 
 // Use this to "rehydrate" the store or provide initial configuration
 const initialState = {};
@@ -20,10 +17,6 @@ const store = createStore(
   combineReducers({
     identity: IdentityReducer,
     appState: appReducer,
-    dashboardState: dashboardReducer,
-    reportingState: reportingReducer,
-    cohortState: cohortReducer,
-    profileState: profileReducer,
     routing: routerReducer,
     form: formReducer,
   }),
@@ -31,8 +24,7 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunkMiddleware))
 );
 
-// store.dispatch(IdentityActions.updateJWT());
-  // .then(() => store.dispatch(IdentityActions.requestData('hras')));
+store.dispatch(fetchData('HRA', new Request('/hras/')));
 
 /* eslint-enable */
 export default store;

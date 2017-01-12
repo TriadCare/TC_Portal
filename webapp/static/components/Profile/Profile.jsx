@@ -8,7 +8,7 @@ const Profile = () => (
 );
 
 const mapStateToProps = (store) => ({
-  data: store.profileState.data,
+  config: store.appState.profileConfiguration,
 });
 
 export default connect(mapStateToProps)(Profile);

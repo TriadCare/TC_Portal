@@ -1,5 +1,4 @@
-import moment from 'moment';
-
+import { submitRequest, jwtPayload } from 'js/util';
 // These strings match: pt-intent-[value]
 export const validation = {
   DEFAULT: 'default', // Use this for no intent (not defined by blueprintjs)
@@ -23,54 +22,17 @@ export const validatePassword = (pw) => {
   return re.test(pw);
 };
 
-export const jwtDecode = (token) => token.split('.').splice(0, 2).map(
-  (tokenPart) => JSON.parse(atob(tokenPart))
-);
-export const jwtExpireTime = (token) => jwtDecode(token)[0].exp * 1000;
-export const jwtIsExpired = (token) => moment().diff(jwtExpireTime(token)) >= 0;
-export const jwtPayload = (token) => jwtDecode(token)[1];
-
-// Fetch Promise Helpers
-function json(response) {
-  return response.json();
-}
-function status(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return Promise.resolve(response);
-  }
-  return Promise.reject(response);
-}
-
-// API Fetch Wrapper
-// Takes a request object (can be a Request or object) and callbacks
-// (add headers and other request attributes before calling)
-export const submitRequest = (r, success, error, failure) => {
-  const request = new Request(r);
-
-  fetch(request)
-  .then(status)
-  .then(
-    (response) => json(response).then(success),
-    (response) => json(response).then(error))
-  .catch((reason) => {
-    failure(reason);
-    return Promise.reject();  // stop Promise chain
-  });
-};
-
 // API Fetch Functions
 export const loginUser = (userData, successCallback, errorCallback, failureCallback) => {
   const request = new Request(
     '/token/', {
       method: 'POST',
-      headers: {
-        Authorization: `Basic ${btoa(`${userData.email}:${userData.password}`)}`,
-      },
     }
   );
 
   submitRequest(
     request,
+    `${userData.email}:${userData.password}`,
     successCallback,
     errorCallback,
     failureCallback
@@ -85,6 +47,7 @@ export const registerNewUser = (userData, successCallback, errorCallback, failur
 
   submitRequest(
     request,
+    undefined,
     successCallback,
     errorCallback,
     failureCallback
@@ -99,6 +62,7 @@ export const submitForgotPassword = (email, successCallback, errorCallback, fail
 
   submitRequest(
     request,
+    undefined,
     successCallback,
     errorCallback,
     failureCallback
@@ -110,14 +74,12 @@ export const submitSetPassword = (pw, token, successCallback, errorCallback, fai
   const userID = payload.userID || payload.recordID;
   const request = new Request(`/users/${userID}`, {
     method: 'PUT',
-    headers: {
-      Authorization: `Basic ${btoa(token)}`,
-    },
     body: JSON.stringify({ password: pw }),
   });
 
   submitRequest(
     request,
+    token,
     successCallback,
     errorCallback,
     failureCallback
@@ -132,6 +94,7 @@ export const submitHelpRequest = (helpData, successCallback, errorCallback, fail
 
   submitRequest(
     request,
+    undefined,
     successCallback,
     errorCallback,
     failureCallback

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Patient{% endblock title %}
+
+{% block stylesheet_section %}
+	{{ super() }}
+	{{ stylesheet_tag('patient') | safe }}
+{% endblock stylesheet_section %}
+
+{% block header %}{% endblock header %}
+{% block messages %}{{ super() }}{% endblock messages %}
+
+{% block content %}{% endblock content %}
+
+{% block footer %}{% endblock footer %}
+
+{% block script_section %}
+	{{ super() }}
+	{{ javascript_tag('patient') | safe }}
+{% endblock script_section %}

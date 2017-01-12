@@ -30,21 +30,24 @@ webpack.init_app(app)
 
 # import modules
 from .executive import executive
+from .patient import patient
 # Using the File Maker User API as a RestFM Proxy
 from .api_fm import fm_user_view as user_view
 # from .api import user_view
-from .api import auth_view, email_view
+from .api import auth_view, email_view, hra_view
 from .auth import auth as auth_app
 
 # register modules
 app.register_blueprint(executive, url_prefix='/executive')
+app.register_blueprint(patient, url_prefix='/patient')
 app.register_blueprint(auth_app)
 # API Endpoints
 app.add_url_rule('/token/', view_func=auth_view,)
 app.add_url_rule('/email/', view_func=email_view,)
+app.add_url_rule('/hras/', view_func=hra_view,)
+app.add_url_rule('/hras/<string:response_id>', view_func=hra_view,)
 
 app.add_url_rule('/users/', view_func=user_view,)
-
 app.add_url_rule('/users/<string:record_id>', view_func=user_view,)
 
 

@@ -1,0 +1,64 @@
+import React from 'react';
+import { NonIdealState, Spinner /* , Button */ } from '@blueprintjs/core';
+
+import './css/Dashboard';
+
+// import AddDashletButton from './components/AddDashletButton';
+import DashletContainer from './containers/DashletContainer';
+
+const getLoadingComponent = () => (
+  <NonIdealState
+    visual="cloud-download"
+    title="Fetching your Dashboard"
+    description={'Hang tight while we set this up...'}
+    action={<Spinner />}
+  />
+);
+
+const getEmptyComponent = () => (
+  <NonIdealState
+    visual="folder-open"
+    title="Nothing to show!"
+    description={'Your dashboard is empty.'}
+  />
+);
+
+const renderDashboard = (dashlets, isFetching, handleDashletClick) => {
+  // Need to build dashlets from provided configuration and datasources.
+  if (dashlets.length !== 0) {
+    return (
+      dashlets.map((dashlet, index) => (
+        <DashletContainer
+          key={index}
+          dashlet={dashlet}
+          handleClick={() => handleDashletClick(dashlet)}
+        />
+      ))
+    );
+  }
+  if (isFetching) {
+    return getLoadingComponent();
+  }
+  return getEmptyComponent();
+};
+
+const Dashboard = ({ dashlets, isFetching, /* handleRefresh, */handleDashletClick }) => (
+  <div className="spaceComponent dashboardComponent">
+    {/* <AddDashletButton onClick={this.addNewDashlet} /> */}
+    {/* Omit dataName in handleRefresh call to refresh all datasources */}
+    {/* <Button
+      iconName="refresh"
+      onClick={() => handleRefresh()}
+    /> */}
+    {renderDashboard(dashlets, isFetching, handleDashletClick)}
+  </div>
+);
+
+Dashboard.propTypes = {
+  dashlets: React.PropTypes.array.isRequired,
+  isFetching: React.PropTypes.bool,
+  handleRefresh: React.PropTypes.func.isRequired,
+  handleDashletClick: React.PropTypes.func.isRequired,
+};
+
+export default Dashboard;

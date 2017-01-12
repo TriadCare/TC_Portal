@@ -6,17 +6,20 @@ import TitleBar from './components/TitleBar';
 import SpaceExplorer from './components/SpaceExplorer';
 
 const BaseLayout = (props) => (
-  <div>
-    <LoginComponent />
+  <div className="baseLayout">
+    <LoginComponent onLogin={props.onLogin} />
     <TitleBar />
-    <SpaceExplorer />
     <div className="mainContainer">
-      {props.children}
+      <SpaceExplorer />
+      <div className="appletContainer">
+        {props.children}
+      </div>
     </div>
   </div>
 );
 
 BaseLayout.propTypes = {
+  onLogin: React.PropTypes.func,
   children: React.PropTypes.object,
 };
 

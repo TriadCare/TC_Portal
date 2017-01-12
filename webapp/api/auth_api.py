@@ -1,7 +1,7 @@
 import base64
 from functools import wraps
 
-from flask_login import LoginManager, current_user, login_required
+from flask_login import LoginManager
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -50,7 +50,7 @@ def verify_jwt(token, token_type='API'):
         payload = jwt_tjwss.loads(token)
     except SignatureExpired:
         api_error(AttributeError, "This token has expired.", 401)
-    except BadSignature:
+    except BadSignature as e:
         api_error(ValueError, "Bad Signature was provided.", 400)
     return payload
 
@@ -58,10 +58,10 @@ def verify_jwt(token, token_type='API'):
 # Decorator for all views to use to authorize user access
 def authorize(*roles):
     def wrapper(f):
-        @login_required  # Authenticate
         @wraps(f)
         def wrapped(*args, **kwargs):
-            user_role = current_user.get_role()
+            user = load_user_from_request(request, throws=True)
+            user_role = user.get_role()
             if user_role in roles or user_role is "TRIADCARE_ADMIN":
                 return f(*args, **kwargs)
             else:
@@ -80,18 +80,27 @@ def load_user(userid):
 
 
 @login_manager.request_loader
+# throws defaults to False because Flask-Login calls this without knowing args
 def load_user_from_request(request, token_type='API', throws=False):
     # try to login using the Token in Basic Auth Headers
     auth_token = request.headers.get('Authorization')
+    user = None
     if auth_token:
         auth_token = base64_decode(auth_token.replace('Basic ', '', 1))
-        # Check if the Auth Header is like (username:password), then assume the
-        # token is in the 'username' position and discard the other part.
+        # Check if the Auth Header is like (username:password)
         if ':' in auth_token:
-            auth_token = auth_token.split(":")[0]
-        user = User.query(
-            recordID=verify_jwt(auth_token, token_type)['recordID']
-        )
+            username = auth_token.split(":")[0]
+            password = auth_token.split(":")[1]
+            if password != '':  # username:password
+                user = User.query(email=username)
+                if not user.authenticate(password):
+                    api_error(ValueError, "Authentication Failed.", 401)
+            else:
+                auth_token = username  # Most likely a token
+        else:
+            user = User.query(
+                recordID=verify_jwt(auth_token, token_type)['recordID']
+            )
         if user and user.is_enabled():
             return user
         else:
@@ -100,7 +109,7 @@ def load_user_from_request(request, token_type='API', throws=False):
     if throws:
         api_error(
             AttributeError,
-            "Required Headers are missing: 'Authorization'",
+            "Required Headers are missing: 'Authentication'",
             400
         )
 
@@ -109,6 +118,9 @@ def load_user_from_request(request, token_type='API', throws=False):
 
 class Auth_API(MethodView):
     decorators = [csrf.exempt]
+
+    def get(self):
+        api_error(AttributeError, "Unsupported HTTP Method: GET", 405)
 
     # Accessed by '/token', can specify TOKEN_TYPE (defaults to API TOKEN)
     def post(self):
@@ -142,6 +154,7 @@ class Auth_API(MethodView):
                         404
                     )
                 if user.authenticate(pw):
+                    ("building token response")
                     return jsonify(jwt=generate_jwt(user.to_json(), jwt_type))
                 return api_error(
                     ValueError,
