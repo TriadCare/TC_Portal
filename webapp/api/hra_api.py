@@ -42,8 +42,7 @@ class HRA_API(MethodView):
     def get(self, response_id=None):
         # Note: Only Patient and Provider should have authorization to expand
         expand = (request.args.get('expand', 'false') != 'false')
-        tcid = '0000000001'
-        # tcid = current_user.get_tcid()
+        tcid = current_user.get_tcid()
         if response_id is None:
             return jsonify(get_hras(tcid, expand))
         else:
