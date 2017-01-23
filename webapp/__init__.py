@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, make_response, jsonify
 from flask_login import login_required
 from flask_wtf.csrf import CsrfProtect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event, Table
 from flask_webpack import Webpack
 
 from server.util import logError
@@ -19,7 +20,13 @@ app = Flask(
 app.config.from_object('config.default')
 app.config.from_pyfile('instance_config.py')
 
+
 # Flask-SQLAlchemy
+# This function formats the column keys
+# so they can be represented as object attributes
+@event.listens_for(Table, "column_reflect")
+def column_reflect(inspector, table, column_info):
+    column_info['key'] = column_info['name'].replace(" ", "_").replace("&", "")
 db = SQLAlchemy(app)
 db.Model.metadata.reflect(db.engine)
 # WTF CSRF Protection

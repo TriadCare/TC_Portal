@@ -48,6 +48,9 @@ const reducer = (state = getJWTState(), action) => {
       }
       setJWT(action.response.jwt);
       return getJWTState();
+    case actions.POST_ERROR:
+    case actions.REQUEST_ERROR:
+      return getJWTState();
     default: return state;
   }
 };

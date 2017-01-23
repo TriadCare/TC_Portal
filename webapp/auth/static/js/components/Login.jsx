@@ -77,7 +77,7 @@ class loginPage extends React.Component {
       formSuccess: 'Login Success!',
     });
     sessionStorage.setItem('tc_jwt', data.jwt);
-    location.pathname = '/executive';  // redirect to correct portal
+    location.pathname = '/patient';  // redirect to correct portal
   }
 
   loginFailure = (error) => {

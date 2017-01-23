@@ -177,6 +177,9 @@ class FM_User():
     def get_role(self):
         return 'TRIADCARE_ADMIN'
 
+    def eligibleForHRA(self):
+        return True  # self.eligibleForHRA == 1
+
     # Returns a User from File Maker based on the search criteria
     @staticmethod
     def query(**kwargs):

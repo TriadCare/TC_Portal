@@ -1,10 +1,18 @@
+from datetime import datetime
+
 from flask import request, make_response, jsonify, url_for
 from flask_login import login_required, current_user
 from flask.views import MethodView
 
+from sqlalchemy.sql import func
+
+from webapp import csrf
+from webapp.server.util import api_error, get_request_data
 from ..api.auth_api import authorize
 from .models.HRA import HRA
 from webapp.api_fm.models.FM_User import FM_User as User
+
+from webapp import db
 
 
 def make_public(hra):
@@ -20,12 +28,40 @@ def make_public(hra):
     return hra
 
 
+def get_tc_avg_hra():
+    # Would love to cache this...
+    # http://flask.pocoo.org/docs/0.12/patterns/caching/
+    # http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    # if cached_response is not None:
+    #     return cached_response
+    (Overall, Tobacco, Diet__Nutrition, Physical_Activity,
+     Stress, Preventative_Care) = db.session.query(
+        func.avg(HRA.Overall),
+        func.avg(HRA.Tobacco),
+        func.avg(HRA.Diet__Nutrition),
+        func.avg(HRA.Physical_Activity),
+        func.avg(HRA.Stress),
+        func.avg(HRA.Preventative_Care),
+    ).filter(HRA.completed == 1).first()
+
+    return [{
+        "score": {
+            "Overall": round(Overall, 1),
+            "Tobacco": round(Tobacco, 1),
+            "Diet & Nutrition": round(Diet__Nutrition, 1),
+            "Physical Activity": round(Physical_Activity, 1),
+            "Stress": round(Stress, 1),
+            "Preventative Care": round(Preventative_Care, 1)
+        }
+    }]
+
+
 def get_hra(tcid, response_id, expand=False):
-    return make_public(
+    return [make_public(
         HRA.query.filter_by(tcid=tcid)
         .filter_by(responseID=response_id)
         .first_or_404().to_dict(expand)
-    )
+    )]
 
 
 def get_hras(tcid, expand=False):
@@ -37,7 +73,7 @@ def get_hras(tcid, expand=False):
 
 class HRA_API(MethodView):
     # authorize includes authentication (login_required via Flask-Login)
-    decorators = [authorize(['EXECUTIVE', 'TRIADCARE_ADMIN'])]
+    decorators = [csrf.exempt, authorize(['EXECUTIVE', 'TRIADCARE_ADMIN'])]
 
     def get(self, response_id=None):
         # Note: Only Patient and Provider should have authorization to expand
@@ -45,8 +81,40 @@ class HRA_API(MethodView):
         tcid = current_user.get_tcid()
         if response_id is None:
             return jsonify(get_hras(tcid, expand))
+        elif response_id == '-1':
+            return jsonify(get_tc_avg_hra())
         else:
             return jsonify(get_hra(tcid, response_id, expand))
 
-    def post():
-        api_error(AttributeError, "Unsupported HTTP Method: GET", 405)
+    def post(self):
+        if not current_user.eligibleForHRA():
+            api_error(AttributeError, "User is ineligible for a new HRA.", 403)
+        complete = (request.args.get('complete', 0) == 1 or False)
+        request_data = get_request_data(request)
+
+        hra_data = HRA.from_request(request_data, complete)
+        hra_data['tcid'] = current_user.get_tcid()
+        hra_data['USER_CREATED'] = current_user.get_email()
+        hra_data['DATE_CREATED'] = datetime.now()
+        new_hra = HRA(hra_data)
+
+        db.session.add(new_hra)
+        db.session.commit()
+
+        return jsonify(id=new_hra.responseID), 201
+
+    def put(self, response_id=None):
+        complete = (request.args.get('complete', 0) == 1 or False)
+        if response_id is None:
+            api_error(AttributeError, "Need Record ID for Update.", 401)
+        request_data = get_request_data(request)
+
+        hra_data = HRA.from_request(request_data, complete)
+        hra_data['USER_UPDATED'] = current_user.get_email()
+        hra_data['DATE_UPDATED'] = datetime.now()
+
+        hra = HRA.query.get(response_id)
+        hra.update(hra_data)
+        db.session.commit()
+
+        return jsonify(id=hra.responseID), 200

@@ -59,7 +59,8 @@ export const submitRequest = (r, token, success, error, failure) => {
     (response) => json(response).then(success),
     (response) => json(response).then(error))
   .catch((reason) => {
-    console.log(reason);
+    /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+    console.error(reason);
     failure(reason);
   });
 };

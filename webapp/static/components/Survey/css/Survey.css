@@ -1,0 +1,131 @@
+.surveyComponent {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}
+
+.response__viewer {
+  flex: 1;
+}
+
+.response__overall {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  height: 30vh;
+}
+
+.response__section-breakdown {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  height: 45vh;
+  margin-top: 15px;
+}
+
+.response__overall-date {
+  flex: none;
+}
+.response__overall-label {
+  font-size: 1.2em;
+  flex: none;
+}
+
+.response__chart {
+  flex: 1;
+}
+
+.response__chart-bar .ct-bar {
+  stroke-width: 35px;
+}
+
+.response__chart-bar .ct-series-a .ct-bar {
+  stroke: rgb(0,120,185);
+}
+
+.response__chart-bar .ct-series-b .ct-bar {
+  stroke: rgb(180,180,180);
+}
+
+.ct-label.response__chart-label {
+  font-size: 0.75em;
+}
+
+.response__section-breakdown-label,
+.response__questionnaire-breakdown-label {
+  font-size: 1.2em;
+  text-align: center;
+}
+
+.response__questionnaire-breakdown {
+  margin-top: 15px;
+}
+
+.response__chart-bar-key {
+  flex: none;
+}
+
+.key__item {
+  margin-right: 15px;
+}
+
+.key__item:before {
+  content: "";
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+.key__item-blue:before {
+  background: rgb(0,120,185);
+}
+
+.key__item-gray:before {
+  background: rgb(180,180,180);
+}
+
+.response__section-label {
+  color: rgb(0,120,185);
+  background-color: rgb(220,220,220);
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.response__question-grid {
+  text-align: center;
+}
+
+.grid__row-header {
+  text-align: left;
+}
+
+.response__question-grid .grid__cell {
+  vertical-align: middle;
+}
+
+.grid__cell-answer {
+  display: inline;
+  padding-left: 16px;
+}
+
+.response__question-answer {
+  font-size: 0.85em;
+}
+
+.response__question-answer-multichoice {
+  margin: 0;
+  font-weight: inherit;
+}
+
+.response__question-blurb {
+  font-size: 0.8em;
+  text-align: left;
+  color: rgb(0,120,185);
+}

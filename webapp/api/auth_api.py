@@ -1,7 +1,7 @@
 import base64
 from functools import wraps
 
-from flask_login import LoginManager
+from flask_login import LoginManager, logout_user
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -73,10 +73,12 @@ def authorize(*roles):
 # callback used by Flask-Login to load a user object from a userid in a session
 @login_manager.user_loader
 def load_user(userid):
-    user = User.query(tcid=userid)
-    if not user:
-        api_error(ValueError, "Could not find user with this ID.", 404)
-    return user
+    try:
+        user = User.query(tcid=userid)
+        return user
+    except ValueError:
+        return None
+    return None
 
 
 @login_manager.request_loader

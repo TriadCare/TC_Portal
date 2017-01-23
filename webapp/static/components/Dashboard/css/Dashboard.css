@@ -2,7 +2,7 @@
   padding: 20px;
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;;
+  justify-content: flex-start;
 }
 
 .dashletContainer {
@@ -41,16 +41,17 @@
 }
 
 .chart__donut-overall {
-  stroke: rgba(151,187,205,0.5);
+  stroke: rgb(0,120,185);
 }
 
 .chart__donut-remainder {
-  stroke: rgba(220,220,220,0.5);
+  stroke: rgb(220,220,220);
 }
 
 .chart__donut-label {
-  font-size: 1em;
-  stroke: rgb(151,187,205);
+  font-size: 1.5em;
+  stroke: rgb(0,120,185);
+  fill: rgb(0,120,185);
 }
 
 .ct-label.dashlet__chart-label {
@@ -61,11 +62,11 @@
   stroke: #dddddd;
 }
 .ct-line.dashlet__chart-line {
-  stroke: rgb(151,187,205);
+  stroke: rgb(0,120,185);
   stroke-width: 2px;
 }
 .ct-area.dashlet__chart-area {
-  fill: rgb(151,187,205);
+  fill: rgb(0,120,185);
   fill-opacity: 0.5;
 }
 

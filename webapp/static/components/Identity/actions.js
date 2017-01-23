@@ -31,12 +31,31 @@ export function requestData(dataName) {
   };
 }
 
+export const POST_DATA = 'POST_DATA';
+export function postData(dataName) {
+  return {
+    type: POST_DATA,
+    dataName,
+    isPosting: true,
+  };
+}
+
 export const REQUEST_ERROR = 'REQUEST_ERROR';
 export function requestError(dataName, errorResponse) {
   return {
     type: REQUEST_ERROR,
     dataName,
     isFetching: false,
+    data: errorResponse,
+  };
+}
+
+export const POST_ERROR = 'POST_ERROR';
+export function postError(dataName, errorResponse) {
+  return {
+    type: POST_ERROR,
+    dataName,
+    isPosting: false,
     data: errorResponse,
   };
 }
@@ -51,12 +70,33 @@ export function requestFailure(dataName) {
   };
 }
 
+export const POST_FAILURE = 'POST_FAILURE';
+export function postFailure(dataName) {
+  return {
+    type: POST_FAILURE,
+    dataName,
+    isPosting: false,
+    data: [],
+  };
+}
+
 export const RECEIVE_DATA = 'RECEIVE_DATA';
 export function receiveData(dataName, data) {
   return {
     type: RECEIVE_DATA,
     dataName,
     isFetching: false,
+    data,
+    receivedAt: Date.now(),
+  };
+}
+
+export const POST_RESULT = 'POST_RESULT';
+export function postResult(dataName, data) {
+  return {
+    type: POST_RESULT,
+    dataName,
+    isPosting: false,
     data,
     receivedAt: Date.now(),
   };
@@ -110,7 +150,7 @@ export function fetchJWT(email, password, onLogin) {
 
 // helper function for checking cache
 function shouldFetchData(state, dataName) {
-  const data = state[dataName];
+  const data = state.datasources[dataName];
   if (!data || !data.items || data.items.length === 0) {
     return true;
   }
@@ -124,7 +164,7 @@ function shouldFetchData(state, dataName) {
 export function fetchData(dataName, request) {
   return (dispatch, getState) => {
     const state = getState();
-    if (shouldFetchData(state, dataName)) {
+    if (shouldFetchData(state.appState, dataName)) {
       const jwt = state.identity.jwt;
       // Let Redux know we are now requesting data from the given endpoint
       dispatch(requestData(dataName));
@@ -137,6 +177,29 @@ export function fetchData(dataName, request) {
         () => dispatch(requestFailure(dataName))
       );
     }
+    return Promise.resolve();
+  };
+}
+
+// Use for fetching data if needed
+export function submitData(dataName, request, onSuccess) {
+  return (dispatch, getState) => {
+    const jwt = getState().identity.jwt;
+    // Let Redux know we are now requesting data from the given endpoint
+    dispatch(postData(dataName));
+    // Then build and make the request
+    submitRequest(
+      request,
+      jwt,
+      json => {
+        dispatch(postResult(dataName, json));
+        if (typeof onSuccess === 'function') {
+          dispatch(onSuccess());
+        }
+      },
+      json => dispatch(postError(dataName, json)),
+      () => dispatch(postFailure(dataName))
+    );
     return Promise.resolve();
   };
 }
