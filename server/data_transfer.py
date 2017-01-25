@@ -109,7 +109,7 @@ def get_user_with_tcid(tcid):
 def get_users_with_account(account):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select * from webappusers where Account=%s order by DATE_CREATED desc", [account])
+		cursor.execute("select * from webappusers where Account=%s and isActive=1 order by DATE_CREATED desc", [account])
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
@@ -127,7 +127,7 @@ def get_users_with_account(account):
 def get_incompletes_with_account(account):
 	cursor = getConnection().cursor()
 	try:
-		cursor.execute("select email, first_name from webappusers where tcid in (select tcid from survey_response where tcid in (select tcid from webappusers where Account=%s) and completed=0)", [account])
+		cursor.execute("select email, first_name from webappusers where Account=%s and isActive=1", [account])
 		desc = []
 		for d in cursor.description: #get a list of the column names
 			desc.append(d[0])
