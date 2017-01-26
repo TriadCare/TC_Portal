@@ -36,6 +36,11 @@ a:hover, a:visited, a:link, a:active
   flex: auto;
 }
 
+.loginForm__dialog {
+  width: 90vw;
+  max-width: 500px;
+}
+
 .spaceExplorer {
   /* subtract the text-size, the padding, and the border size from the total height */
   width: 75px;

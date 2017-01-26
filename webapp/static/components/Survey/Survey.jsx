@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { oneLineTrim } from 'common-tags';
 import { NonIdealState, Spinner, Button, Radio } from '@blueprintjs/core';
 
 import { renderChart } from 'components/Charting';
@@ -44,7 +45,7 @@ const reconcileCheckbox = (currentAnswer, checkedValue) => {
 };
 
 const renderQuestion = (questionNumber, configQuestion,
-  responseQuestion, completed, handleAnswer) => {
+  responseQuestion, activeQuestion, completed, handleAnswer) => {
   switch (configQuestion.type) {
     case 'INTEGER':
       return (
@@ -59,6 +60,7 @@ const renderQuestion = (questionNumber, configQuestion,
               value={(responseQuestion.aid || '')}
               onChange={(e) => handleAnswer(configQuestion.qid, e.target.value)}
               disabled={completed ? 'disabled' : ''}
+              autoFocus={configQuestion.qid === activeQuestion}
             />
           </div>
           {(completed && configQuestion.blurb) ?
@@ -71,7 +73,14 @@ const renderQuestion = (questionNumber, configQuestion,
       );
     case 'MULTIPLE_CHOICE':
       return (
-        <div key={questionNumber} className="panel panel-default response__question">
+        <div
+          key={questionNumber}
+          className={oneLineTrim
+            `panel panel-default response__question ${
+              configQuestion.qid === activeQuestion ? `${/* 'question-active'*/''}` : ''
+            }`
+          }
+        >
           <div className="panel-heading response__question-label">
             {configQuestion.text}
           </div>
@@ -86,6 +95,7 @@ const renderQuestion = (questionNumber, configQuestion,
                   checked={answer.aid === responseQuestion.aid}
                   disabled={completed ? 'disabled' : ''}
                   onChange={() => handleAnswer(configQuestion.qid, answer.aid)}
+                  autoFocus={configQuestion.qid === activeQuestion}
                 />
               </div>
             )}
@@ -112,7 +122,12 @@ const renderQuestion = (questionNumber, configQuestion,
             ><tbody>
               <tr>
                 <td></td>
-                {configQuestion.columns.map((column, key) => <td key={key}>{column}</td>)}
+                {configQuestion.columns.map((column, key) =>
+                  <td
+                    key={key}
+                    className="grid__column-header"
+                  >{column}</td>
+                )}
               </tr>
               {configQuestion.rows.map((row, key) =>
                 (row.type === 'GRID_TEXT' ? null :
@@ -152,6 +167,10 @@ const renderQuestion = (questionNumber, configQuestion,
                                       (responseQuestion[row.qid] === (idx + 1).toString()) ?
                                       'checked' : ''
                                     }
+                                    onChange={() => {
+                                      handleAnswer(row.qid, (idx + 1).toString());
+                                    }}
+                                    autoFocus={(idx === 0 && row.qid === activeQuestion)}
                                   /> :
                                   <input
                                     name={row.qid}
@@ -161,6 +180,10 @@ const renderQuestion = (questionNumber, configQuestion,
                                       (responseQuestion[row.qid] === (idx + 1).toString() ||
                                       responseQuestion[row.qid] === '3') ? 'checked' : ''
                                     }
+                                    onChange={() => {
+                                      handleAnswer(row.qid, (idx + 1).toString());
+                                    }}
+                                    autoFocus={(idx === 0 && row.qid === activeQuestion)}
                                   />
                                 }
                                 <span
@@ -211,37 +234,55 @@ const renderQuestion = (questionNumber, configQuestion,
   }
 };
 
-const renderQuestionnaire = (config, answers, handleAnswer, score, completed) => (
+const renderQuestionnaire = (configObj) => (
   <div className="questionnaire">
-    {config.meta.sections.map((section, index) => (
-      <div key={index} id={section.group} className="response__section">
+    {configObj.config.meta.sections.map((section, index) => (
+      <div
+        key={index}
+        id={`section_${section.id}`}
+        className={
+          oneLineTrim`section__container ${
+            (configObj.activeQuestion === undefined ||
+            section.qids.includes(configObj.activeQuestion)) ?
+            'section-active' : 'section-inactive'}`
+        }
+      >
         <div className="response__section-label">
-          {`${section.group}${(section.graded && completed) ?
-            ` | Your Section GPA is ${score[section.group].toFixed(1)}` :
-            ''
-          }`}
+          <div className="section__label-count">
+            {`Section ${section.id} out of ${configObj.config.meta.sections.length}`}
+          </div>
+          <div>
+            {`${section.label}${(section.graded && configObj.completed) ?
+              ` | Your Section GPA is ${configObj.score[section.group].toFixed(1)}` :
+              ''
+            }`}
+          </div>
+          <Button onClick={() => configObj.handleSave(configObj.answers)} text="Save" />
         </div>
-        {section.question_numbers.map((questionNumber) => {
-          const configQuestion = config.questions.find(
-            (qObj) => qObj.question_number === questionNumber
-          );
-          const responseQuestion = (configQuestion.type === 'GRID') ?
-            configQuestion.rows.reduce(
-              (responseQs, row) => ({
-                ...responseQs,
-                ...{ [row.qid]: answers[row.qid] },
-              }), {}
-            ) :
-            { aid: answers[configQuestion.qid] };
+        <div className="response__section">
+          {section.question_numbers.map((questionNumber) => {
+            const configQuestion = configObj.config.questions.find(
+              (qObj) => qObj.question_number === questionNumber
+            );
+            const responseQuestion = (configQuestion.type === 'GRID') ?
+              configQuestion.rows.reduce(
+                (responseQs, row) => ({
+                  ...responseQs,
+                  ...{ [row.qid]: configObj.answers[row.qid] },
+                }), {}
+              ) :
+              { aid: configObj.answers[configQuestion.qid] };
 
-          return renderQuestion(
-            questionNumber,
-            configQuestion,
-            responseQuestion,
-            completed,
-            handleAnswer
-          );
-        })}
+            return renderQuestion(
+              questionNumber,
+              configQuestion,
+              responseQuestion,
+              configObj.activeQuestion,
+              configObj.completed,
+              configObj.handleAnswer
+            );
+          })}
+        </div>
       </div>
     ))}
   </div>
@@ -269,38 +310,42 @@ const renderViewer = (config, answers, response, tcScores) => (
         'ct-chart response__chart response__chart-bar'
       )}
     </div>
-    {response.meta.surveyID === '4' ?
-      <div className="response__questionnaire-breakdown">
-        <div className="response__questionnaire-breakdown-label">Questionnaire Breakdown</div>
-        {renderQuestionnaire(
-          config,
-          answers,
-          undefined,
-          response.score,
-          (response.meta.completed === 1)
-        )}
-      </div>
-      :
-      null
-    }
+    <div className="response__questionnaire-breakdown">
+      <div className="response__questionnaire-breakdown-label">Questionnaire Breakdown</div>
+      {renderQuestionnaire({
+        config,
+        answers,
+        score: response.score,
+        completed: (response.meta.completed === 1),
+      })}
+    </div>
   </div>
 );
 
-const renderSurvey = (config, answers, handleAnswer, handleSave, handleSubmit, isPosting) => (
+const renderSurvey = (config, answers, activeQuestion,
+  handleAnswer, handleSectionChange,
+  handleSave, handleSubmit, isPosting) => (
   <div className="survey__viewer">
-    {renderQuestionnaire(config, answers, handleAnswer, undefined, false)}
+    {renderQuestionnaire({
+      config,
+      answers,
+      activeQuestion,
+      handleAnswer,
+      handleSave,
+      isPosting,
+    })}
     {isPosting ?
       '' :
-      <div>
-        <Button onClick={() => handleSave(answers)} text="Save" />
-        <Button onClick={() => handleSubmit(answers)} text="Submit" />
+      <div className="questionnaire-footer">
+        <Button onClick={() => handleSectionChange(-1)} text="Back" />
+        <Button onClick={() => handleSectionChange(1)} text="Next" />
       </div>
     }
   </div>
 );
 
-const buildSurveyAnswers = (config, response) =>
-  config.meta.sections.reduce((answers, section) => (
+const buildSurveyAnswers = (config, response, existingAnswers) => ({
+  ...config.meta.sections.reduce((answers, section) => (
     {
       ...answers,
       ...section.qids.reduce((sectionAnswers, qid) => ({
@@ -310,7 +355,16 @@ const buildSurveyAnswers = (config, response) =>
         },
       }), {}),
     }
-  ), {});
+  ), {}),
+  ...Object.keys(existingAnswers).reduce(  // need to remove values of undefined
+    (onlyAnswers, a) => (
+      (existingAnswers[a] !== undefined) ?
+      { ...onlyAnswers, ...{ [a]: existingAnswers[a] } } :
+      { ...onlyAnswers }
+    ),
+    {}
+  ),
+});
 
 const nullToUndefined = (o) => {
   const newO = {};
@@ -321,25 +375,43 @@ const nullToUndefined = (o) => {
   return newO;
 };
 
+const updateState = (props, surveyAnswers) => {
+  const response = (
+    (props.response.items !== undefined &&
+    props.response.items.length !== 0) ?
+      props.response.items[0] :
+      {}
+  );
+  const responseAnswers = response.questionnaire ? props.response.items[0].questionnaire : [];
+  const activeQuestion = (
+    response.meta === undefined ||
+    response.meta.completed === 1) ?
+      undefined :
+      ((
+        response.questionnaire
+        .sort((q1, q2) => (parseInt(q1.qid, 10) < parseInt(q2.qid, 10) ? -1 : 1))
+        .find((q) => (q.aid === undefined || q.aid === null)) || { qid: '1' }
+      ).qid);
+  return {
+    surveyAnswers: nullToUndefined(
+      buildSurveyAnswers(props.config, responseAnswers, surveyAnswers)
+    ),
+    activeQuestion,
+  };
+};
+
 class Survey extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      surveyAnswers: nullToUndefined(buildSurveyAnswers(props.config, [])),
+      ...{ config: props.config },
+      ...updateState(props, {}),
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const responseAnswers =
-      (nextProps.response.items !== undefined &&
-        nextProps.response.items.length !== 0) ?
-          nextProps.response.items[0].questionnaire :
-          [];
-
-    this.setState({
-      surveyAnswers: buildSurveyAnswers(nextProps.config, responseAnswers),
-    });
-  }
+  componentWillReceiveProps = (nextProps) => (
+    this.setState(updateState(nextProps, this.state.surveyAnswers))
+  );
 
   handleAnswer = (qid, aid) => {
     this.setState({
@@ -347,6 +419,21 @@ class Survey extends React.Component {
         ...this.state.surveyAnswers,
         ...{ [qid]: aid },
       },
+    });
+  }
+
+  handleSectionChange = (diff) => {
+    const activeSection = this.state.config.meta.sections.find(
+      (section) => section.qids.includes(this.state.activeQuestion)
+    );
+    let nextID = (activeSection.id + diff);
+    nextID = nextID < 1 ? 1 : nextID;
+    nextID = nextID > this.state.config.meta.sections.length ?
+      this.state.config.meta.sections.length : nextID;
+    this.setState({
+      activeQuestion: this.state.config.meta.sections.find(
+        (section) => section.id === nextID
+      ).qids[0],
     });
   }
 
@@ -369,7 +456,9 @@ class Survey extends React.Component {
     return renderSurvey(
       config,
       this.state.surveyAnswers,
+      this.state.activeQuestion,
       this.handleAnswer,
+      this.handleSectionChange,
       handleSave,
       handleSubmit,
       response.isPosting

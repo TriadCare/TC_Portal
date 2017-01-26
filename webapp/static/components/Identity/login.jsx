@@ -19,6 +19,11 @@ const LoginComponent = (props) => (
       isOpen={props.isOpen}
       isCloseButtonShown={false}
       title="Your Session has Expired"
+      className="loginForm__dialog"
+      autoFocus={false}
+      enforceFocus={false}
+      canEscapeKeyClose={false}
+      canOutsideClickClose={false}
     >
       <div className="pt-dialog-body">
         <LoginForm

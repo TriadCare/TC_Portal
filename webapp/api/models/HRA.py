@@ -1,7 +1,9 @@
-from datetime import datetime
-from webapp import db
-
 import json
+from datetime import datetime
+from functools import reduce
+
+from webapp import db
+from webapp.server.util import api_error
 
 
 class Survey(db.Model):
@@ -23,8 +25,11 @@ class HRA(db.Model):
     ]
     __transform__ = {
         "Diet__Nutrition": "Diet & Nutrition",
+        "Diet & Nutrition": "Diet__Nutrition",
         "Physical_Activity": "Physical Activity",
-        "Preventative_Care": "Preventative Care"
+        "Physical Activity": "Physical_Activity",
+        "Preventative_Care": "Preventative Care",
+        "Preventative Care": "Preventative_Care",
     }
 
     def __init__(self, data):
@@ -68,18 +73,156 @@ class HRA(db.Model):
         return hra_obj
 
     @staticmethod
-    def score_hra(data, complete):
-        if complete:
-            # need to score here
-            pass
-        return {key: None for key in HRA.__score_keys__}
-
-    @staticmethod
     def from_request(data, complete):
-        score = HRA.score_hra(data, complete)
-        result = {
-            'surveyID': 4
-        }
-        for k, v in data.iteritems():
+        if 'meta' not in data or 'surveyID' not in data['meta']:
+            api_error(
+                'AttributeError',
+                "Required field is missing: meta.surveyID",
+                400
+            )
+        surveyID = data['meta']['surveyID']
+        response = data['response']
+        score = score_hra(surveyID, response, complete)
+
+        result = {}
+        result['surveyID'] = surveyID
+        for k, v in score.iteritems():
+            result[k] = v
+        for k, v in response.iteritems():
             result[k] = v
         return result
+
+
+def invalid_answer(qid):
+    api_error(
+        ValueError,
+        'Required answer is missing or invalid for QID: ' + qid,
+        400
+    )
+
+
+def get_grade(g, response):
+    if isinstance(g, float):
+        return g
+    if 'equal' in g.keys():
+        return get_grade(
+            g['score'] if response[g['qid']] == g['equal'] else g['else'],
+            response
+        )
+    if 'greaterThanOrEqual' in g.keys():
+        return get_grade(
+            g['score'] if
+            int(response[g['qid']]) >= g['greaterThanOrEqual'] else
+            g['else'],
+            response
+        )
+
+
+def score_hra(surveyID, response, complete):
+    score = {key: None for key in HRA.__score_keys__ if key != 'Overall'}
+    if complete:
+        hra_scores = {}
+        hra_def = {}
+
+        filename = ('webapp/static/hra_files/v' +
+                    str(surveyID) + '/scores.json')
+        with open(filename, 'r') as scores:
+            hra_scores = json.load(scores)['scores']
+
+        filename = ('webapp/static/hra_files/v' +
+                    str(surveyID) + '/hra_definition.json')
+        with open(filename, 'r') as definition:
+            hra_def = json.load(definition)
+
+        hra_sections = hra_def['meta']['sections']
+
+        for section in hra_sections:
+            # For each required section
+            if section['isRequired']:
+                answer_count = 0
+                section_name = (HRA.__transform__[section['group']]
+                                if section['group'] in
+                                HRA.__transform__.keys()
+                                else section['group'])
+                # iterate through the question numbers (includes grids)
+                for qNum in section['question_numbers']:
+                    # If Age question, validate the age and continue
+                    if qNum == '1':
+                        try:
+                            age = int(response[qNum])
+                            if age > 0 and age < 200:
+                                continue
+                            else:
+                                raise ValueError()
+                        except ValueError:
+                            invalid_answer(qNum)
+                    # get the question as defined
+                    question = next(
+                        (q for q in hra_def['questions']
+                         if q['question_number'] == qNum), None
+                    )
+                    # and the possible answers for this question
+                    # and then validate the response(s) to this question
+                    if 'aids' in question:
+                        for row in question['rows']:
+                            if ((
+                                row['qid'] not in response or
+                                response[row['qid']] not in question['aids']
+                            ) and row['type'] != 'GRID_TEXT'):
+                                invalid_answer(row['qid'])
+                            # question answer is valid,
+                            # add the score to the section
+                            if (
+                                section['graded'] and
+                                question['type'] != 'GRID_TEXT'
+                            ):
+                                g = next(
+                                    ans['score'] for ans in
+                                    hra_scores[row['qid']]
+                                    if ans['aid'] == response[row['qid']]
+                                )
+                                if g is not None:
+                                    # unravel conditonal score if needed
+                                    g = get_grade(g, response)
+                                    score[section_name] = (
+                                        g if score[section_name] is None
+                                        else score[section_name] + g
+                                    )
+                                    answer_count = answer_count + 1
+                    else:
+                        if (
+                            question['qid'] not in response or
+                            response[question['qid']] not in
+                            [a['aid'] for a in question['answers']]
+                        ):
+                            invalid_answer(question['qid'])
+                        # question answer is valid,
+                        # add the score to the section
+                        if section['graded']:
+                            g = next(
+                                ans['score'] for ans in
+                                hra_scores[question['qid']]
+                                if ans['aid'] == response[question['qid']]
+                            )
+                            if g is not None:
+                                # unravel conditonal score if needed
+                                g = get_grade(g, response)
+                                score[section_name] = (
+                                    g if score[section_name] is None
+                                    else score[section_name] + g
+                                )
+                                answer_count = answer_count + 1
+
+                if section['graded']:
+                    # Section total / answer count = section avg
+                    score[section_name] = (
+                        round((score[section_name] / answer_count), 1)
+                    )
+        # average the section averages to get the Overall score
+        score['Overall'] = round(sum(score.values()) / len(score.values()), 1)
+        score['completed'] = 1
+
+    if 'Overall' not in score:
+        score['Overall'] = None
+
+    return score

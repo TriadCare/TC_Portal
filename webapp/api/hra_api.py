@@ -89,7 +89,7 @@ class HRA_API(MethodView):
     def post(self):
         if not current_user.eligibleForHRA():
             api_error(AttributeError, "User is ineligible for a new HRA.", 403)
-        complete = (request.args.get('complete', 0) == 1 or False)
+        complete = request.args.get('complete', '0') == '1'
         request_data = get_request_data(request)
 
         hra_data = HRA.from_request(request_data, complete)
@@ -104,9 +104,9 @@ class HRA_API(MethodView):
         return jsonify(id=new_hra.responseID), 201
 
     def put(self, response_id=None):
-        complete = (request.args.get('complete', 0) == 1 or False)
         if response_id is None:
             api_error(AttributeError, "Need Record ID for Update.", 401)
+        complete = request.args.get('complete', '0') == '1'
         request_data = get_request_data(request)
 
         hra_data = HRA.from_request(request_data, complete)

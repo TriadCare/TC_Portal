@@ -1,0 +1,760 @@
+{
+  "meta": {
+    "surveyID": 4
+  },
+  "scores": [
+    {
+      "qid": "3",
+      "answers": [
+        {
+          "aid": "1",
+          "score": 0.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        }
+      ]
+    },
+    {
+      "qid": "4",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 0.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        }
+      ]
+  	},
+		{
+      "qid": "5",
+      "answers": [
+  			{
+          "aid": "1",
+          "score": 2.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        }
+      ]
+    },
+    {
+      "qid": "6",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+      ]
+  	},
+		{
+      "qid": "7",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        }
+      ]
+  	},
+		{
+      "qid": "8",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        }
+      ]
+  	},
+		{
+      "qid": "9",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        }
+      ]
+  	},
+		{
+      "qid": "10",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 1.0
+        },
+        {
+          "aid": "2",
+          "score": 1.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 3.0
+        },
+        {
+          "aid": "5",
+          "score": 4.0
+        }
+      ]
+  	},
+		{
+      "qid": "11",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 0.0
+        },
+        {
+          "aid": "2",
+          "score": 1.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 3.0
+        },
+        {
+          "aid": "5",
+          "score": 4.0
+        }
+      ]
+  	},
+		{
+      "qid": "12",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 0.0
+        },
+        {
+          "aid": "2",
+          "score": 1.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 3.0
+        },
+        {
+          "aid": "5",
+          "score": 4.0
+        }
+      ]
+  	},
+		{
+      "qid": "13",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        },
+        {
+          "aid": "3",
+          "score": 3.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+      ]
+  	},
+		{
+      "qid": "14",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+      ]
+  	},
+		{
+      "qid": "15",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+      ]
+  	},
+		{
+      "qid": "16",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 1.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        }
+      ]
+  	},
+		{
+      "qid": "17",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 0.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 4.0
+        },
+        {
+          "aid": "4",
+          "score": 4.0
+        }
+      ]
+  	},
+		{
+      "qid": "18",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 0.0
+        },
+        {
+          "aid": "2",
+          "score": 2.0
+        },
+        {
+          "aid": "3",
+          "score": 3.0
+        },
+        {
+          "aid": "4",
+          "score": 4.0
+        }
+  		]
+  	},
+		{
+      "qid": "19",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "20",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 0.0
+        },
+        {
+          "aid": "3",
+          "score": null
+        }
+  		]
+  	},
+		{
+      "qid": "21",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 1.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 4.0
+        },
+        {
+          "aid": "4",
+          "score": 2.0
+        }
+  		]
+  	},
+		{
+      "qid": "25",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "26",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "27",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "28",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        },
+        {
+          "aid": "3",
+          "score": 4.0
+        },
+        {
+          "aid": "4",
+          "score": 4.0
+        },
+        {
+          "aid": "5",
+          "score": null,
+          "conditionalScore": {
+            "qid": "1",
+            "greaterThanOrEqual": 50,
+            "value": 0.0
+          }
+        }
+  		]
+  	},
+		{
+      "qid": "29",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "30",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+		  ]
+  	},
+		{
+      "qid": "31",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "32",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+  		]
+  	},
+		{
+      "qid": "33",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 0.0
+        },
+        {
+          "aid": "3",
+          "score": 0.0
+        },
+        {
+          "aid": "4",
+          "score": 0.0
+        },
+        {
+          "aid": "5",
+          "score": 0.0
+        }
+      ]
+  	},
+		{
+      "qid": "34",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": null,
+          "conditionalScore": {
+              "qid": "2",
+              "equal": 2,
+              "value": {
+                  "qid": "1",
+                  "greaterThanOrEqual": 45,
+                  "value": 0.0
+              }
+          }
+        }
+      ]
+  	},
+		{
+      "qid": "35",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": null,
+          "conditionalScore": {
+              "qid": "2",
+              "equal": 2,
+              "value": 0.0
+          }
+        }
+      ]
+  	},
+		{
+      "qid": "36",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 3.0
+        },
+        {
+          "aid": "3",
+          "score": 2.0
+        },
+        {
+          "aid": "4",
+          "score": 1.0
+        },
+        {
+          "aid": "5",
+          "score": null,
+          "conditionalScore": {
+              "qid": "2",
+              "equal": 2,
+              "value": 0.0
+          }
+        }
+      ]
+  	},
+		{
+      "qid": "37",
+      "answers": [
+				{
+          "aid": "1",
+          "score": 4.0
+        },
+        {
+          "aid": "2",
+          "score": 4.0
+        },
+        {
+          "aid": "3",
+          "score": 4.0
+        },
+        {
+          "aid": "4",
+          "score": 4.0
+        },
+        {
+          "aid": "5",
+          "score": null,
+          "conditionalScore": {
+            "qid": "2",
+            "equal": 1,
+            "value": {
+              "qid": "1",
+              "greaterThanOrEqual": 45,
+              "value": 0.0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

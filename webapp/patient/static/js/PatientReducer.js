@@ -5,7 +5,16 @@ import { IdentityActions } from 'components/Identity';
 import { SELECT_HRA, NEW_HRA, SUBMIT_HRA } from './PatientActions';
 
 import dashboardConfiguration from './default_dashlet_config'; // user pref doc
-import hraSurveyConfiguration from './hra_new.json';
+
+import surveyConfigV2 from 'hra_files/v3/english/hra_definition.json';
+import surveyConfigV2Spanish from 'hra_files/v3/spanish/hra_definition.json';
+import surveyConfigV4 from 'hra_files/v4/english/hra_definition.json';
+const latestSurveyVersion = 'v4';
+const surveyConfigurations = {
+  v2: surveyConfigV2,
+  v3: surveyConfigV2Spanish,
+  v4: surveyConfigV4,
+};
 
 const compareHRAs = (hraOne, hraTwo) =>
   moment(hraOne.meta.DATE_CREATED).diff(moment(hraTwo.meta.DATE_CREATED));
@@ -101,9 +110,13 @@ function getUpdatedState(state, action) {
     ...newState,
     ...{
       initializingDashboard: action.isFetching,
-    },
-    ...{
       dashboardDashlets: buildDashlets(newState),
+      surveyConfiguration: surveyConfigurations[
+        (newState.datasources.EXPANDED_HRA.items !== undefined &&
+            newState.datasources.EXPANDED_HRA.items.length !== 0) ?
+          `v${newState.datasources.EXPANDED_HRA.items[0].meta.surveyID}` :
+          latestSurveyVersion
+      ],
     },
   };
 }
@@ -165,7 +178,7 @@ const initialState = {
   },
   dashboardDashlets: [],  // rehydrate in PatientReduxStore!
   initializingDashboard: true,
-  surveyConfiguration: hraSurveyConfiguration,
+  surveyConfiguration: surveyConfigurations[latestSurveyVersion],
   selectedHRA: undefined,
   profileConfiguration: undefined,
 };
@@ -185,12 +198,21 @@ const appReducer = (state = initialState, action) => {
     case NEW_HRA:
       return {
         ...combineDatasource('EXPANDED_HRA', state, blankHRA),
-        ...{ selectedHRA: action.responseID },
+        ...{
+          surveyConfiguration: surveyConfigurations[latestSurveyVersion],
+          selectedHRA: action.responseID,
+        },
       };
     case SUBMIT_HRA:
-      return {
-        ...combineDatasource('EXPANDED_HRA', state, { isFresh: false }),
-      };
+      return combineDatasource(
+        'EXPANDED_HRA',
+        combineDatasource(
+          'HRA',
+          state,
+          { isFresh: false }
+        ),
+        { isFresh: false }
+      );
     case '@@router/LOCATION_CHANGE':
       return {
         ...state,

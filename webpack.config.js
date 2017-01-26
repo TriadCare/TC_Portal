@@ -28,7 +28,7 @@ module.exports = {
   },
   output: {
     path: PATHS.dist,  // Build Destination
-    publicPath: 'https://stage.triadcare.com/bundle/',
+    publicPath: 'http://localhost:8080/bundle/',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[id].[chunkhash].js',
   },

@@ -6,8 +6,11 @@
   justify-content: flex-start;
 }
 
-.response__viewer {
+.response__viewer,
+.survey__viewer {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .response__overall {
@@ -89,6 +92,45 @@
   background: rgb(180,180,180);
 }
 
+.section-active,
+.section__label-active {
+  display: block;
+}
+.section-inactive,
+.section__label-inactive {
+  display: none;
+}
+
+/*.question-active {
+  box-shadow: 0 0 5px rgb(0,120,185);
+  border: 1px solid rgb(0,120,185);
+
+  transition: border-color 3s ease-in-out;
+}*/
+
+.questionnaire {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.questionnaire-footer {
+  flex: none;
+  background-color: rgb(220,220,220);
+  height: 50px;
+  line-height: 50px;
+}
+
+.section__container {
+  height: 100%;
+  width:100%;
+}
+
+.response__section {
+  overflow-y: auto;
+  height: calc(100% - 55px);
+  width:100%;
+}
+
 .response__section-label {
   color: rgb(0,120,185);
   background-color: rgb(220,220,220);
@@ -96,6 +138,8 @@
   line-height: 50px;
   font-size: 1.1em;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .response__question-grid {
@@ -113,6 +157,28 @@
 .grid__cell-answer {
   display: inline;
   padding-left: 16px;
+}
+
+.grid__column-header,
+.grid__row-header
+{
+	font-size: 1em;
+}
+@media (max-width: 700px) and (min-width: 475px)
+{
+  .grid__column-header,
+  .grid__row-header
+	{
+		font-size: 0.8em;
+	}
+}
+@media (max-width: 475px)
+{
+  .grid__column-header,
+  .grid__row-header
+	{
+		font-size: 0.55em;
+	}
 }
 
 .response__question-answer {

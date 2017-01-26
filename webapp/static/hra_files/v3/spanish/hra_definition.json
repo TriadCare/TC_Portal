@@ -1,0 +1,1002 @@
+{
+	"meta": {
+    "surveyID": 3,
+		"sections": [
+			{
+        "id": 1,
+				"group": "Demographic",
+				"label": "Demographic",
+				"qids": ["1", "2"],
+				"question_numbers": ["1", "2"],
+				"graded": false,
+        "isRequired": true
+			},
+			{
+        "id": 2,
+				"group": "Tobacco",
+				"label": "Tabaco",
+				"qids": ["3","4","5"],
+				"question_numbers": ["3","4","5"],
+				"graded": true,
+        "isRequired": true
+			},
+			{
+        "id": 3,
+				"group": "Diet & Nutrition",
+				"label": "Nutrición",
+				"qids": ["6","7","8","9","10","11","12","13","14","15"],
+				"question_numbers": ["6","7","8","9","10","11","12","13"],
+				"graded": true,
+        "isRequired": true
+			},
+			{
+        "id": 4,
+				"group": "Physical Activity",
+				"label": "Actividad física",
+				"qids": ["16","17","18"],
+				"question_numbers": ["14","15","16"],
+				"graded": true,
+        "isRequired": true
+			},
+			{
+        "id": 5,
+				"group": "Stress",
+				"label": "Estrés",
+				"qids": ["19","20","21"],
+				"question_numbers": ["17","18","19"],
+				"graded": true,
+        "isRequired": true
+			},
+			{
+        "id": 6,
+				"group": "Medication Management",
+				"label": "Manejo de los medicamentos",
+				"qids": ["22","23","24","25","26"],
+				"question_numbers": ["20","21","22","23","24"],
+				"graded": false,
+        "isRequired": true
+			},
+			{
+        "id": 7,
+				"group": "Preventative Care",
+				"label": "Chequeos y atención preventiva",
+				"qids": [
+								"27","28","29","30",
+								"31","32","33","34",
+								"35","36","37",
+								"38","39"
+							],
+				"question_numbers": ["25"],
+				"graded": true,
+        "isRequired": true
+			},
+			{
+        "id": 8,
+				"group": "Chronic Conditions",
+				"label": "Condiciones crónicas",
+				"qids": [
+								"40","41","42","43","44","45","46","47","48","49",
+								"50","51","52","53","54","55","56","57","58","59",
+								"60","61","62","63","64","79"
+							],
+				"question_numbers": ["26"],
+				"graded": false,
+        "isRequired": true
+			},
+			{
+        "id": 9,
+				"group": "Self-Analysis",
+				"label": "Autoanálisis",
+				"qids": ["65","66","67","68","69","70","71","72","73","74","75","76", "77", "78"],
+				"question_numbers": ["27", "28", "29", "30"],
+				"graded": false,
+        "isRequired": true
+			}
+		]
+	},
+	"questions": [
+		{
+			"qid": "1",
+      "question_number": "1",
+			"type": "INTEGER",
+			"text": "Años"
+		},
+		{
+			"qid": "2",
+      "question_number": "2",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Sexo",
+      "answers": [
+        {
+					"aid": "1",
+					"text": "M"
+				},
+				{
+					"aid": "2",
+					"text": "F"
+				}
+      ]
+		},
+		{
+			"qid": "3",
+      "question_number": "3",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Fuma cigarrillos, cigarros o cigarrillos electrónicos?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				}
+			],
+			"blurb": "Smoking-related illnesses cost over $300 billion each year in the United States including nearly $170 billion in direct medical expenses and over $156 billion for losses in productivity. Smoking is the leading cause of preventable death in the U.S., and smokers die, on average, ten years earlier than non-smokers."
+		},
+		{
+			"qid": "4",
+      "question_number": "4",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Consume algún tipo de tabaco sin humo u otros productos de nicotina?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				}
+			],
+			"blurb": "Smokeless tobacco, including chewing tobacco and snuff, contains nicotine that is absorbed through the mouth or nose instead of direct inhalation of burned tobacco into the lungs, as with smoking. The nicotine addiction is the same, however, and smokeless tobacco products have not been proven to help smokers quit smoking. In fact, smokers who delay quitting by using smokeless products between cigarettes significantly heighten their risk of lung cancer as well as other health problems uniquely attributed to smokeless tobacco."
+		},
+		{
+			"qid": "5",
+      "question_number": "5",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿A menudo está expuesto a humo de segunda mano (una vez por semana o más)?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				}
+			],
+			"blurb": "Secondhand smoke accounts for about $5.6 billion in lost productivity each year in the United States."
+		},
+		{
+			"qid": "6",
+      "question_number": "6",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Con qué frecuencia sale a comer fuera o compra comida para llevar?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Nunca"
+				},
+				{
+					"aid": "2",
+					"text": "Rara vez (1-2 veces por semana)"
+				},
+				{
+					"aid": "3",
+					"text": "De vez en cuando (aproximadamente 3-4 veces por semana)"
+				},
+				{
+					"aid": "4",
+					"text": "Con regularidad (aproximadamente 5-7 veces por semana)"
+				},
+				{
+					"aid": "5",
+					"text": "Frecuentemente (1-2 veces por <i>día</i>)"
+				}
+			],
+			"blurb": "Dining out has become a critical risk factor for obesity. It is challenging to control portions, sodium, and calories when dining out, even if healthier options are available on the menu. Eating fast food more than twice weekly is correlated with significant weight gain over time compared to infrequent visits. Furthermore, regular consumption of fast food doubles one’s risk of developing insulin resistance, which increases the risk of type 2 diabetes."
+		},
+		{
+      "question_number": "7",
+			"type": "GRID",
+      "text": "¿Con qué frecuencia se salta las siguientes comidas?",
+			"blurb": "Skipping meals not only causes your blood sugar to drop, making you feel tired and irritable, but it is also linked to overeating later in the day. Without consistent “fuel” through food, your body switches into starvation mode, thereby conserving calories and slowing metabolism, which may be linked to weight gain. Further, your body may start using muscle protein for fuel, which shifts body composition to burn even fewer calories at rest. Studies have linked breakfast in particular to increased risk of obesity, and individuals with diabetes are at heightened risk of unstable blood glucose if they skip meals. Finally, your brain suffers, making mood swings likely and clear thinking a significant challenge.",
+			"columns": ["Nunca", "Rara vez (1-2 veces/semana)", "A veces (3-4 veces/semana)", "A menudo (más de 5 veces/semana)"],
+      "aids": ["1", "2", "3", "4"],
+      "rows": [
+    		{
+    			"qid": "7",
+    			"type": "GRID_RADIO",
+    			"text": "Desayuno"
+				},
+    		{
+    			"qid": "8",
+    			"type": "GRID_RADIO",
+    			"text": "Almuerzo"
+				},
+    		{
+    			"qid": "9",
+    			"type": "GRID_RADIO",
+    			"text": "Cena"
+				}
+      ]
+		},
+		{
+			"qid": "10",
+      "question_number": "8",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuánta agua toma? (1 botella de agua estándar = ~16 onzas líquidas o 2 tazas)",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Nada"
+				},
+				{
+					"aid": "2",
+					"text": "0-1 tazas (8 onzas líquidas) por día"
+				},
+				{
+					"aid": "3",
+					"text":	"2-4 tazas por día (1-2 botellas estándar de agua))"
+				},
+				{
+					"aid": "4",
+					"text": "5-8 tazas por día"
+				},
+				{
+					"aid": "5",
+					"text": "Más de 8 tazas por día"
+				}
+			],
+			"blurb": "Water is involved in every cellular function in the body, and if you’re dehydrated, those processes do not function efficiently. It is calorie-free, essentially cost-free, and adds volume to your stomach, which may help with weight management if consumed before meals and snacks. Finally, by getting the optimal amount of water daily (1 oz. per 2 lbs. body weight; example: 80 oz. for a 160 lb person), one typically has to displace sweetened, caloric beverages. Substituting water for one 20 oz. soda can save ~250 calories. It also aids in digestion, keeping you “regular” and helping to reduce bloating."
+		},
+		{
+			"qid": "11",
+      "question_number": "9",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuántas porciones de alimentos ricos en fibra come diariamente? (Incluya panes y cereales hechos con un 100% de granos integrales, avena, arroz integral, pastas de granos integrales, frutas y verduras, frijoles secos, etc.) *1 porción = 1 rebanada de pan, 1/3 taza de pasta, arroz o frijoles; 1/2 taza de verduras; 1 fruta entera pequeña; 1/2 taza de bayas o frutas en rodajas",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Menos de 1"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 porciones por día"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 porciones por día"
+				},
+				{
+					"aid": "4",
+					"text": "5-6 porciones por día"
+				},
+				{
+					"aid": "5",
+					"text": "más de 7 porciones por día"
+				}
+			], "blurb": "Fiber fills you up, keeps you satisfied, is linked to lower body weight, and adds bulk, thereby helping with digestive regularity. Populations that consume more dietary fiber have lower incidence of chronic disease and decreased risk of developing chronic diseases. The recommended goals for fiber are 25-35 grams per day for women and men, respectively. Food sources of fiber include fruits and vegetables with skin, legumes, whole grains, nuts and seeds."
+		},
+		{
+			"qid": "12",
+      "question_number": "10",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Con qué frecuencia come por lo menos 5 porciones de frutas y verduras no almidonadas? (No incluye papas, camotes, maíz, alverjas, frijoles secos, frijoles cocidos, etc.; sí incluye brócoli, coliflor, frijoles verdes, zanahorias, ensaladas, tomates, repollos, col, pepinos, champiñones, coles de Bruselas, espárragos, pimientos, cebollas, etc.) *1 porción = 1 fruta entera pequeña, 1/2 taza de verduras o 1 taza de ensaladas verdes",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Nunca consumo mucho"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 días por semana"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 días por semana"
+				},
+				{
+					"aid": "4",
+					"text": "La mayoría de días"
+				},
+				{
+					"aid": "5",
+					"text": "Todos los días"
+				}
+			],
+			"blurb": "Diets rich in vegetables and fruit may reduce the risk of some cancers and other chronic diseases. Fruits and vegetables are also full of vitamins and minerals, phytochemicals and antioxidants, and fiber, all of which are crucial to good health. Nearly all fruits and vegetables are naturally low in calories and fat. Eating at least five servings per day is recommended for health, but more is even better."
+		},
+		{
+			"qid": "13",
+      "question_number": "11",
+			"type": "MULTIPLE_CHOICE",
+			"text":"En un día promedio, ¿cuántas copas de bebidas alcohólicas toma?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "No bebo alcohol"
+				},
+				{
+					"aid": "2",
+					"text": "0-1"
+				},
+				{
+					"aid": "3",
+					"text": "2-3"
+				},
+				{
+					"aid": "4",
+					"text": "4-5"
+				},
+				{
+					"aid": "5",
+					"text": "Más de 6"
+				}
+			],
+			"blurb": "Excessive alcohol consumption kills about 88,000 people in the U.S. yearly, and the costs are estimated at $223.5 billion per year (2006) from healthcare expenses, loss in workplace productivity, related criminal justice expenses, and costs of motor vehicle accidents. Binge drinking, defined as consuming more than four alcoholic beverages for women or five for men in one occasion is the most common form of excessive alcohol consumption in the U.S. Eighteen percent of U.S. adults report engaging in binge drinking."
+		},
+		{
+			"qid": "14",
+      "question_number": "12",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Con qué frecuencia come alimentos muy procesados o dulces? (incluye galletas, galletas saladas, tortas, pasteles, bollos, bizcochos, pan o pasta blanca, arroz blanco, meriendas Lunchables, mezclas en caja de pastas, arroz, macarrones con queso, alimentos envasados, alimentos para meriendas dulces o saladas, galletitas saladas con pasta de cacahuetes, etc.)",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Menos de una vez a la semana"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 veces por semana"
+				},
+				{
+					"aid": "3",
+					"text": "3-5 días por semana"
+				},
+				{
+					"aid": "4",
+					"text": "6-7 días por semana"
+				},
+				{
+					"aid": "5",
+					"text": "Muchas veces al día"
+				}
+			], "blurb": "Refined grains, such as white flour (or white rice) used in processed foods like bread, pasta, baked goods, and many packaged foods, lack fiber and nutritional value and can cause blood sugar spikes that may lead to subsequent cravings for sweets or simple carbohydrates. Additionally, processed foods typically contain high amounts of sodium, which can contribute to elevated blood pressure and heart disease. More than 75% of the sodium Americans consume comes from processed foods, including restaurant meals. Any food that has been changed from its original raw form can be called processed, which often involves added ingredients including sodium and other additives, which make the product less healthy or even harmful in excess. Smart food choices are crucial to maintaining a healthy weight and a healthy heart."
+		},
+		{
+			"qid": "15",
+      "question_number": "13",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuántas bebidas calóricas toma al día? (Incluye té dulce, bebidas gaseosas, jugos, bebidas de café endulzado, ponche de frutas, limonada, Gatorade, etc.; no incluye bebidas Diet o sin azúcar ni bebidas alcohólicas) *1 porción = 8 onzas líquidas o 1 taza; 1 – 20 onzas líquidas de gaseosa = 2.5 porciones",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Menos de 1 por día"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 por día"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 por día"
+				},
+				{
+					"aid": "4",
+					"text": "5-6 por día"
+				},
+				{
+					"aid": "5",
+					"text": "más de 7 por día"
+				}
+			], "blurb": "Increasing evidence suggests that regular consumption of sugar-sweetened beverages contributes to weight gain, obesity, and type 2 diabetes. Adults who drink even one daily soft drink are 27% more likely to be overweight than those who drink none. The economic impact of obesity is estimated to be $2 trillion annually, including direct medical claims, indirect medical expenses, and obesity-related job absenteeism."
+		},
+		{
+			"qid": "16",
+      "question_number": "14",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Incluye su trabajo períodos de estar sentado por más de cuatro horas al día?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text":	"No"
+				}
+			],
+			"blurb": "Sitting for extended periods of time has been linked to a variety of health risks, including obesity, diabetes, and metabolic syndrome, as well as an increased risk of death from cardiovascular disease and cancer. Any extended sitting, including driving, at work, or in front of the TV, can be harmful, and spending a few hours vigorously exercising each week does not appear to offset the risk. It is estimated that reducing sedentary behavior and physical inactivity could save $45 million in healthcare spending by 2020. Furthermore, researchers estimate $842 million in savings for sedentary-behavior related diabetes costs and $202 million in savings for related hypertension costs."
+		},
+		{
+			"qid": "17",
+      "question_number": "15",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuántos días hace ejercicios de resistencia por lo menos durante 30 minutos en una semana normal? (Es decir, entrenamientos con pesas o entrenamiento de resistencia, Pilates, yoga, calistenia)",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Nunca"
+				},
+				{
+					"aid": "2",
+					"text": "1 día por semana"
+				},
+				{
+					"aid": "3",
+					"text": "2-4 días por semana"
+				},
+				{
+					"aid": "4",
+					"text": "Más de 5 días por semana"
+				}
+			],
+			"blurb": "Lifting weights or doing resistance exercise like push-ups, triceps dips, and squats, can help build strong muscles, which burn more calories at rest. Activities including calisthenics, resistance bands, plyometrics, or even functional work like digging or lifting, count as resistance exercise. The recommendation for adults is resistance exercise at least twice weekly for muscle strength and maintenance of lean body mass, both of which keep the metabolism humming more efficiently."
+		},
+		{
+			"qid": "18",
+      "question_number": "16",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuántos días hace actividad física por lo menos durante 30 minutos consecutivos, en la que su ritmo cardíaco aumenta y respira con dificultad, en una semana normal?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Nunca"
+				},
+				{
+					"aid": "2",
+					"text": "2-3 días por mes"
+				},
+				{
+					"aid": "3",
+					"text": "1-2 días por semana"
+				},
+				{
+					"aid": "4",
+					"text": "3-4 días por semana"
+				},
+				{
+					"aid": "5",
+					"text": "Más de 5 días por semana"
+				}
+			],
+			"blurb": "Adults should get a minimum of 150 minutes of moderate aerobic activity per week, or about 30 minutes five days per week.  Benefits include weight management; reduced risk of type 2 diabetes, metabolic syndrome, some cancers, and cardiovascular disease; stronger bones and muscles; improved mental health and mood; easier activities of daily living; and increased longevity.  Aerobic activity makes you sweat and breathe more heavily, and includes things such as jogging, swimming, aerobics, biking, interval training, some sports (soccer, tennis, basketball), or even walking at a brisk enough pace to get your heart beating faster.  The health benefits of regular physical activity dramatically outweigh any risks of getting hurt."
+		},
+		{
+			"qid": "19",
+      "question_number": "17",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cómo describiría el estrés en su vida cotidiana?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Mínimo a nada"
+				},
+				{
+					"aid": "2",
+					"text": "Leve a tolerable"
+				},
+				{
+					"aid": "3",
+					"text": "Moderado"
+				},
+				{
+					"aid": "4",
+					"text": "Excesivo"
+				},
+				{
+					"aid": "5",
+					"text": "Debilitante (He faltado al trabajo o a un evento debido al estrés)"
+				}
+			],
+			"blurb": "Chronic stress can be overwhelming to the physical and mental health of an individual.  Stress hormones are released, including cortisol and catecholamines, which disrupt nearly all of the body’s physiological processes and can significantly heighten the risk of many health conditions.  Further, stress may be responsible for aging the immune system prematurely, thereby increasing the risk of illness and age-related diseases."
+		},
+		{
+			"qid": "20",
+      "question_number": "18",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Está tomando medidas positivas para manejar el estrés en su vida? (Por ejemplo, ejercicios, meditación, lectura, baño caliente, apoyo social, escuchar música, respiración profunda, etc.)",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				},
+				{
+					"aid": "3",
+					"text": "N/A"
+				}
+			],
+			"blurb": "Individuals who are under chronic or acute stress can benefit from efforts to moderate the impact on their health and wellbeing.  Alcohol, smoking, or chemical means do not mitigate stress in the long term, and may, in fact, exacerbate anxiety and depression related to the stressful stimulus and environment."
+		},
+		{
+			"qid": "21",
+      "question_number": "19",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuántas horas duerme aproximadamente en una noche normal?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Menos de 5"
+				},
+				{
+					"aid": "2",
+					"text": "Entre 5 y 7"
+				},
+				{
+					"aid": "3",
+					"text": "Entre 7 y 9"
+				},
+				{
+					"aid": "4",
+					"text": "Más de 9"
+				}
+			],
+			"blurb": "Sleep is critical to good health and wellbeing, and may play an essential role in performance, memory, emotional and metabolic regulation, recovery, and learning.  The Institute of Medicine 2006 report identified 7-8 hours per night as the optimal sleep duration for adults, but over 1/3 of adults get less than that.  Insufficient or poor quality sleep can increase the risk of chronic conditions including metabolic disorders (which may lead to obesity, diabetes, heart disease, or hypertension), coronary heart disease, decreased immunologic function, and mood disorders.  Conversely, sleep in excess of approximately nine hours per night has also been linked (causality not determined) to diabetes, obesity, heart disease, depression, and increased risk of death."
+		},
+		{
+			"qid": "22",
+      "question_number": "20",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Con qué frecuencia se salta o pierde una dosis de un medicamento recetado?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Nunca"
+				},
+				{
+					"aid": "2",
+					"text": "1-2 veces por semana"
+				},
+				{
+					"aid": "3",
+					"text": "3-4 veces por semana"
+				},
+				{
+					"aid": "4",
+					"text": "5-7 veces por semana"
+				},
+				{
+					"aid": "5",
+					"text": "No aplicable (es decir: No me han recetado ninguna medicina)"
+				}
+			],
+			"blurb": "Medication non-adherence is responsible for about $105 billion in avoidable costs per year, with a range of $68-$146 billion.  Management of diabetes and hypertension has the greatest effect on avoidable costs.  The six primary areas of opportunity for responsible use of medicines are non-adherence, medication errors, suboptimal generic use, delayed evidence-based treatment practice, antibiotic misuse, and mismanaged polypharmacy."
+		},
+		{
+			"qid": "23",
+      "question_number": "21",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Está tomando algún medicamento para el manejo del dolor por lo menos 3 días a la semana?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				}
+			]
+		},
+		{
+			"qid": "24",
+      "question_number": "22",
+			"type": "MULTIPLE_CHOICE",
+			"text": "Si la respuesta es sí, ¿está adecuadamente controlado su dolor?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				},
+				{
+					"aid": "3",
+					"text": "N/A"
+				}
+			],
+			"blurb": "Uncontrolled pain can prevent physical activity (which may lead to weight gain and related conditions), interfere with work, sleep, and relationships, affect appetite and mood, and hinder healing after an injury or surgery.  It might also affect your ability to work and your outlook on life.  Managing pain is essential for optimal health and wellbeing."
+		},
+		{
+			"qid": "25",
+      "question_number": "23",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cuántos medicamentos de venta con receta médica le han recetado para tomar diariamente?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Ninguno"
+				},
+				{
+					"aid": "2",
+					"text": "1-2"
+				},
+				{
+					"aid": "3",
+					"text": "3-4"
+				},
+				{
+					"aid": "4",
+					"text": "5-6"
+				},
+				{
+					"aid": "5",
+					"text": "Más de 6"
+				}
+			]
+		},
+		{
+			"qid": "26",
+      "question_number": "24",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Toma algún suplemento nutricional o suplemento herbal en forma regular? (Incluye aceite de pescado, probióticos, vitamina D, calcio, hierro, ácido fólico, suplementos proteicos, etc.)",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Sí"
+				},
+				{
+					"aid": "2",
+					"text": "No"
+				}
+			]
+		},
+		{
+      "question_number": "25",
+			"type": "GRID",
+      "text": "¿Cuándo fue la última vez que tuvo los siguientes chequeos?",
+      "blurb": "Routine check-ups, annual physical exams, and recommended health screenings can help identify risks before they become problems, or identify problems in the early stages, which improves the chances for treatment or cure.  Age, health, family history, and lifestyle choices affect the tests and screens that are recommended for you.  Prioritizing the recommended tests and screenings for your individual circumstances improves your chances for living a longer, healthier life.",
+			"columns": ["Hace menos de 1 año", "Hace 1-2 años", "Hace 3-5 años", "Hace más de 5 años", "N/A"],
+      "aids": ["1", "2", "3", "4", "5"],
+      "rows": [
+    		{
+    			"qid": "27",
+    			"type": "GRID_RADIO",
+    			"text": "Físico anual"
+    		},
+    		{
+    			"qid": "28",
+    			"type": "GRID_RADIO",
+    			"text": "Presión arterial"
+    		},
+    		{
+    			"qid": "29",
+    			"type": "GRID_RADIO",
+    			"text": "Colesterol"
+    		},
+    		{
+    			"qid": "30",
+    			"type": "GRID_RADIO",
+    			"text": "Colonoscopía (Si es mayor de 50 años) "
+    		},
+    		{
+    			"qid": "31",
+    			"type": "GRID_RADIO",
+    			"text": "Diabetes"
+    		},
+    		{
+    			"qid": "32",
+    			"type": "GRID_RADIO",
+    			"text": "Examen dental"
+    		},
+    		{
+    			"qid": "33",
+    			"type": "GRID_RADIO",
+    			"text": "Examen de la vista"
+    		},
+    		{
+    			"qid": "34",
+    			"type": "GRID_RADIO",
+    			"text": "Cáncer de piel"
+    		},
+    		{
+    			"qid": "35",
+    			"type": "GRID_RADIO",
+    			"text": "Vacuna contra la gripe"
+    		},
+    		{
+    			"qid": "36",
+    			"type": "GRID_RADIO",
+    			"text": "Mamografía (40 años de edad o mayores)"
+    		},
+    		{
+    			"qid": "37",
+    			"type": "GRID_RADIO",
+    			"text": "Papanicolao"
+    		},
+    		{
+    			"qid": "38",
+    			"type": "GRID_RADIO",
+    			"text": "Examen de pecho por una enfermera licenciada o por un médico"
+    		},
+    		{
+    			"qid": "39",
+    			"type": "GRID_RADIO",
+    			"text": "Próstata (mayores de 40 años de edad)"
+    		}
+      ]
+    },
+		{
+      "question_number": "26",
+			"type": "GRID",
+      "text": "¿Tiene usted alguna de las siguientes condiciones?",
+      "blurb": "One quarter of all U.S. adults suffer from multiple chronic medical conditions, most commonly a combination of diabetes, hypertension, and hyperlipidemia.  Healthcare costs for individuals with 2-3 chronic conditions are estimated at $8,478 per year, and $16,257 for individuals with 4 or more chronic conditions.",
+			"columns": ["Sí", "No"],
+      "aids": ["1","2"],
+      "rows": [
+  		  {
+    			"qid": "40",
+    			"type": "GRID_RADIO",
+    			"text": "Ansiedad"
+    		},
+    		{
+    			"qid": "41",
+    			"type": "GRID_RADIO",
+    			"text": "Asma"
+    		},
+    		{
+    			"qid": "42",
+    			"type": "GRID_RADIO",
+    			"text": "Cáncer"
+    		},
+    		{
+    			"qid": "43",
+    			"type": "GRID_RADIO",
+    			"text": "EPOC o enfisema"
+    		},
+    		{
+    			"qid": "44",
+    			"type": "GRID_RADIO",
+    			"text": "Enfermedad renal crónica"
+    		},
+    		{
+    			"qid": "45",
+    			"type": "GRID_RADIO",
+    			"text": "Insuficiencia cardíaca congestiva"
+    		},
+    		{
+    			"qid": "46",
+    			"type": "GRID_RADIO",
+    			"text": "Enfermedad arterial coronaria"
+    		},
+    		{
+    			"qid": "47",
+    			"type": "GRID_RADIO",
+    			"text": "Enfermedad de Crohn"
+    		},
+    		{
+    			"qid": "79",
+    			"type": "GRID_RADIO",
+    			"text": "Depresión"
+    		},
+    		{
+    			"qid": "48",
+    			"type": "GRID_RADIO",
+    			"text": "Diabetes"
+    		},
+    		{
+    			"qid": "49",
+    			"type": "GRID_RADIO",
+    			"text": "Epilepsia"
+    		},
+    		{
+    			"qid": "50",
+    			"type": "GRID_RADIO",
+    			"text": "Glaucoma"
+    		},
+    		{
+    			"qid": "51",
+    			"type": "GRID_RADIO",
+    			"text": "VIH / SIDA"
+    		},
+    		{
+    			"qid": "52",
+    			"type": "GRID_RADIO",
+    			"text": "Latidos irregulares (Arritmia o FA)"
+    		},
+    		{
+    			"qid": "53",
+    			"type": "GRID_RADIO",
+    			"text": "Presión arterial alta"
+    		},
+    		{
+    			"qid": "54",
+    			"type": "GRID_RADIO",
+    			"text": "Colesterol alto"
+    		},
+    		{
+    			"qid": "55",
+    			"type": "GRID_RADIO",
+    			"text": "Hipotiroidismo"
+    		},
+    		{
+    			"qid": "56",
+    			"type": "GRID_RADIO",
+    			"text": "Lupus"
+    		},
+    		{
+    			"qid": "57",
+    			"type": "GRID_RADIO",
+    			"text": "Migrañas"
+    		},
+    		{
+    			"qid": "58",
+    			"type": "GRID_RADIO",
+    			"text": "Esclerosis múltiple"
+    		},
+    		{
+    			"qid": "59",
+    			"type": "GRID_RADIO",
+    			"text": "Osteoartritis/Osteoporosis"
+    		},
+    		{
+    			"qid": "60",
+    			"type": "GRID_RADIO",
+    			"text": "Dolor, crónico"
+    		},
+    		{
+    			"qid": "61",
+    			"type": "GRID_RADIO",
+    			"text": "Enfermedad de Parkinson"
+    		},
+    		{
+    			"qid": "62",
+    			"type": "GRID_RADIO",
+    			"text": "Artritis reumatoide"
+    		},
+    		{
+    			"qid": "63",
+    			"type": "GRID_RADIO",
+    			"text": "Colitis ulcerativa"
+    		},
+    		{
+    			"qid": "64",
+    			"type": "GRID_TEXT",
+    			"text": "Otro (Especificar)"
+    		}
+      ]
+    },
+		{
+			"qid": "65",
+      "question_number": "27",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cómo considera su salud en general?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Excelente"
+				},
+				{
+					"aid": "2",
+					"text": "Encima del promedio"
+				},
+				{
+					"aid": "3",
+					"text": "Promedio"
+				},
+				{
+					"aid": "4",
+					"text": "Debajo del promedio"
+				},
+				{
+					"aid": "5",
+					"text": "Mala"
+				}
+			]
+		},
+		{
+			"qid": "66",
+      "question_number": "28",
+			"type": "MULTIPLE_CHOICE",
+			"text": "¿Cómo cree que será su salud en 10 años si continúa con su estilo de vida actual?",
+			"answers": [
+				{
+					"aid": "1",
+					"text": "Mucho mejor"
+				},
+				{
+					"aid": "2",
+					"text": "Mejor"
+				},
+				{
+					"aid": "3",
+					"text": "Igual"
+				},
+				{
+					"aid": "4",
+					"text": "Peor"
+				},
+				{
+					"aid": "5",
+					"text": "Mucho peor"
+				}
+			]
+		},
+		{
+      "question_number": "29",
+			"type": "GRID",
+      "text": "¿Cómo describiría su disposición para cambiar en las siguientes áreas?",
+			"columns": ["No estoy listo para cambiar", "Estoy considerando el cambio", "Estoy listo para cambiar", "Estoy tomando una acción para cambiar", "No necesito ningún cambio"],
+      "aids": ["1", "2", "3", "4", "5"],
+      "rows": [
+    		{
+    			"qid": "67",
+    			"type": "GRID_RADIO",
+    			"text": "Dieta / nutrición"
+    		},
+    		{
+    			"qid": "68",
+    			"type": "GRID_RADIO",
+    			"text": "Actividad física"
+    		},
+    		{
+    			"qid": "69",
+    			"type": "GRID_RADIO",
+    			"text": "Dejar el tabaco"
+    		},
+    		{
+    			"qid": "70",
+    			"type": "GRID_RADIO",
+    			"text": "Controlar el peso"
+    		},
+    		{
+    			"qid": "71",
+    			"type": "GRID_RADIO",
+    			"text": "Automanejo de las condiciones crónicas"
+    		}
+      ]
+    },
+		{
+      "question_number": "30",
+			"type": "GRID_HEADER",
+      "text": "¿Cómo describiría su nivel de interés en los siguientes temas?",
+			"columns": ["Sumamente interesado", "Moderadamente interesado", "Puedo estar interesado", "No estoy interesado en absoluto"],
+			"aids": ["1", "2", "3", "4"],
+      "rows": [
+    		{
+    			"qid": "72",
+    			"type": "GRID_RADIO",
+    			"text": "Dieta / nutrición"
+    		},
+    		{
+    			"qid": "73",
+    			"type": "GRID_RADIO",
+    			"text": "Actividad física"
+    		},
+    		{
+    			"qid": "74",
+    			"type": "GRID_RADIO",
+    			"text": "Dejar el tabaco"
+    		},
+    		{
+    			"qid": "75",
+    			"type": "GRID_RADIO",
+    			"text": "Control del peso"
+    		},
+    		{
+    			"qid": "76",
+    			"type": "GRID_RADIO",
+    			"text": "Automanejo de condiciones crónicas (es decir, diabetes, presión arterial alta, colesterol alto, etc.)"
+    		},
+    		{
+    			"qid": "77",
+    			"type": "GRID_RADIO",
+    			"text": "Manejo del estrés"
+    		},
+    		{
+    			"qid": "78",
+    			"type": "GRID_TEXT",
+    			"text": "Otros temas"
+    		}
+    	]
+    }
+  ]
+}

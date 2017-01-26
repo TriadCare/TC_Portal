@@ -71,7 +71,12 @@ export const submitHRAResponse = (response, complete) =>
         `${hraState.uri}
         ${method === 'PUT' ? `${state.selectedHRA}` : ''}
         ?complete=${complete ? 1 : 0}`,
-        { method, body: JSON.stringify(response) }
+        {
+          method, body: JSON.stringify({
+            meta: { surveyID: state.surveyConfiguration.meta.surveyID },
+            response,
+          }),
+        }
       ), refreshData
     ));
   };

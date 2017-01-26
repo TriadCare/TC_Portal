@@ -26,6 +26,7 @@ const loginForm = (props) => (
             placeholder="jdoe@email.com"
             dir="auto"
             value={props.userEmail}
+            autoFocus
           />
         </div>
       </label>

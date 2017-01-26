@@ -1,550 +1,696 @@
-[{
-    "qid": "3",
-    "answers": [{
+{
+  "meta": {
+    "surveyID": 4
+  },
+  "scores": {
+    "3": [
+      {
         "aid": "1",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "2",
-        "score": 4.0
-    }]
-}, {
-    "qid": "4",
-    "answers": [{
+        "score": {
+            "qid": "4",
+            "equal": "2",
+            "score": 4.0,
+            "else": 0.0
+        }
+      }
+    ],
+    "4": [
+			{
         "aid": "1",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "2",
-        "score": 4.0
-    }]
-}, {
-    "qid": "5",
-    "answers": [{
+        "score": {
+            "qid": "3",
+            "equal": "2",
+            "score": 4.0,
+            "else": 0.0
+        }
+      }
+    ],
+		"5": [
+			{
         "aid": "1",
-        "score": 2.0
-    }, {
+        "score": {
+            "qid": "3",
+            "equal": "2",
+            "score": {
+                "qid": "4",
+                "equal": "2",
+                "score": 2.0,
+                "else": 0.0
+            },
+            "else": 0.0
+        }
+      },
+      {
         "aid": "2",
-        "score": 4.0
-    }]
-}, {
-    "qid": "6",
-    "answers": [{
+        "score": {
+            "qid": "3",
+            "equal": "2",
+            "score": {
+                "qid": "4",
+                "equal": "2",
+                "score": 4.0,
+                "else": 0.0
+            },
+            "else": 0.0
+        }
+      }
+    ],
+    "6": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "7",
-    "answers": [{
+      }
+    ],
+		"7": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }]
-}, {
-    "qid": "8",
-    "answers": [{
+      }
+    ],
+		"8": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }]
-}, {
-    "qid": "9",
-    "answers": [{
+      }
+    ],
+		"9": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }]
-}, {
-    "qid": "10",
-    "answers": [{
+      }
+    ],
+		"10": [
+			{
         "aid": "1",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 4.0
-    }]
-}, {
-    "qid": "11",
-    "answers": [{
+      }
+    ],
+		"11": [
+			{
         "aid": "1",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 4.0
-    }]
-}, {
-    "qid": "12",
-    "answers": [{
+      }
+    ],
+		"12": [
+			{
         "aid": "1",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 4.0
-    }]
-}, {
-    "qid": "13",
-    "answers": [{
+      }
+    ],
+		"13": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "14",
-    "answers": [{
+      }
+    ],
+		"14": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "15",
-    "answers": [{
+      }
+    ],
+		"15": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "16",
-    "answers": [{
+      }
+    ],
+		"16": [
+			{
         "aid": "1",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 4.0
-    }]
-}, {
-    "qid": "17",
-    "answers": [{
+      }
+    ],
+		"17": [
+			{
         "aid": "1",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 4.0
-    }]
-}, {
-    "qid": "18",
-    "answers": [{
+      }
+    ],
+		"18": [
+			{
         "aid": "1",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 4.0
-    }]
-}, {
-    "qid": "19",
-    "answers": [{
+      }
+		],
+		"19": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "20",
-    "answers": [{
+      }
+		],
+		"20": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": null
-    }]
-}, {
-    "qid": "21",
-    "answers": [{
+      }
+		],
+		"21": [
+			{
         "aid": "1",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 2.0
-    }]
-}, {
-    "qid": "25",
-    "answers": [{
+      }
+		],
+		"25": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "26",
-    "answers": [{
+      }
+		],
+		"26": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "27",
-    "answers": [{
+      }
+		],
+		"27": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "28",
-    "answers": [{
+      }
+		],
+		"28": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "5",
-        "score": null,
-        "conditionalScore": {
+        "score": {
             "qid": "1",
             "greaterThanOrEqual": 50,
-            "value": 0.0
+            "score": 0.0,
+            "else": null
         }
-    }]
-}, {
-    "qid": "29",
-    "answers": [{
+      }
+		],
+		"29": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "30",
-    "answers": [{
+      }
+		],
+		"30": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "31",
-    "answers": [{
+      }
+	  ],
+		"31": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "32",
-    "answers": [{
+      }
+		],
+		"32": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "33",
-    "answers": [{
+      }
+		],
+		"33": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 0.0
-    }, {
+      },
+      {
         "aid": "5",
         "score": 0.0
-    }]
-}, {
-    "qid": "34",
-    "answers": [{
+      }
+    ],
+		"34": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
-        "score": null,
-        "conditionalScore": {
-            "qid": "2",
-            "equal": 2,
-            "value": {
-                "qid": "1",
-                "greaterThanOrEqual": 45,
-                "value": 0.0
-            }
+        "score": {
+          "qid": "2",
+          "equal": "2",
+          "score": {
+            "qid": "1",
+            "greaterThanOrEqual": 45,
+            "score": 0.0,
+            "else": null
+          },
+          "else": null
         }
-    }]
-}, {
-    "qid": "35",
-    "answers": [{
+      }
+    ],
+		"35": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
-        "score": null,
-        "conditionalScore": {
-            "qid": "2",
-            "equal": 2,
-            "value": 0.0
+        "score": {
+          "qid": "2",
+          "equal": "2",
+          "score": 0.0,
+          "else": null
         }
-    }]
-}, {
-    "qid": "36",
-    "answers": [{
+      }
+    ],
+		"36": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 3.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 2.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 1.0
-    }, {
+      },
+      {
         "aid": "5",
-        "score": null,
-        "conditionalScore": {
-            "qid": "2",
-            "equal": 2,
-            "value": 0.0
+        "score": {
+          "qid": "2",
+          "equal": "2",
+          "score": 0.0,
+          "else": null
         }
-    }]
-}, {
-    "qid": "37",
-    "answers": [{
+      }
+    ],
+		"37": [
+			{
         "aid": "1",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "2",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "3",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "4",
         "score": 4.0
-    }, {
+      },
+      {
         "aid": "5",
-        "score": null,
-        "conditionalScore": {
-            "qid": "2",
-            "equal": 1,
-            "value": {
-                "qid": "1",
-                "greaterThanOrEqual": 45,
-                "value": 0.0
-            }
+        "score": {
+          "qid": "2",
+          "equal": "1",
+          "score": {
+            "qid": "1",
+            "greaterThanOrEqual": 45,
+            "score": 0.0,
+            "else": null
+          },
+          "else": null
         }
-    }]
-}]
+      }
+    ]
+  }
+}
