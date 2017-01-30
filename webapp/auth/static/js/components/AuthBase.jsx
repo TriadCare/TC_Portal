@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 const AuthBase = (props) => (
   <div>
 
-    <nav className="pt-navbar pt-fixed-top .modifier" role="menubar">
+    <nav className="pt-navbar pt-fixed-top" role="menubar">
       <div className="pt-navbar-group pt-align-left">
         <div className="titleBar__logo"></div>
       </div>

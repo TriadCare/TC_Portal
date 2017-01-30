@@ -28,12 +28,14 @@ a:hover, a:visited, a:link, a:active
 .baseLayout {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .mainContainer {
   display: flex;
   flex-flow: row wrap;
   flex: auto;
+  margin-top: 50px;
 }
 
 .loginForm__dialog {

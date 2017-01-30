@@ -44,12 +44,62 @@ const reconcileCheckbox = (currentAnswer, checkedValue) => {
   return '3';
 };
 
+const scrollTo = (element, to, duration) => {
+  if (duration <= 0) return;
+  const difference = to - element.scrollTop;
+  const perTick = difference / duration * 10;
+
+  setTimeout(() => {
+    /* eslint no-param-reassign: ["error", { "props": false }]*/
+    element.scrollTop = element.scrollTop + perTick;
+    if (element.scrollTop === to) return;
+    scrollTo(element, to, duration - 10);
+  }, 10);
+};
+
+const convertToPDF = (htmlData, filename, callback) => {
+  const xhr = new XMLHttpRequest();
+  xhr.onload = (e) => {
+    const arraybuffer = xhr.response; // not responseText
+
+    const blob = new Blob([arraybuffer], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.style = 'display: none';
+    a.class = 'blobLink';
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    document.body.removeChild(a);
+
+    callback(e);
+  };
+
+  xhr.open('POST', '/pdf/');
+  xhr.responseType = 'arraybuffer';
+  xhr.send(JSON.stringify(htmlData));
+};
+
+const requestPDF = () => {
+  const data = { html: document.documentElement.innerHTML };
+  const filename = 'hra.pdf';
+  convertToPDF(data, filename, () => console.log('all done.'));
+};
+
 const renderQuestion = (questionNumber, configQuestion,
-  responseQuestion, activeQuestion, completed, handleAnswer) => {
+  responseQuestion, activeQuestion, error, completed, handleAnswer) => {
   switch (configQuestion.type) {
     case 'INTEGER':
       return (
-        <div key={questionNumber} className="panel panel-default response__question">
+        <div
+          key={questionNumber}
+          ref={`qid_${configQuestion.qid}`}
+          className={'panel panel-default response__question'}
+        >
           <div className="panel-heading response__question-label">
             {configQuestion.text}
           </div>
@@ -75,6 +125,7 @@ const renderQuestion = (questionNumber, configQuestion,
       return (
         <div
           key={questionNumber}
+          ref={`qid_${configQuestion.qid}`}
           className={oneLineTrim
             `panel panel-default response__question ${
               configQuestion.qid === activeQuestion ? `${/* 'question-active'*/''}` : ''
@@ -131,7 +182,10 @@ const renderQuestion = (questionNumber, configQuestion,
               </tr>
               {configQuestion.rows.map((row, key) =>
                 (row.type === 'GRID_TEXT' ? null :
-                  <tr key={key}>
+                  <tr
+                    key={key}
+                    ref={`qid_${row.qid}`}
+                  >
                     <td className="grid__row-header">{row.text}</td>
                     {configQuestion.columns.map((column, idx) => {
                       switch (row.type) {
@@ -206,10 +260,11 @@ const renderQuestion = (questionNumber, configQuestion,
           {configQuestion.rows.filter((row) => row.type === 'GRID_TEXT').map((q, idx) =>
             <label
               key={idx}
-              className={`pt-label ${completed ? 'pt-disabled' : ''}`}
+              className={`pt-label specify-label ${completed ? 'pt-disabled' : ''}`}
             >
               {q.text}
               <input
+                ref={`qid_${q.qid}`}
                 name={q.qid}
                 value={(responseQuestion[q.qid] || '')}
                 disabled={completed ? 'disabled' : ''}
@@ -248,18 +303,35 @@ const renderQuestionnaire = (configObj) => (
         }
       >
         <div className="response__section-label">
-          <div className="section__label-count">
-            {`Section ${section.id} out of ${configObj.config.meta.sections.length}`}
-          </div>
-          <div>
+          {!configObj.completed &&
+            <div className="section__label-item section__label-count">
+              {`Section ${section.id} out of ${configObj.config.meta.sections.length}`}
+            </div>
+          }
+          <div className="section__label-item section__label-text">
             {`${section.label}${(section.graded && configObj.completed) ?
               ` | Your Section GPA is ${configObj.score[section.group].toFixed(1)}` :
               ''
             }`}
           </div>
-          <Button onClick={() => configObj.handleSave(configObj.answers)} text="Save" />
+          {!configObj.completed &&
+            <div className="section__label-item section__button-container section__button-save">
+              <Button
+                onClick={() => configObj.handleSave(configObj.answers)}
+                text={configObj.surveyCompleted ? 'Submit' : 'Save'}
+                className={oneLineTrim
+                  `pt-intent-${configObj.surveyCompleted ? 'success submit__button ' : 'primary '}
+                   section__button`
+                 }
+              />
+            </div>
+          }
         </div>
-        <div className="response__section">
+        <div
+          ref={`section_${section.id}`}
+          id={`section_${section.id}`}
+          className="response__section"
+        >
           {section.question_numbers.map((questionNumber) => {
             const configQuestion = configObj.config.questions.find(
               (qObj) => qObj.question_number === questionNumber
@@ -278,6 +350,7 @@ const renderQuestionnaire = (configObj) => (
               configQuestion,
               responseQuestion,
               configObj.activeQuestion,
+              configObj.error,
               configObj.completed,
               configObj.handleAnswer
             );
@@ -290,6 +363,7 @@ const renderQuestionnaire = (configObj) => (
 
 const renderViewer = (config, answers, response, tcScores) => (
   <div className="response__viewer">
+    <div className="pt-button pt-intent-primary button-print" onClick={requestPDF}>Export PDF</div>
     <div className="response__overall">
       <div className="response__overall-date">
         {moment(response.meta.DATE_CREATED).format('ddd MMM Do, YYYY')}
@@ -319,28 +393,58 @@ const renderViewer = (config, answers, response, tcScores) => (
         completed: (response.meta.completed === 1),
       })}
     </div>
+    {/* <span
+      id="top-link-block"
+      className="well well-sm topBlock"
+      onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
+    >
+      <i className="glyphicon glyphicon-chevron-up"></i> Back to Top
+    </span> */}
   </div>
 );
 
 const renderSurvey = (config, answers, activeQuestion,
+  error, errorMessage,
   handleAnswer, handleSectionChange,
-  handleSave, handleSubmit, isPosting) => (
+  handleSave, handleSubmit, surveyCompleted, isPosting) => (
   <div className="survey__viewer">
     {renderQuestionnaire({
       config,
       answers,
       activeQuestion,
+      error,
       handleAnswer,
-      handleSave,
+      handleSave: (surveyCompleted ? handleSubmit : handleSave),
+      surveyCompleted,
       isPosting,
     })}
-    {isPosting ?
-      '' :
-      <div className="questionnaire-footer">
-        <Button onClick={() => handleSectionChange(-1)} text="Back" />
-        <Button onClick={() => handleSectionChange(1)} text="Next" />
+    <div className="questionnaire-footer">
+      <div className="section__button-container section__button-back">
+        <Button
+          onClick={() => handleSectionChange(-1)}
+          text="Back"
+          className="pt-intent-primary section__button"
+          disabled={config.meta.sections.find((s) => s.qids.includes(activeQuestion)).id === 1}
+        />
       </div>
-    }
+      {error &&
+        <div className="section__button-container section__label-error">
+          {errorMessage}
+        </div>
+      }
+      <div className="section__button-container section__button-next">
+        <Button
+          onClick={() => handleSectionChange(1)}
+          text="Next"
+          className="pt-intent-primary section__button"
+          disabled={
+            config.meta.sections.find(
+              (s) => s.qids.includes(activeQuestion)
+            ).id === config.meta.sections.length
+          }
+        />
+      </div>
+    </div>
   </div>
 );
 
@@ -413,8 +517,42 @@ class Survey extends React.Component {
     this.setState(updateState(nextProps, this.state.surveyAnswers))
   );
 
+  focusInput = (qid) => {
+    const q = this.refs[`qid_${qid}`];
+    const section = this.state.config.meta.sections.find((s) => s.qids.includes(qid));
+
+    let to = 0;
+    if (q.localName === 'tr') {
+      to = ((q.offsetParent !== null) ?
+        q.offsetParent.offsetTop - q.offsetParent.offsetHeight : 0);
+    } else {
+      to = q.offsetTop - q.offsetHeight;
+    }
+
+    scrollTo(this.refs[`section_${section.id}`], to, 300);
+
+    if (q.localName === 'input') {
+      q.focus();
+      return;
+    }
+    if (q.localName === 'tr') {
+      q.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.focus();
+      return;
+    }
+    // target must be question panel for multiple choice or number input
+    if (q.lastElementChild.firstElementChild.localName === 'input') {
+      q.lastElementChild.firstElementChild.focus();
+      return;
+    }
+    q.lastElementChild.firstElementChild.firstElementChild.focus();
+    return;
+  }
+
   handleAnswer = (qid, aid) => {
+    this.refs[`qid_${qid}`].classList.remove('q-error');
     this.setState({
+      error: false,
+      errorMessage: '',
       surveyAnswers: {
         ...this.state.surveyAnswers,
         ...{ [qid]: aid },
@@ -422,19 +560,79 @@ class Survey extends React.Component {
     });
   }
 
+  validateSection = (section) => {
+    if (!section.isRequired) { return true; }
+
+    const answers = this.state.surveyAnswers;
+    const unansweredQ = section.qids.find((q) => answers[q] === undefined);
+    if (unansweredQ) {
+      // ignore text inputs for now (none are required)
+      if (this.refs[`qid_${unansweredQ}`].type !== 'text') {
+        this.setState({
+          activeQuestion: unansweredQ,
+          error: true,
+          errorMessage: 'Oops! You missed one.',
+        });
+        // add the error class and focus the question
+        const questionElement = this.refs[`qid_${unansweredQ}`];
+        questionElement.classList.add('q-error');
+        this.focusInput(unansweredQ);
+        return false;
+      }
+    }
+    // should save section now
+    return true;
+  }
+
   handleSectionChange = (diff) => {
     const activeSection = this.state.config.meta.sections.find(
       (section) => section.qids.includes(this.state.activeQuestion)
     );
+    // If diff is positive (moving forward),
+    // we need to validate the current section
+    if (diff > 0) {
+      if (!this.validateSection(activeSection)) {
+        return;
+      }
+      // Saving Section Here
+      // const r = (this.props.response.items !== undefined ?
+      //   this.props.response.items[0].questionnaire : []);
+      // if (r.length > 0) {
+      //   const answerChanged = activeSection.qids.find(
+      //     (q) => this.state.surveyAnswers[q] !== r.find(
+      //       (a) => a.qid === q
+      //     ).aid
+      //   );
+      //   if (activeSection.isRequired && answerChanged !== undefined) {
+      //     this.props.handleSave(this.state.surveyAnswers);
+      //   }
+      // }
+    }
+
     let nextID = (activeSection.id + diff);
     nextID = nextID < 1 ? 1 : nextID;
     nextID = nextID > this.state.config.meta.sections.length ?
       this.state.config.meta.sections.length : nextID;
+
+    const qid = this.state.config.meta.sections.find(
+      (section) => section.id === nextID
+    ).qids[0];
+
     this.setState({
-      activeQuestion: this.state.config.meta.sections.find(
-        (section) => section.id === nextID
-      ).qids[0],
-    });
+      activeQuestion: qid,
+    }, () => this.focusInput(qid));
+  }
+
+  surveyCompleted = () => {
+    if (this.state.config === undefined) {
+      return false;
+    }
+    const incomplete = this.state.config.meta.sections.filter((s) => s.isRequired).find(
+      (s) => s.qids.find(
+        (q) => this.state.surveyAnswers[q] === undefined
+      )
+    );
+    return (incomplete === undefined);
   }
 
   renderComponent(config, response, TCAvgHRA, handleSave,
@@ -457,10 +655,13 @@ class Survey extends React.Component {
       config,
       this.state.surveyAnswers,
       this.state.activeQuestion,
+      this.state.error,
+      this.state.errorMessage,
       this.handleAnswer,
       this.handleSectionChange,
       handleSave,
       handleSubmit,
+      this.surveyCompleted(),
       response.isPosting
     );
   }

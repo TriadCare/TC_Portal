@@ -1,4 +1,6 @@
 import moment from 'moment';
+import React from 'react';
+import { Link } from 'react-router';
 
 import { jwtPayload } from 'js/util';
 import { IdentityActions } from 'components/Identity';
@@ -38,7 +40,7 @@ export const buildDashlets = (state) => {
     switch (card.cardType) {
       case 'group':
         if (card.data.length === 0) {  // Use every datapoint
-          dashlets.push(...state.datasources[card.datasource].items.sort(compareHRAs).map(
+          dashlets.push(...state.datasources[card.datasource].items.sort(compareHRAs).reverse().map(
             (item) => populateCard(
                 { ...card, ...{ data: [item.meta[card.dataKey]] } },
                 state.datasources[card.datasource].items
@@ -50,7 +52,7 @@ export const buildDashlets = (state) => {
         dashlets.push(...card.data.map((data) =>
           populateCard(
             { ...card, ...{ data: [data] } },
-            state.datasources[card.datasource].items.sort(compareHRAs)
+            state.datasources[card.datasource].items.sort(compareHRAs).reverse
           )
         ));
         return;
@@ -69,7 +71,7 @@ export const buildDashlets = (state) => {
     const user = jwtPayload();
     if (user !== undefined) {
       // if (user.eligibleForHRA) {}
-      dashlets.push({
+      dashlets.splice(1, 0, {
         cardSize: 'medium',
         datasource: 'HRA',
         title: 'New HRA',
@@ -122,21 +124,44 @@ function getUpdatedState(state, action) {
 }
 
 const getTitleBarText = (state, payload) => {
-  let location;
-  let name;
   if (payload.pathname !== undefined) {
-    const path = payload.pathname.split('/');
-    location = path[path.length - 1].charAt(0).toUpperCase() + path[path.length - 1].slice(1);
-    const user = jwtPayload();
-    if (user === undefined) {
-      return `Patient ${location}`;
+    const path = payload.pathname;
+    if (path === '/patient/dashboard') {
+      return (
+        <div className="breadcrumb__container">
+          <ul className="pt-breadcrumbs">
+            <li><div className="pt-breadcrumb">Dashboard</div></li>
+          </ul>
+        </div>
+      );
     }
-    name = user.first_name;
-  } else if (payload.jwt !== undefined) {
-    name = jwtPayload(payload.jwt).first_name;
-    location = 'Dashboard';
+    if (path === '/patient/hra') {
+      return (
+        <div className="breadcrumb__container">
+          <ul className="pt-breadcrumbs">
+            <li><Link
+              to={"/patient/dashboard"}
+              className="pt-breadcrumb breadcrumb__item"
+            >Dashboard</Link></li>
+            <li><Link
+              to={"/patient/hra"}
+              className="pt-breadcrumb breadcrumb__item"
+            >HRA</Link></li>
+          </ul>
+        </div>
+      );
+    }
   }
-  return `Hi ${name}, this is your ${location}.`;
+  return (
+    <div className="breadcrumb__container">
+      <ul className="pt-breadcrumbs">
+        <li><Link
+          to={"/patient/dashboard"}
+          className="pt-breadcrumb breadcrumb__item"
+        >Dashboard</Link></li>
+      </ul>
+    </div>
+  );
 };
 
 const blankHRA = {

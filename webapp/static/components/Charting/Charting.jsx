@@ -3,6 +3,19 @@ import moment from 'moment';
 import Chartist from 'chartist';
 import ChartistGraph from 'react-chartist';
 
+const scrollTo = (element, to, duration) => {
+  if (duration <= 0) return;
+  const difference = to - element.scrollTop;
+  const perTick = difference / duration * 10;
+
+  setTimeout(() => {
+    /* eslint no-param-reassign: ["error", { "props": false }]*/
+    element.scrollTop = element.scrollTop + perTick;
+    if (element.scrollTop === to) return;
+    scrollTo(element, to, duration - 10);
+  }, 10);
+};
+
 const pie = (chartType, data, classNames) => (
   <ChartistGraph
     data={{
@@ -87,6 +100,18 @@ const pie = (chartType, data, classNames) => (
   />
 );
 
+// HRA specific... remove ASAP...
+const getSection = (k) => {
+  const map = {
+    'Diet & Nutrition': 3,
+    'Physical Activity': 4,
+    'Preventative Care': 7,
+    Stress: 5,
+    Tobacco: 2,
+  };
+  return map[k];
+};
+
 const bar = (chartType, data, classNames) => (
   <ChartistGraph
     data={{
@@ -94,7 +119,10 @@ const bar = (chartType, data, classNames) => (
       series: data.map((d) =>
         Object.keys(d.score)
         .filter((k) => k !== 'Overall')
-        .map((k) => Math.round(d.score[k] * 100 / 4)),
+        .map((k) => ({
+          value: Math.round(d.score[k] * 100 / 4),
+          meta: getSection(k),
+        })),
       ),
     }}
     options={{
@@ -108,13 +136,29 @@ const bar = (chartType, data, classNames) => (
       height: '100%',
       classNames: {
         label: 'ct-label response__chart-label',
+        bar: 'ct-bar chart-bar',
       },
     }}
+    responsiveOptions={[
+      ['screen and (max-width: 450px)', {
+        seriesBarDistance: 20,
+      }],
+    ]}
     type={chartType}
     className={classNames}
     listener={{
       draw: (ctx) => {
         if (ctx.type === 'bar') {
+          /* eslint no-param-reassign: ["error", { "props": false }]*/
+          /* eslint no-underscore-dangle: ["error", { "allow": ["_node"] }]*/
+          ctx.element._node.onclick = () => {
+            scrollTo(
+              document.getElementsByClassName('surveyComponent')[0],
+              document.querySelector(`#section_${ctx.meta}`).offsetTop - 100,
+              500
+            );
+          };
+
           const scoreLabel = new Chartist.Svg('text');
           scoreLabel.text(ctx.value.y);
           scoreLabel.addClass('ct-label response__chart-label');

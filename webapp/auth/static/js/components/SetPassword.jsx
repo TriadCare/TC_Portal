@@ -3,8 +3,10 @@ import { Dialog } from '@blueprintjs/core';
 
 import {
   validation, validatePassword,
-  submitSetPassword, jwtIsExpired,
+  submitSetPassword,
 } from '../util.js';
+
+import { jwtIsExpired } from 'js/util';
 
 const checkToken = (token) => {
   let results = ['', '', false];

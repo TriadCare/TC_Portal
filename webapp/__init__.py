@@ -41,7 +41,7 @@ from .patient import patient
 # Using the File Maker User API as a RestFM Proxy
 from .api_fm import fm_user_view as user_view
 # from .api import user_view
-from .api import auth_view, email_view, hra_view
+from .api import auth_view, email_view, hra_view, pdf_view
 from .auth import auth as auth_app
 
 # register modules
@@ -51,6 +51,7 @@ app.register_blueprint(auth_app)
 # API Endpoints
 app.add_url_rule('/token/', view_func=auth_view,)
 app.add_url_rule('/email/', view_func=email_view,)
+app.add_url_rule('/pdf/', view_func=pdf_view,)
 app.add_url_rule('/hras/', view_func=hra_view,)
 app.add_url_rule('/hras/<string:response_id>', view_func=hra_view,)
 

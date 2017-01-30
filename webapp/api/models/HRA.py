@@ -130,7 +130,7 @@ def score_hra(surveyID, response, complete):
             hra_scores = json.load(scores)['scores']
 
         filename = ('webapp/static/hra_files/v' +
-                    str(surveyID) + '/hra_definition.json')
+                    str(surveyID) + '/english/hra_definition.json')
         with open(filename, 'r') as definition:
             hra_def = json.load(definition)
 

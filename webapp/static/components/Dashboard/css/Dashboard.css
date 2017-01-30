@@ -15,7 +15,7 @@
 }
 
 .dashletContainer__medium {
-  min-width: 40%;
+  min-width: 350px;
   flex: 1;
 }
 
@@ -38,6 +38,7 @@
 
 .dashlet__chart {
   flex: 1;
+  max-height: 100%;
 }
 
 .chart__donut-overall {
