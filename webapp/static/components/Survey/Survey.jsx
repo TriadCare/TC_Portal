@@ -57,38 +57,38 @@ const scrollTo = (element, to, duration) => {
   }, 10);
 };
 
-const convertToPDF = (htmlData, filename, callback) => {
-  const xhr = new XMLHttpRequest();
-  xhr.onload = (e) => {
-    const arraybuffer = xhr.response; // not responseText
-
-    const blob = new Blob([arraybuffer], { type: 'application/pdf' });
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.style = 'display: none';
-    a.class = 'blobLink';
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-    document.body.removeChild(a);
-
-    callback(e);
-  };
-
-  xhr.open('POST', '/pdf/');
-  xhr.responseType = 'arraybuffer';
-  xhr.send(JSON.stringify(htmlData));
-};
-
-const requestPDF = () => {
-  const data = { html: document.documentElement.innerHTML };
-  const filename = 'hra.pdf';
-  convertToPDF(data, filename, () => console.log('all done.'));
-};
+// const convertToPDF = (htmlData, filename, callback) => {
+//   const xhr = new XMLHttpRequest();
+//   xhr.onload = (e) => {
+//     const arraybuffer = xhr.response; // not responseText
+//
+//     const blob = new Blob([arraybuffer], { type: 'application/pdf' });
+//     const url = window.URL.createObjectURL(blob);
+//
+//     const a = document.createElement('a');
+//     document.body.appendChild(a);
+//     a.style = 'display: none';
+//     a.class = 'blobLink';
+//     a.href = url;
+//     a.download = filename;
+//     a.click();
+//     window.URL.revokeObjectURL(url);
+//
+//     document.body.removeChild(a);
+//
+//     callback(e);
+//   };
+//
+//   xhr.open('POST', '/pdf/');
+//   xhr.responseType = 'arraybuffer';
+//   xhr.send(JSON.stringify(htmlData));
+// };
+//
+// const requestPDF = () => {
+//   const data = { html: document.documentElement.innerHTML };
+//   const filename = 'hra.pdf';
+//   convertToPDF(data, filename, () => console.log('all done.'));
+// };
 
 const renderQuestion = (questionNumber, configQuestion,
   responseQuestion, activeQuestion, error, completed, handleAnswer) => {
@@ -363,7 +363,12 @@ const renderQuestionnaire = (configObj) => (
 
 const renderViewer = (config, answers, response, tcScores) => (
   <div className="response__viewer">
-    <div className="pt-button pt-intent-primary button-print" onClick={requestPDF}>Export PDF</div>
+    {/*
+      <div
+        className="pt-button pt-intent-primary button-print"
+        onClick={requestPDF}>Export PDF
+      </div>
+      */}
     <div className="response__overall">
       <div className="response__overall-date">
         {moment(response.meta.DATE_CREATED).format('ddd MMM Do, YYYY')}
@@ -393,13 +398,14 @@ const renderViewer = (config, answers, response, tcScores) => (
         completed: (response.meta.completed === 1),
       })}
     </div>
-    {/* <span
+    <span
       id="top-link-block"
-      className="well well-sm topBlock"
+      ref="topBlock"
+      className="hidden well well-sm topBlock"
       onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
     >
       <i className="glyphicon glyphicon-chevron-up"></i> Back to Top
-    </span> */}
+    </span>
   </div>
 );
 
@@ -668,7 +674,13 @@ class Survey extends React.Component {
 
   render() {
     return (
-      <div className="spaceComponent surveyComponent">
+      <div
+        className="spaceComponent surveyComponent"
+        onScroll={() => {
+          this.refs.topBlock.classList.remove('hidden');
+          console.log('scrolling!');
+        }}
+      >
         {this.renderComponent(
           this.props.config,
           this.props.response,

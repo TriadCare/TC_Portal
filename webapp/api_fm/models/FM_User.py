@@ -61,6 +61,8 @@ class FM_User():
         'DOB': 'dob',
         'NameFirst': 'first_name',
         'NameLast': 'last_name',
+        'Gender': 'gender',
+        'HraEligible': 'hraEligible',
         'AccountId': 'accountID',
         'EmployeeId': 'employeeID'
     }
@@ -117,6 +119,8 @@ class FM_User():
         self.dob = str(data['dob'])
         self.first_name = str(data['first_name'])
         self.last_name = str(data['last_name'])
+        self.gender = str(data['gender'])
+        self.hraEligible = str(data['hraEligible'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
 
@@ -206,7 +210,6 @@ class FM_User():
                     )
                 query_URL = query_URL[:-len("&")]
             r = requests.get(query_URL, auth=FM_USER_AUTH).json()
-
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "User not found.", 404)
 
@@ -240,6 +243,7 @@ class FM_User():
         if response.status_code == 200:
             if response.json()['info']['X-RESTfm-Status'] == 200:
                 return
+        print(json.dumps(response.json()))
         api_error(ValueError, 'User Update Failed.', 500)
 
     # function to call to verify the user's creds.
