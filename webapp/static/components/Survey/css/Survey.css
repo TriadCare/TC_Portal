@@ -172,14 +172,19 @@ tr.q-error {
 }
 @media (max-width: 650px)
 {
-  .section__label-text
-	{
+  .section__label-text {
 		line-height: 20px;
 	}
 }
+@media (max-width: 780px) {
+  .section__label-error {
+    line-height: 20px;
+  }
+}
 @media (max-width: 475px)
 {
-  .response__section-label
+  .response__section-label,
+  .section__label-error
 	{
 		font-size: 0.8em;
 	}
@@ -294,4 +299,14 @@ tr.q-error {
 .button-print {
   position: absolute;
   right: 20px;
+}
+
+.topBlock {
+  position: absolute;
+  right: 20px;
+  cursor: pointer;
+}
+.topBlock:hover {
+  box-shadow: 0 0 5px rgb(0,120,185);
+  border: 1px solid rgb(0,120,185);
 }

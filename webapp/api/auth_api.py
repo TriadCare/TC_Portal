@@ -25,11 +25,11 @@ jwt_tjwss = TimedJSONWebSignatureSerializer(app.config['SECRET_KEY'])
 TOKEN_TYPES = {
     'API': {
         'salt': 'api_token',
-        'expires_in': 900
+        'expires_in': 3600  # 1 hour
     },
     'PASSWORD_SET': {
         'salt': 'password_set_token',
-        'expires_in': 300
+        'expires_in': 1800  # 0.5 hour
     }
 }
 
@@ -65,7 +65,11 @@ def authorize(*roles):
             if user_role in roles or user_role is "TRIADCARE_ADMIN":
                 return f(*args, **kwargs)
             else:
-                abort(403)
+                api_error(
+                    AttributeError,
+                    "You are unauthorized to access this endpoint.",
+                    403
+                )
         return wrapped
     return wrapper
 

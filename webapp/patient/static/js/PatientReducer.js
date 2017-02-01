@@ -70,15 +70,16 @@ export const buildDashlets = (state) => {
   if (dashlets.length !== 0) {
     const user = jwtPayload();
     if (user !== undefined) {
-      // if (user.eligibleForHRA) {}
-      dashlets.splice(1, 0, {
-        cardSize: 'medium',
-        datasource: 'HRA',
-        title: 'New HRA',
-        description: 'Click here to start a new HRA.',
-        dataType: undefined,
-        chartType: undefined,
-      });
+      if (user.hraEligible) {
+        dashlets.splice(1, 0, {
+          cardSize: 'medium',
+          datasource: 'HRA',
+          title: 'New HRA',
+          description: 'Click here to start a new HRA.',
+          dataType: undefined,
+          chartType: undefined,
+        });
+      }
     }
   }
   return dashlets;
@@ -103,22 +104,27 @@ function combineDatasource(datasourceName, oldState, newData) {
 
 function getUpdatedState(state, action) {
   const newState = combineDatasource(action.dataName, state, {
-    isFetching: action.isFetching,
+    isFetching: action.isFetching || false,
     isFresh: true,
+    isPosting: action.isPosting || false,
     receivedAt: action.receivedAt,
     items: action.data || [],
   });
+
+  let currentSurveyID = latestSurveyVersion;
+  if (newState.datasources.EXPANDED_HRA.items !== undefined &&
+      newState.datasources.EXPANDED_HRA.items.length !== 0 &&
+      newState.datasources.EXPANDED_HRA.items[0].meta.surveyID !== undefined) {
+    currentSurveyID = `v${newState.datasources.EXPANDED_HRA.items[0].meta.surveyID}`;
+  }
+  const surveyConfiguration = surveyConfigurations[currentSurveyID];
+
   return {
     ...newState,
     ...{
       initializingDashboard: action.isFetching,
       dashboardDashlets: buildDashlets(newState),
-      surveyConfiguration: surveyConfigurations[
-        (newState.datasources.EXPANDED_HRA.items !== undefined &&
-            newState.datasources.EXPANDED_HRA.items.length !== 0) ?
-          `v${newState.datasources.EXPANDED_HRA.items[0].meta.surveyID}` :
-          latestSurveyVersion
-      ],
+      surveyConfiguration,
     },
   };
 }
@@ -257,9 +263,11 @@ const appReducer = (state = initialState, action) => {
           titleBarText: getTitleBarText(state, action.response),
         },
       };
+    case IdentityActions.POST_DATA:
     case IdentityActions.REQUEST_DATA:
     case IdentityActions.RECEIVE_DATA:
       return getUpdatedState(state, action);
+    case IdentityActions.POST_FAILURE:
     case IdentityActions.REQUEST_ERROR:
     case IdentityActions.REQUEST_FAILURE:
     default:

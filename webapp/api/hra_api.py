@@ -73,7 +73,7 @@ def get_hras(tcid, expand=False):
 
 class HRA_API(MethodView):
     # authorize includes authentication (login_required via Flask-Login)
-    decorators = [csrf.exempt, authorize(['EXECUTIVE', 'TRIADCARE_ADMIN'])]
+    decorators = [csrf.exempt, authorize('PATIENT', 'TRIADCARE_ADMIN')]
 
     def get(self, response_id=None):
         # Note: Only Patient and Provider should have authorization to expand
@@ -100,6 +100,8 @@ class HRA_API(MethodView):
 
         db.session.add(new_hra)
         db.session.commit()
+
+        current_user.update({'hraEligible': 0})
 
         return jsonify(id=new_hra.responseID), 201
 

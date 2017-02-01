@@ -146,7 +146,7 @@ class User(db.Model):
         return self.dob
 
     def get_role(self):
-        return 'TRIADCARE_ADMIN'
+        return 'PATIENT'
 
     # No return, just updates self with provided data
     def update(self, data):

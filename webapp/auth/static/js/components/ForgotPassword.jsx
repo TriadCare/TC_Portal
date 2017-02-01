@@ -3,7 +3,7 @@ import { Dialog } from '@blueprintjs/core';
 
 import { validation, validateEmail, submitForgotPassword } from '../util.js';
 
-const TOKEN_EXPIRATION_SECONDS = 300;
+const TOKEN_EXPIRATION_SECONDS = 1800;
 
 class forgotPassword extends React.Component {
   constructor() {

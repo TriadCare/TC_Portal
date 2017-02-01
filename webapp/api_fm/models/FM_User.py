@@ -47,7 +47,7 @@ def getFMField(field):
 # User DB Model
 class FM_User():
     __public_fields__ = [
-        'recordID', 'first_name', 'last_name', 'dob',
+        'recordID', 'first_name', 'last_name', 'dob', 'gender', 'hraEligible',
         'tcid', 'email', 'accountID'
     ]
 
@@ -179,10 +179,10 @@ class FM_User():
         return self.dob
 
     def get_role(self):
-        return 'TRIADCARE_ADMIN'
+        return 'PATIENT'
 
     def eligibleForHRA(self):
-        return True  # self.eligibleForHRA == 1
+        return self.hraEligible == '1'
 
     # Returns a User from File Maker based on the search criteria
     @staticmethod
@@ -268,7 +268,7 @@ class FM_User():
                 try:
                     return_dict[k] = v.strftime("%m/%d/%Y")
                 except:
-                    return_dict[k] = None
+                    return_dict[k] = v  # None
             else:
                 return_dict[k] = v
 

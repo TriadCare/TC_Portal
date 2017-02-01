@@ -3,6 +3,7 @@ import moment from 'moment';
 import { oneLineTrim } from 'common-tags';
 import { NonIdealState, Spinner, Button, Radio } from '@blueprintjs/core';
 
+import { jwtPayload } from 'js/util';
 import { renderChart } from 'components/Charting';
 
 import './css/Survey';
@@ -24,6 +25,16 @@ const renderEmptyComponent = (goBackToDashboard) => (
     action={<Button text="Back to Dashboard" onClick={goBackToDashboard} />}
   />
 );
+
+const renderSavingComponent = () => (
+  <NonIdealState
+    visual="cloud-upload"
+    title="Saving your HRA"
+    description={'One. more. second...'}
+    action={<Spinner />}
+  />
+);
+
 
 const pointToPercent = (gradePoint) => Math.round(gradePoint * 100 / 4);
 
@@ -234,16 +245,20 @@ const renderQuestion = (questionNumber, configQuestion,
                                       (responseQuestion[row.qid] === (idx + 1).toString() ||
                                       responseQuestion[row.qid] === '3') ? 'checked' : ''
                                     }
-                                    onChange={() => {
-                                      handleAnswer(row.qid, (idx + 1).toString());
-                                    }}
+                                    onChange={() => {}}
                                     autoFocus={(idx === 0 && row.qid === activeQuestion)}
                                   />
                                 }
                                 <span
                                   className="pt-control-indicator"
                                   onClick={() => {
-                                    handleAnswer(row.qid, (idx + 1).toString());
+                                    const answer = row.type === 'GRID_CHECKBOX' ?
+                                      reconcileCheckbox(
+                                        responseQuestion[row.qid],
+                                        (idx + 1).toString()
+                                      )
+                                      : (idx + 1).toString();
+                                    handleAnswer(row.qid, answer);
                                   }}
                                 ></span>
                               </div>
@@ -318,11 +333,9 @@ const renderQuestionnaire = (configObj) => (
             <div className="section__label-item section__button-container section__button-save">
               <Button
                 onClick={() => configObj.handleSave(configObj.answers)}
-                text={configObj.surveyCompleted ? 'Submit' : 'Save'}
-                className={oneLineTrim
-                  `pt-intent-${configObj.surveyCompleted ? 'success submit__button ' : 'primary '}
-                   section__button`
-                 }
+                text={`${configObj.isPosting ? 'Saving' : 'Save'}`}
+                className="pt-intent-primary section__button"
+                disabled={configObj.isPosting}
               />
             </div>
           }
@@ -366,9 +379,17 @@ const renderViewer = (config, answers, response, tcScores) => (
     {/*
       <div
         className="pt-button pt-intent-primary button-print"
-        onClick={requestPDF}>Export PDF
+        onClick={requestPDF}></div>Export PDF
       </div>
       */}
+    <span
+      id="top-link-block"
+      ref="topBlock"
+      className="hidden well well-sm topBlock"
+      onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
+    >
+      <i className="glyphicon glyphicon-chevron-up"></i> Back to Top
+    </span>
     <div className="response__overall">
       <div className="response__overall-date">
         {moment(response.meta.DATE_CREATED).format('ddd MMM Do, YYYY')}
@@ -398,14 +419,6 @@ const renderViewer = (config, answers, response, tcScores) => (
         completed: (response.meta.completed === 1),
       })}
     </div>
-    <span
-      id="top-link-block"
-      ref="topBlock"
-      className="hidden well well-sm topBlock"
-      onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
-    >
-      <i className="glyphicon glyphicon-chevron-up"></i> Back to Top
-    </span>
   </div>
 );
 
@@ -420,8 +433,7 @@ const renderSurvey = (config, answers, activeQuestion,
       activeQuestion,
       error,
       handleAnswer,
-      handleSave: (surveyCompleted ? handleSubmit : handleSave),
-      surveyCompleted,
+      handleSave,
       isPosting,
     })}
     <div className="questionnaire-footer">
@@ -441,12 +453,23 @@ const renderSurvey = (config, answers, activeQuestion,
       <div className="section__button-container section__button-next">
         <Button
           onClick={() => handleSectionChange(1)}
-          text="Next"
-          className="pt-intent-primary section__button"
-          disabled={
-            config.meta.sections.find(
-              (s) => s.qids.includes(activeQuestion)
-            ).id === config.meta.sections.length
+          text={`${config.meta.sections.find(
+                  (s) => s.qids.includes(activeQuestion)
+                ).id === config.meta.sections.length ? 'Submit' : 'Next'}`}
+          className={
+            `${
+              config.meta.sections.find(
+                (s) => s.qids.includes(activeQuestion)
+              ).id === config.meta.sections.length ?
+              `pt-intent-${surveyCompleted ? 'success submit__button ' : 'primary'}` :
+              'pt-intent-primary'
+            }`
+          }
+          disabled={config.meta.sections.find(
+            (s) => s.qids.includes(activeQuestion)
+          ).id === config.meta.sections.length ?
+            isPosting :
+            false
           }
         />
       </div>
@@ -485,6 +508,43 @@ const nullToUndefined = (o) => {
   return newO;
 };
 
+const getAge = (dob) => moment().diff(moment(dob, 'MM/DD/YYYY'), 'years');
+const getGenderAid = (gender) => (gender === 'Male' ? '1' : '2');
+
+const fillInDefaultAnswers = (answers) => {
+  const user = jwtPayload();
+  // these default answers are hardcoded based on Survey ID 4
+  // They should be based on default answers from the active survey configuration
+  const defaultAnswers = {
+    1: user !== undefined ? getAge(user.dob) : '',
+    2: (user !== undefined && user.gender !== null) ? getGenderAid(user.gender) : undefined,
+    63: '',
+    77: '',
+  };
+
+  const newAnswers = [];
+
+  answers.forEach((a) => {
+    if (Object.keys(defaultAnswers).includes(a.qid)) {
+      if (a.aid === undefined) {
+        newAnswers.push({ qid: a.qid, aid: defaultAnswers[a.qid] });
+      } else {
+        newAnswers.push({ qid: a.qid, aid: a.aid });
+      }
+    } else {
+      newAnswers.push({ qid: a.qid, aid: a.aid });
+    }
+  });
+
+  Object.keys(defaultAnswers).forEach((key) => {
+    if (newAnswers.find((q) => q.qid === key) === undefined) {
+      newAnswers.push({ qid: key, aid: defaultAnswers[key] });
+    }
+  });
+
+  return newAnswers;
+};
+
 const updateState = (props, surveyAnswers) => {
   const response = (
     (props.response.items !== undefined &&
@@ -492,7 +552,12 @@ const updateState = (props, surveyAnswers) => {
       props.response.items[0] :
       {}
   );
-  const responseAnswers = response.questionnaire ? props.response.items[0].questionnaire : [];
+  let responseAnswers = response.questionnaire ? props.response.items[0].questionnaire : [];
+  if (response.meta !== undefined) {
+    if (!response.meta.completed) {
+      responseAnswers = fillInDefaultAnswers(responseAnswers);
+    }
+  }
   const activeQuestion = (
     response.meta === undefined ||
     response.meta.completed === 1) ?
@@ -586,6 +651,22 @@ class Survey extends React.Component {
         return false;
       }
     }
+    if (section.id === 1) {
+      // Need to validate that age is valid
+      const age = this.refs.qid_1.lastElementChild.firstElementChild.value;
+      if (age < 0 || age > 150) {
+        this.setState({
+          activeQuestion: '1',
+          error: true,
+          errorMessage: 'Oops! I don\'t think you\'re this old.',
+        });
+        // add the error class and focus the question
+        const questionElement = this.refs.qid_1;
+        questionElement.classList.add('q-error');
+        this.focusInput('1');
+        return false;
+      }
+    }
     // should save section now
     return true;
   }
@@ -617,8 +698,10 @@ class Survey extends React.Component {
 
     let nextID = (activeSection.id + diff);
     nextID = nextID < 1 ? 1 : nextID;
-    nextID = nextID > this.state.config.meta.sections.length ?
-      this.state.config.meta.sections.length : nextID;
+    if (nextID > this.state.config.meta.sections.length) {
+      this.props.handleSubmit(this.state.surveyAnswers);
+      return;
+    }
 
     const qid = this.state.config.meta.sections.find(
       (section) => section.id === nextID
@@ -643,8 +726,11 @@ class Survey extends React.Component {
 
   renderComponent(config, response, TCAvgHRA, handleSave,
     handleSubmit, goBackToDashboard) {
-    if (response.isFetching) {
+    if (response.isFetching || config === undefined) {
       return renderLoadingComponent();
+    }
+    if (response.isPosting) {
+      return renderSavingComponent();
     }
     if (response.items === undefined || response.items.length === 0) {
       return renderEmptyComponent(goBackToDashboard);
@@ -676,9 +762,15 @@ class Survey extends React.Component {
     return (
       <div
         className="spaceComponent surveyComponent"
+        ref="surveyComponent"
         onScroll={() => {
-          this.refs.topBlock.classList.remove('hidden');
-          console.log('scrolling!');
+          if (this.refs.topBlock !== undefined) {
+            if (this.refs.surveyComponent.scrollTop > 1000) {
+              this.refs.topBlock.classList.remove('hidden');
+            } else {
+              this.refs.topBlock.classList.add('hidden');
+            }
+          }
         }}
       >
         {this.renderComponent(
