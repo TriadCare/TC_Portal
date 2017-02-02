@@ -126,13 +126,13 @@ def score_hra(surveyID, response, complete):
     if complete:
         hra_scores = {}
         hra_def = {}
-
-        filename = (os.getcwd() + '/webapp/static/hra_files/v' +
+        cur_dir = os.path.dirname(os.path.realpath(__file__))
+        filename = (cur_dir + '/../../static/hra_files/v' +
                     str(surveyID) + '/scores.json')
         with open(filename, 'r') as scores:
             hra_scores = json.load(scores)['scores']
 
-        filename = (os.getcwd() + '/webapp/static/hra_files/v' +
+        filename = (cur_dir + '/../../static/hra_files/v' +
                     str(surveyID) + '/english/hra_definition.json')
         with open(filename, 'r') as definition:
             hra_def = json.load(definition)
