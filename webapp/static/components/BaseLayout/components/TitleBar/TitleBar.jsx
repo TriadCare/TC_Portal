@@ -17,10 +17,7 @@ const TitleBar = (props) => (
     <div className="pt-navbar-group pt-align-right titleBar__log-out">
       <Button
         className="pt-button pt-minimal pt-icon-power log-out__icon"
-        onClick={() => {
-          props.dispatch(props.onLogout);
-          location.pathname = '/';
-        }}
+        onClick={props.onLogout}
       />
     </div>
   </div>
@@ -29,13 +26,10 @@ const TitleBar = (props) => (
 TitleBar.propTypes = {
   titleBarText: React.PropTypes.object.isRequired,
   onLogout: React.PropTypes.func.isRequired,
-  dispatch: React.PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (store) => ({
   titleBarText: store.appState.titleBarText,
-  onLogout: store.appState.onLogout,
-  dispatch: store.dispatch,
 });
 
 export default connect(mapStateToProps)(TitleBar);

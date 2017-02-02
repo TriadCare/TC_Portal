@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 from functools import reduce
 
@@ -102,6 +103,8 @@ def invalid_answer(qid):
 
 
 def get_grade(g, response):
+    if g is None:
+        return None
     if isinstance(g, float):
         return g
     if 'equal' in g.keys():
@@ -124,12 +127,12 @@ def score_hra(surveyID, response, complete):
         hra_scores = {}
         hra_def = {}
 
-        filename = ('webapp/static/hra_files/v' +
+        filename = (os.getcwd() + '/webapp/static/hra_files/v' +
                     str(surveyID) + '/scores.json')
         with open(filename, 'r') as scores:
             hra_scores = json.load(scores)['scores']
 
-        filename = ('webapp/static/hra_files/v' +
+        filename = (os.getcwd() + '/webapp/static/hra_files/v' +
                     str(surveyID) + '/english/hra_definition.json')
         with open(filename, 'r') as definition:
             hra_def = json.load(definition)
@@ -176,14 +179,13 @@ def score_hra(surveyID, response, complete):
                                 section['graded'] and
                                 question['type'] != 'GRID_TEXT'
                             ):
-                                g = next(
+                                # unravel conditonal score if needed
+                                g = get_grade(next(
                                     ans['score'] for ans in
                                     hra_scores[row['qid']]
                                     if ans['aid'] == response[row['qid']]
-                                )
+                                ), response)
                                 if g is not None:
-                                    # unravel conditonal score if needed
-                                    g = get_grade(g, response)
                                     score[section_name] = (
                                         g if score[section_name] is None
                                         else score[section_name] + g
@@ -199,14 +201,13 @@ def score_hra(surveyID, response, complete):
                         # question answer is valid,
                         # add the score to the section
                         if section['graded']:
-                            g = next(
+                            # unravel conditonal score if needed
+                            g = get_grade(next(
                                 ans['score'] for ans in
                                 hra_scores[question['qid']]
                                 if ans['aid'] == response[question['qid']]
-                            )
+                            ), response)
                             if g is not None:
-                                # unravel conditonal score if needed
-                                g = get_grade(g, response)
                                 score[section_name] = (
                                     g if score[section_name] is None
                                     else score[section_name] + g

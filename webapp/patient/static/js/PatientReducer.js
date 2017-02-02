@@ -66,11 +66,13 @@ export const buildDashlets = (state) => {
         ));
     }
   });
-  // Also add a New HRA card if needed
-  if (dashlets.length !== 0) {
+  // Also add a New HRA card if needed (eligibleForHRA && haven't taken one today)
+  if (dashlets.length !== 0 && state.datasources.HRA.items.reduce(
+    (shouldContinue, hra) => (shouldContinue && moment().diff(hra.meta.DATE_CREATED, 'days') > 1)
+  , true)) {
     const user = jwtPayload();
     if (user !== undefined) {
-      if (user.hraEligible) {
+      if (user.hraEligible === '1') {
         dashlets.splice(1, 0, {
           cardSize: 'medium',
           datasource: 'HRA',
@@ -180,7 +182,6 @@ const blankHRA = {
 
 const initialState = {
   titleBarText: 'Patient Portal',
-  onLogout: IdentityActions.invalidateJWT,
   spaces: [],
   datasources: {
     HRA: {

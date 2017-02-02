@@ -1,4 +1,4 @@
-import { submitRequest } from 'js/util';
+import { submitRequest, removeJWT } from 'js/util';
 // Action Types and Creators
 export const REQUEST_JWT = 'REQUEST_JWT';
 export function requestJWT() {
@@ -106,7 +106,10 @@ export function postResult(dataName, data) {
 
 // Use this to invalidate the JWT
 export function invalidateJWT() {
-  return (dispatch) => dispatch(invalidJWT());
+  return (dispatch) => {
+    removeJWT();
+    dispatch(invalidJWT());
+  };
 }
 
 // Use this to refresh the current JWT.
