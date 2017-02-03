@@ -24,6 +24,9 @@ const getEmptyComponent = () => (
 );
 
 const renderDashboard = (dashlets, isFetching, handleDashletClick) => {
+  if (isFetching) {
+    return getLoadingComponent();
+  }
   // Need to build dashlets from provided configuration and datasources.
   if (dashlets.length !== 0) {
     return (
@@ -35,9 +38,6 @@ const renderDashboard = (dashlets, isFetching, handleDashletClick) => {
         />
       ))
     );
-  }
-  if (isFetching) {
-    return getLoadingComponent();
   }
   return getEmptyComponent();
 };

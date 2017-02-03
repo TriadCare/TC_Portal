@@ -1,7 +1,7 @@
 import base64
 from functools import wraps
 
-from flask_login import LoginManager, logout_user
+from flask_login import LoginManager, login_user, logout_user
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -108,6 +108,7 @@ def load_user_from_request(request, token_type='API', throws=False):
                 recordID=verify_jwt(auth_token, token_type)['recordID']
             )
         if user and user.is_enabled():
+            login_user(user)
             return user
         else:
             api_error(ValueError, "Authorization denied.", 401)

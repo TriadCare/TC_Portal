@@ -164,10 +164,11 @@ function shouldFetchData(state, dataName) {
 }
 
 // Use for fetching data if needed
-export function fetchData(dataName, request) {
+// use force flag to skip data freshness check
+export function fetchData(dataName, request, force = false) {
   return (dispatch, getState) => {
     const state = getState();
-    if (shouldFetchData(state.appState, dataName)) {
+    if (force || shouldFetchData(state.appState, dataName)) {
       const jwt = state.identity.jwt;
       // Let Redux know we are now requesting data from the given endpoint
       dispatch(requestData(dataName));

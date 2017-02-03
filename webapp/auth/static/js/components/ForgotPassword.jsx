@@ -39,7 +39,7 @@ class forgotPassword extends React.Component {
         failureMessage = error.message;
         break;
       case 401:
-        failureMessage = 'Uh oh! This email isn\'t registered yet.';
+        failureMessage = 'Uh oh. This email isn\'t registered yet.';
         break;
       case 404:
         failureMessage = 'Hm. We couldn\'t find this email address.';
@@ -139,14 +139,14 @@ class forgotPassword extends React.Component {
             iconName="thumbs-up"
             isOpen={this.state.submissionSuccess}
             isCloseButtonShown={false}
-            title={`You're all set! This action expires in
+            title={`You're all set. This action expires in
             ${this.state.tokenExpiresIn} seconds.`}
           >
             <div className="pt-dialog-body">
               <p>We sent you the Password Reset Email.</p>
               <p>Check your email and follow the instructions
               to set your new password.</p>
-              <p>Then you can <a href="/login">log in!</a></p>
+              <p>You can close this window or <a href="/login">go back</a>.</p>
             </div>
           </Dialog>
         </div>

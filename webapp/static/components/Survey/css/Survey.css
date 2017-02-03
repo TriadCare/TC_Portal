@@ -276,6 +276,14 @@ tr.q-error {
 		font-size: 0.55em;
 	}
 }
+@media (max-width: 425px)
+{
+  .grid__column-header,
+  .grid__row-header
+	{
+		font-size: 0.50em;
+	}
+}
 
 .specify-label {
   font-weight: inherit;
@@ -303,6 +311,7 @@ tr.q-error {
 
 .topBlock {
   position: absolute;
+  z-index: 10000;
   right: 20px;
   cursor: pointer;
 }

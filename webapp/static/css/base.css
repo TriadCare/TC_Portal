@@ -82,14 +82,14 @@ a:hover, a:visited, a:link, a:active
 
 @media (min-width: 768px) {
   /* Pull out the header and footer */
-.header{
-    position: fixed;
-    top: 0;
-}
-.footer {
-    position: fixed;
-    bottom: 0;
-}
+  .header{
+      position: fixed;
+      top: 0;
+  }
+  .footer {
+      position: fixed;
+      bottom: 0;
+  }
 
   /* Handle the widths */
   .header,

@@ -26,7 +26,7 @@ export function submitHRA() {
 }
 
 // Async Actions
-export const refreshData = (dataSets) =>
+export const refreshData = (dataSets, force = false) =>
   (dispatch, getState) => {
     const appState = getState().appState;
     // If dataSets not specified, refresh all datasources
@@ -53,7 +53,8 @@ export const refreshData = (dataSets) =>
         const request = new Request(appState.datasources[dataName].uri);
         dispatch(IdentityActions.fetchData(
           appState.datasources[dataName].label,
-          request
+          request,
+          force
         ));
       }
     });

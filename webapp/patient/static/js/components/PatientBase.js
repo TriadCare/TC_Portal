@@ -5,7 +5,7 @@ import BaseLayout from 'components/BaseLayout';
 import { refreshData } from '../PatientActions';
 
 const mapDispatchToProps = (dispatch) => ({
-  onLogin: () => refreshData(),
+  onLogin: () => refreshData(undefined, true),
   onLogout: () => {
     dispatch(IdentityActions.invalidateJWT());
     location.href = '/';

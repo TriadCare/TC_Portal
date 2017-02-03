@@ -67,12 +67,14 @@ export const buildDashlets = (state) => {
     }
   });
   // Also add a New HRA card if needed (eligibleForHRA && haven't taken one today)
-  if (dashlets.length !== 0 && state.datasources.HRA.items.reduce(
-    (shouldContinue, hra) => (shouldContinue && moment().diff(hra.meta.DATE_CREATED, 'days') > 1)
-  , true)) {
-    const user = jwtPayload();
-    if (user !== undefined) {
-      if (user.hraEligible === '1') {
+  const user = jwtPayload();
+  if (user !== undefined) {
+    if (user.hraEligible === '1') {
+      if (state.datasources.HRA.items.reduce(
+        (shouldContinue, hra) => (
+          shouldContinue && moment().diff(hra.meta.DATE_CREATED, 'days') > 1
+        )
+      , true)) {
         dashlets.splice(1, 0, {
           cardSize: 'medium',
           datasource: 'HRA',
@@ -166,7 +168,7 @@ const getTitleBarText = (state, payload) => {
         <li><Link
           to={"/patient/dashboard"}
           className="pt-breadcrumb breadcrumb__item"
-        >Dashboard</Link></li>
+        >Patient Portal</Link></li>
       </ul>
     </div>
   );

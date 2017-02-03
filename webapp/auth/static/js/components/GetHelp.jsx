@@ -318,12 +318,9 @@ class helpForm extends React.Component {
             className="pt-button pt-intent-primary form__submit-button"
             type="submit"
           >
-            Request Help
+            Submit
           </button>
         </form>
-        <div className="form__footer">
-          <p className="form__description">Give us the details and we'll give you the help.</p>
-        </div>
         <div>
           <Dialog
             iconName="thumbs-up"

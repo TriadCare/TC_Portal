@@ -15,7 +15,7 @@
 }
 
 .dashletContainer__medium {
-  min-width: 350px;
+  min-width: 300px;
   flex: 1;
 }
 
@@ -30,6 +30,12 @@
   display: flex;
   justify-content: space-between;
   flex: none;
+}
+
+@media (max-width: 450px) {
+  .dashlet__card-title {
+    font-size: 0.8em;
+  }
 }
 
 .dashlet__card-date {
