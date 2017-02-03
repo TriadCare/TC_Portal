@@ -1,6 +1,8 @@
 import React from 'react';
 import { Dialog, Intent, Button } from '@blueprintjs/core';
 
+require('./css/ConfirmationDialog');
+
 const ConfirmationDialog = (props) => (
   <Dialog
     autoFocus={props.autoFocus}
@@ -8,6 +10,7 @@ const ConfirmationDialog = (props) => (
     iconName={props.iconName}
     onClose={props.onCancel}
     title={props.title}
+    className="dialog-confirmation"
   >
     <div className="pt-dialog-body">{props.body}</div>
     <div className="pt-dialog-footer">

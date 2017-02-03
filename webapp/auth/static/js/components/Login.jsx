@@ -219,7 +219,7 @@ class loginPage extends React.Component {
   render() {
     return (
       <div className="formContainer formSmall">
-        <h1 className="formTitle">Welcome to the Triad Care Portal!</h1>
+        <h1 className="formTitle">Welcome to the Triad Care Portal</h1>
         {/* (this.state.formError &&
           this.state.formError !== '' &&
           <div className="pt-callout pt-intent-danger form-callout">
