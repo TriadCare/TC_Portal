@@ -1,11 +1,16 @@
 
 .titleBar__logo {
-  width: 40px;
+  width: 160px;
   height: 40px;
-  margin: 10px 10px;
-  background-image: url("~!file!media/triadcare_logo.png");
+  background-image: url("~!file!media/TC_Web_Logo.png");
   background-size: contain;
   background-repeat: no-repeat;
+}
+@media (max-width: 550px) {
+  .titleBar__logo {
+    width: 100px;
+    height: 25px;
+  }
 }
 
 .titleBar__label {

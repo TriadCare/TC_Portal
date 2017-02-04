@@ -156,6 +156,16 @@ class registerPage extends React.Component {
           },
         });
         break;
+      case 401:
+        this.setState({
+          email: {
+            ...this.state.email,
+            valid: false,
+            fieldStatus: validation.ERROR,
+            errorMessage: error.message,
+          },
+        });
+        break;
       case 403:
         this.setState({
           id: {

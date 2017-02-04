@@ -55,9 +55,25 @@ class FM_User_API(MethodView):
                       "Failed field match: dob",
                       400)
         # Make sure email is either not yet set, or matches provided
-        if ((preloaded_user.get_email() is not None and
-             preloaded_user.get_email() != '') and
-                preloaded_user.get_email() != new_user_data['email']):
+        preloaded_email = preloaded_user.get_email()
+        if (preloaded_email is None or preloaded_user.get_email() == ''):
+            print("preloaded email is None")
+            # check that the provided email does not yet exist in the database
+            try:
+                user_with_email = User.query(email=new_user_data['email'])
+                if user_with_email is not None:
+                    print("record with email found. Not unique.")
+                    api_error(
+                        AttributeError,
+                        "This email has already been registered.",
+                        401
+                    )
+            except ValueError:  # no users found with this email
+                print("Value error")
+                pass  # this is email is unique
+        elif (preloaded_email != new_user_data['email']):
+            # If the email has been preloaded for this user,
+            # make sure the provided email matches
             api_error(ValueError,
                       "Failed field match: email",
                       400)
@@ -72,6 +88,10 @@ class FM_User_API(MethodView):
         user_data = get_request_data(request)
         update_type = 'PASSWORD_SET' if 'password' in user_data else 'API'
         user = load_user_from_request(request, update_type, throws=True)
+
+        if 'email' in user_data:
+            # check that the email is either the same as existing or unique
+            pass
 
         if record_id != user.recordID:
             api_error(ValueError, "Unauthorized update.", 403)
