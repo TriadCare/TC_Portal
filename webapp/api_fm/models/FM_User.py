@@ -86,6 +86,10 @@ class FM_User():
             'required': False,
             'validationFunc': lambda value: value,
         },
+        'first_name': {
+            'required': True,
+            'validationFunc': lambda value: value,
+        },
         'last_name': {
             'required': True,
             'validationFunc': lambda value: value,
