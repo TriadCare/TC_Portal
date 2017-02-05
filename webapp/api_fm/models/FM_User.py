@@ -76,7 +76,7 @@ class FM_User():
     __registration_fields__ = {
         'id': {
             'required': True,
-            'validationFunc': lambda value: value,
+            'validationFunc': lambda value: value.strip(),
         },
         'id_type': {
             'required': True,
@@ -84,15 +84,15 @@ class FM_User():
         },
         'preferred_first_name': {
             'required': False,
-            'validationFunc': lambda value: value,
+            'validationFunc': lambda value: value.strip(),
         },
         'first_name': {
             'required': True,
-            'validationFunc': lambda value: value,
+            'validationFunc': lambda value: value.strip(),
         },
         'last_name': {
             'required': True,
-            'validationFunc': lambda value: value,
+            'validationFunc': lambda value: value.strip(),
         },
         'dob': {
             'required': True,
@@ -103,7 +103,7 @@ class FM_User():
         },
         'email': {
             'required': True,
-            'validationFunc': lambda value: value
+            'validationFunc': lambda value: value.strip()
         },
         'password': {
             'required': True,
