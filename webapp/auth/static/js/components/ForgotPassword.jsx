@@ -141,6 +141,7 @@ class forgotPassword extends React.Component {
             isCloseButtonShown={false}
             title={`You're all set. This action expires in
             ${this.state.tokenExpiresIn} seconds.`}
+            className="dialog-auth"
           >
             <div className="pt-dialog-body">
               <p>We sent you the Password Reset Email.</p>

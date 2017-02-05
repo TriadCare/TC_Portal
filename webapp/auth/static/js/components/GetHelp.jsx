@@ -327,6 +327,7 @@ class helpForm extends React.Component {
             isOpen={this.state.submissionSuccess}
             isCloseButtonShown={false}
             title="Help is on the way!"
+            className="dialog-auth"
           >
             <div className="pt-dialog-body">
               <p>Your Help Request has successfully been submitted.</p>

@@ -69,7 +69,8 @@ class FM_User():
     }
 
     __immutable_fields__ = [
-        'recordID', 'patientID', 'tcid', 'employeeID', 'accountID'
+        'recordID', 'patientID', 'tcid', 'employeeID', 'accountID',
+        'first_name', 'last_name'
     ]
 
     __registration_fields__ = {
@@ -82,7 +83,7 @@ class FM_User():
             'validationFunc': lambda value: value,
         },
         'preferred_first_name': {
-            'required': True,
+            'required': False,
             'validationFunc': lambda value: value,
         },
         'last_name': {
@@ -232,7 +233,7 @@ class FM_User():
             for index, d in enumerate(r['data']):
                 user = d
                 user['recordID'] = r['meta'][index]['recordID']
-            data.append(user)
+                data.append(user)
 
             return [FM_User({
                 FM_User.__fm_fields__[key]: user_data[key] for key in user_data
@@ -263,7 +264,6 @@ class FM_User():
         if response.status_code == 200:
             if response.json()['info']['X-RESTfm-Status'] == 200:
                 return
-        print(json.dumps(response.json()))
         api_error(ValueError, 'User Update Failed.', 500)
 
     # function to call to verify the user's creds.
@@ -322,9 +322,10 @@ class FM_User():
                 key = k if k != 'password' else 'hash'
                 user[key] = value
             else:
-                api_error(
-                    AttributeError, "Required field is missing: " + k, 400
-                )
+                if field['required']:
+                    api_error(
+                        AttributeError, "Required field is missing: " + k, 400
+                    )
 
         # normalize ID (from <TCID or Employee_ID> -> <TCID>)
         user_id = user['id']

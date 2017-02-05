@@ -57,6 +57,11 @@ body {
   flex-direction: column;
 }
 
+.dialog-auth {
+  width: 90vw;
+  max-width: 500px;
+}
+
 .form__label {
   display: block;
   text-align: left;

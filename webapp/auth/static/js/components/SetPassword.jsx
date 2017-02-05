@@ -191,6 +191,7 @@ class setPassword extends React.Component {
             isOpen={this.state.showDialog}
             isCloseButtonShown={false}
             title={this.state.dialogTitle}
+            className="dialog-auth"
           >
             <div className="pt-dialog-body">
               {this.state.dialogMessage}

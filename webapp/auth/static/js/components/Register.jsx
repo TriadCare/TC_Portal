@@ -152,7 +152,7 @@ class registerPage extends React.Component {
             ...this.state[error.message.split(': ')[1]],
             valid: false,
             fieldStatus: validation.ERROR,
-            errorMessage: 'Oops! We have something different on file.',
+            errorMessage: 'We have something different on file.',
           },
         });
         break;
@@ -172,7 +172,7 @@ class registerPage extends React.Component {
             ...this.state.id,
             valid: false,
             fieldStatus: validation.ERROR,
-            errorMessage: 'Oops! This user is already registered!',
+            errorMessage: 'This user is already registered!',
           },
         });
         break;
@@ -448,6 +448,7 @@ class registerPage extends React.Component {
             isOpen={this.state.registrationSuccess}
             isCloseButtonShown={false}
             title="Registration Success"
+            className="dialog-auth"
           >
             <div className="pt-dialog-body">
               Welcome aboard! Let's get you <a href="/login">logged in.</a>

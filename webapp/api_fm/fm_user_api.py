@@ -49,8 +49,7 @@ class FM_User_API(MethodView):
                 if len(users_with_eID) == 0:
                     api_error(
                         ValueError,
-                        ("ID and Date of Birth could not be matched. \
-                        Please check both."),
+                        ("Please check both ID and Date of Birth."),
                         404
                     )
                 if len(users_with_eID) > 1:
@@ -63,16 +62,14 @@ class FM_User_API(MethodView):
                     if len(users_with_eID) == 0:
                         api_error(
                             ValueError,
-                            ("ID and Last Name could not be matched. \
-                            Please check both."),
+                            ("Please check both ID and Last Name."),
                             404
                         )
                     if len(users_with_eID) > 1:
                         # If still more than one user, abort
                         api_error(
                             ValueError,
-                            ("Could not select unique User. \
-                            Please contact Customer Support to \
+                            ("Please contact Customer Support to \
                             complete registration."),
                             404
                         )
@@ -100,15 +97,19 @@ class FM_User_API(MethodView):
             api_error(ValueError,
                       "Failed field match: last_name",
                       400)
+        else:
+            del new_user_data['last_name']
         # If provided First Name does not match what we have,
         # put it in the Preferred First Name field
-        if preloaded_user['first_name'] != new_user_data['first_name']:
-            new_user_data['preferred_first_name'] = new_user_data['first_name']
+        if 'first_name' in new_user_data:
+            if preloaded_user['first_name'] != new_user_data['first_name']:
+                new_user_data['preferred_first_name'] = (
+                    new_user_data['first_name']
+                )
             del new_user_data['first_name']
         # Make sure email is either not yet set, or matches provided
         preloaded_email = preloaded_user.get_email()
         if (preloaded_email is None or preloaded_user.get_email() == ''):
-            print("preloaded email is None")
             # check that the provided email does not yet exist in the database
             try:
                 user_with_email = User.query(
@@ -116,14 +117,12 @@ class FM_User_API(MethodView):
                     first=True
                 )
                 if user_with_email is not None:
-                    print("record with email found. Not unique.")
                     api_error(
                         AttributeError,
                         "This email has already been registered.",
                         401
                     )
             except ValueError:  # no users found with this email
-                print("Value error")
                 pass  # this is email is unique
         elif (preloaded_email != new_user_data['email']):
             # If the email has been preloaded for this user,
