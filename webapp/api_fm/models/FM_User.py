@@ -47,8 +47,8 @@ def getFMField(field):
 # User DB Model
 class FM_User():
     __public_fields__ = [
-        'recordID', 'first_name', 'last_name', 'dob', 'gender', 'hraEligible',
-        'tcid', 'email', 'accountID'
+        'recordID', 'first_name', 'last_name', 'preferred_first_name',
+        'dob', 'gender', 'hraEligible', 'tcid', 'email', 'accountID'
     ]
 
     __fm_fields__ = {
@@ -60,6 +60,7 @@ class FM_User():
         'Email': 'email',
         'DOB': 'dob',
         'NameFirst': 'first_name',
+        'NamePreferredFirst': 'preferred_first_name',
         'NameLast': 'last_name',
         'Gender': 'gender',
         'HraEligible': 'hraEligible',
@@ -80,7 +81,7 @@ class FM_User():
             'required': True,
             'validationFunc': lambda value: value,
         },
-        'first_name': {
+        'preferred_first_name': {
             'required': True,
             'validationFunc': lambda value: value,
         },
@@ -118,6 +119,7 @@ class FM_User():
         self.hash = str(data['hash'])
         self.dob = str(data['dob'])
         self.first_name = str(data['first_name'])
+        self.preferred_first_name = str(data['preferred_first_name'])
         self.last_name = str(data['last_name'])
         self.gender = str(data['gender'])
         self.hraEligible = str(data['hraEligible'])
@@ -187,6 +189,11 @@ class FM_User():
     # Returns a User from File Maker based on the search criteria
     @staticmethod
     def query(**kwargs):
+        # decide if user wants first record from query, or all (default)
+        first = False
+        if 'first' in kwargs.keys():
+            first = kwargs['first']
+            del kwargs['first']
         # build the request URL from the provided query parameters
         if 'recordID' in kwargs.keys():
             # If we have recordID, short circuit search
@@ -213,12 +220,25 @@ class FM_User():
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "User not found.", 404)
 
-        user_data = r['data'][0]
-        user_data['recordID'] = r['meta'][0]['recordID']
+        if first:
+            user_data = r['data'][0]
+            user_data['recordID'] = r['meta'][0]['recordID']
 
-        return FM_User({
-            FM_User.__fm_fields__[key]: user_data[key] for key in user_data
-        })
+            return FM_User({
+                FM_User.__fm_fields__[key]: user_data[key] for key in user_data
+            })
+        else:
+            data = []
+            for index, d in enumerate(r['data']):
+                user = d
+                user['recordID'] = r['meta'][index]['recordID']
+            data.append(user)
+
+            return [FM_User({
+                FM_User.__fm_fields__[key]: user_data[key] for key in user_data
+            }) for user_data in data]
+
+        return None
 
     # No return, just updates self with provided data and commits change to DB
     def update(self, data):

@@ -59,12 +59,28 @@ class User_API(MethodView):
                 "Failed field match: dob",
                 400)
         # Make sure email is either not yet set, or matches provided
-        if (preloaded_user.get_email() is not None and
-                preloaded_user.get_email() != new_user_data['email']):
-            api_error(
-                ValueError,
-                "Failed field match: email",
-                400)
+        preloaded_email = preloaded_user.get_email()
+        if (preloaded_email is None or preloaded_user.get_email() == ''):
+            print("preloaded email is None")
+            # check that the provided email does not yet exist in the database
+            try:
+                user_with_email = User.query(email=new_user_data['email'])
+                if user_with_email is not None:
+                    print("record with email found. Not unique.")
+                    api_error(
+                        AttributeError,
+                        "This email has already been registered.",
+                        401
+                    )
+            except ValueError:  # no users found with this email
+                print("Value error")
+                pass  # this is email is unique
+        elif (preloaded_email != new_user_data['email']):
+            # If the email has been preloaded for this user,
+            # make sure the provided email matches
+            api_error(ValueError,
+                      "Failed field match: email",
+                      400)
 
         # Ready to update the new user
         preloaded_user.update(new_user_data)

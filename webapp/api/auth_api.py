@@ -78,7 +78,7 @@ def authorize(*roles):
 @login_manager.user_loader
 def load_user(userid):
     try:
-        user = User.query(tcid=userid)
+        user = User.query(tcid=userid, first=True)
         return user
     except ValueError:
         return None
@@ -98,14 +98,15 @@ def load_user_from_request(request, token_type='API', throws=False):
             username = auth_token.split(":")[0]
             password = auth_token.split(":")[1]
             if password != '':  # username:password
-                user = User.query(email=username)
+                user = User.query(email=username, first=True)
                 if not user.authenticate(password):
                     api_error(ValueError, "Authentication Failed.", 401)
             else:
                 auth_token = username  # Most likely a token
         else:
             user = User.query(
-                recordID=verify_jwt(auth_token, token_type)['recordID']
+                recordID=verify_jwt(auth_token, token_type)['recordID'],
+                first=True
             )
         if user and user.is_enabled():
             login_user(user)
@@ -153,7 +154,7 @@ class Auth_API(MethodView):
                         "Authorization values are missing.",
                         400
                     )
-                user = User.query(email=email)
+                user = User.query(email=email, first=True)
                 if user is None:
                     api_error(
                         ValueError,
@@ -161,7 +162,6 @@ class Auth_API(MethodView):
                         404
                     )
                 if user.authenticate(pw):
-                    ("building token response")
                     return jsonify(jwt=generate_jwt(user.to_json(), jwt_type))
                 return api_error(
                     ValueError,

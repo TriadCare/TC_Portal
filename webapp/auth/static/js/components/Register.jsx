@@ -182,7 +182,7 @@ class registerPage extends React.Component {
             ...this.state.id,
             valid: false,
             fieldStatus: validation.ERROR,
-            errorMessage: 'Oops! We don\'t have this ID on file yet.',
+            errorMessage: error.message,
           },
         });
         break;
