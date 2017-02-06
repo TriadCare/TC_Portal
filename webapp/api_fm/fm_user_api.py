@@ -57,7 +57,8 @@ class FM_User_API(MethodView):
                     users_with_eID = [
                         user
                         for user in users_with_eID
-                        if user['last_name'] == new_user_data['last_name']
+                        if (user['last_name'].strip().lower() ==
+                            new_user_data['last_name'].strip().lower())
                     ]
                     if len(users_with_eID) == 0:
                         api_error(
@@ -93,7 +94,10 @@ class FM_User_API(MethodView):
                       "Failed field match: dob",
                       400)
         # Make sure preloaded Last Name and provided Last Name match
-        if preloaded_user['last_name'] != new_user_data['last_name']:
+        if (
+            preloaded_user['last_name'].strip().lower() !=
+            new_user_data['last_name'].strip().lower()
+        ):
             api_error(ValueError,
                       "Failed field match: last_name",
                       400)
@@ -124,7 +128,8 @@ class FM_User_API(MethodView):
                     )
             except ValueError:  # no users found with this email
                 pass  # this is email is unique
-        elif (preloaded_email != new_user_data['email']):
+        elif (preloaded_email.strip().lower() !=
+                new_user_data['email'].strip().lower()):
             # If the email has been preloaded for this user,
             # make sure the provided email matches
             api_error(ValueError,
