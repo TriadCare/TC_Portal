@@ -30,6 +30,10 @@ TOKEN_TYPES = {
     'PASSWORD_SET': {
         'salt': 'password_set_token',
         'expires_in': 1800  # 0.5 hour
+    },
+    'REGISTRATION': {
+        'salt': 'registration_token',
+        'expires_in': 259200  # 72 hours
     }
 }
 

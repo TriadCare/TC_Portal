@@ -1,0 +1,22 @@
+Hello {{ user_name }},
+
+This is a friendly reminder to complete the Health Assessment in the Triad Care Portal.
+
+Once you copy and paste the link below into your web browser you will be taken to the Triad Care Portal where you can log in and complete your Assessment.
+
+{{ url }}
+
+Please use your email address ({{ user_email }}) to log in.
+
+Once you have logged in you will be able to complete the questionnaire. Please note, all questions are required and you will only be able to see your confidential results after you click the 'Complete' button at the end of the questionnaire.
+
+Please email Triad Care Customer Service at customercare@triadcare.com if you have any trouble.
+
+Sincerely,
+Triad Care, Inc.
+
+As always, if you need any assistance, give us a call at 866-885-7931.
+
+
+
+{% include '/emails/snippets/notice.txt' %}

@@ -1,0 +1,35 @@
+{% include '/emails/snippets/header_image.html' %}
+
+<div style="margin:20px;">
+  <br/>
+  <p>Hello {{ user_name }},</p>
+  <br/>
+  <p>You have been registered by your company to take Triad Care's Health Assessment as part of your wellness program.</p>
+  <p>The link below will allow you to complete the registration process and take the Health Assessment in the Triad Care Portal.</p>
+  <p>This assessment is confidential and will take approximately 20 minutes to complete.</p>
+  <br/>
+	<p>Once you click on the link below you will be taken to the Triad Care Portal where you will set and confirm your password for your new account.</p>
+  <br/>
+	<p><a href='{{ url }}'>Register</a></p>
+  <br/>
+	<p>Please follow the password requirements:
+      <ul>
+        <li>Must be longer than 8 characters.</li>
+				<li>Must use at least one uppercase, one lowercase, and one special character (e.g.- !$&@, etc.)</li>
+      </ul>
+  </p>
+  <br/>
+	<p>After you set your password you will be taken to the login page.</p>
+  <p>Please use your email address ({{ user_email }}) and your new password to log in.</p>
+  <br/>
+	<p>Once you have logged in you will be able to begin the questionnaire.</p>
+  <p>Please note, all questions are required and you will only be able to see your confidential results after you click the 'Complete' button at the end of the questionnaire.</p>
+  <br/>
+  <p>Please email Triad Care Customer Service at customercare@triadcare.com if you have any trouble.</p>
+  <p>Sincerely,<br/>
+  Triad Care, Inc.</p>
+  <br/>
+  As always, if you need any assistance, give us a call at 866-885-7931.
+</div>
+
+{% include '/emails/snippets/notice.html' %}

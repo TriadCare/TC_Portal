@@ -34,12 +34,12 @@ def email_forgot_password(email_address):
         'subject': "Reset Your Password for Triad Care Portal",
         'recipients': user.email,
         'body': render_template(
-            'emails/forgot_password.txt',
+            'emails/forgot_password/forgot_password.txt',
             user_name=user.first_name,
             url=set_pw_url
         ),
         'html': render_template(
-            'emails/forgot_password.html',
+            'emails/forgot_password/forgot_password.html',
             user_name=user.first_name,
             url=set_pw_url
         ),
@@ -47,8 +47,98 @@ def email_forgot_password(email_address):
 
     return jsonify(
         error=False,
-        message=('Password Reset Email has been sent to the \
-                  provided email address.')
+        message=(
+            'Password Reset Email has been sent to the provided email address.'
+        )
+    )
+
+
+def email_registration(email_address):
+    if not isValidEmail(email_address):
+        api_error(ValueError, "Invalid Email Address.", 400)
+
+    user = User.query(email=email_address, first=True)
+    if user is None:
+        api_error(
+            AttributeError,
+            "The provided email address could not be found.",
+            404
+        )
+    if not user.is_enabled():
+        api_error(
+            AttributeError,
+            "The provided email address is not yet registered.",
+            401
+        )
+    token = generate_jwt(user.to_json(), 'REGISTRATION')
+    set_pw_url = 'https://my.triadcare.com/set?jwt=' + token
+    Email({
+        'subject': "Register for Triad Care Portal",
+        'recipients': user.email,
+        'body': render_template(
+            'emails/registration/registration.txt',
+            user_name=user.first_name,
+            user_email=user.email,
+            account=user.account,
+            url=set_pw_url
+        ),
+        'html': render_template(
+            'emails/registration/registration.html',
+            user_name=user.first_name,
+            user_email=user.email,
+            account=user.account,
+            url=set_pw_url
+        ),
+    }).send()
+
+    return jsonify(
+        error=False,
+        message=(
+            'Registration Email has been sent to the provided email address.'
+        )
+    )
+
+
+def email_hra_reminder(email_address):
+    if not isValidEmail(email_address):
+        api_error(ValueError, "Invalid Email Address.", 400)
+
+    user = User.query(email=email_address, first=True)
+    if user is None:
+        api_error(
+            AttributeError,
+            "The provided email address could not be found.",
+            404
+        )
+    if not user.is_enabled():
+        api_error(
+            AttributeError,
+            "The provided email address is not yet registered.",
+            401
+        )
+    url = 'https://my.triadcare.com'
+    Email({
+        'subject': "Reminder to complete your Triad Care Health Assessment",
+        'recipients': user.email,
+        'body': render_template(
+            'emails/reminders/hra.txt',
+            user_name=user.first_name,
+            user_email=user.email,
+            url=url
+        ),
+        'html': render_template(
+            'emails/reminders/hra.html',
+            user_name=user.first_name,
+            user_email=user.email,
+            url=url
+        ),
+    }).send()
+
+    return jsonify(
+        error=False,
+        message=(
+            'HRA Reminder Email has been sent to the provided email address.'
+        )
     )
 
 
@@ -75,16 +165,20 @@ class Email_API(MethodView):
 
         if email_type == "forgot_password":
             return email_forgot_password(request_data['email'])
+        if email_type == "new_user_registration":
+            return email_registration(request_data['email'])
+        if email_type == "hra_reminder":
+            return email_hra_reminder(request_data['email'])
         if email_type == "get_help":
             request_data['subject'] = 'Your Help Request has been Received'
             request_data['recipients'] = request_data['email']
             request_data['cc'] = 'customercare@triadcare.com'
             request_data['html'] = render_template(
-                'emails/get_help.html',
+                'emails/get_help/get_help.html',
                 help_data=request_data
             )
             request_data['body'] = render_template(
-                'emails/get_help.txt',
+                'emails/get_help/get_help.txt',
                 help_data=request_data
             )
             Email.email_from_form(request_data).send()

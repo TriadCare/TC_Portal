@@ -144,8 +144,22 @@ class FM_User_API(MethodView):
     # Update an existing User. Needs Authorization.
     def put(self, record_id):
         user_data = get_request_data(request)
-        update_type = 'PASSWORD_SET' if 'password' in user_data else 'API'
-        user = load_user_from_request(request, update_type, throws=True)
+        user = None
+        if 'password' in user_data:
+            try:
+                user = load_user_from_request(
+                    request,
+                    'PASSWORD_SET',
+                    throws=True
+                )
+            except ValueError:
+                user = load_user_from_request(
+                    request,
+                    'REGISTRATION',
+                    throws=True
+                )
+        else:
+            user = load_user_from_request(request, 'API', throws=True)
 
         if record_id != user.recordID:
             api_error(ValueError, "Unauthorized update.", 403)

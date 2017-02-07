@@ -1,0 +1,25 @@
+{% include '/emails/snippets/header_image.html' %}
+
+<div style="margin:20px;">
+  <br/>
+  <p>Hello {{ user_name }},</p>
+  <br/>
+  <p>This is a friendly reminder to complete the Health Assessment in the Triad Care Portal.</p>
+  <br/>
+	<p>Once you click on the link below you will be taken to the Triad Care Portal where you can log in and complete your Assessment.</p>
+  <br/>
+	<p><a href='{{ url }}'>Complete my Health Assessment</a></p>
+  <br/>
+	<p>Please use your email address ({{ user_email }}) to log in.</p>
+  <br/>
+	<p>Once you have logged in you will be able to complete the questionnaire. Please note, all questions are required and you will only be able to see your confidential results after you click the 'Complete' button at the end of the questionnaire.</p>
+  <br/>
+  <p>Please email Triad Care Customer Service at customercare@triadcare.com if you have any trouble.</p>
+  <p>Sincerely,<br/>
+  Triad Care, Inc.</p>
+  <br/>
+  As always, if you need any assistance, give us a call at 866-885-7931.
+</div>
+
+
+{% include '/emails/snippets/notice.html' %}

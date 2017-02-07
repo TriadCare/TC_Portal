@@ -48,7 +48,7 @@ def getFMField(field):
 class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
-        'dob', 'gender', 'hraEligible', 'tcid', 'email', 'accountID'
+        'dob', 'gender', 'hraEligible', 'tcid', 'email', 'accountID', 'account'
     ]
 
     __fm_fields__ = {
@@ -65,6 +65,7 @@ class FM_User():
         'Gender': 'gender',
         'HraEligible': 'hraEligible',
         'AccountId': 'accountID',
+        'Account::Name': 'account',
         'EmployeeId': 'employeeID'
     }
 
@@ -130,6 +131,7 @@ class FM_User():
         self.hraEligible = str(data['hraEligible'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
+        self.account = str(data['account'])
 
     def __getitem__(self, key):
         return getattr(self, key)

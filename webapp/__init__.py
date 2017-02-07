@@ -67,7 +67,8 @@ def error_handler(e):
     if app.debug:
         logError(e, request)
     else:
-        pass  # Need to log to file here
+        if e.code == 500:
+            logError(e, request)
     return make_response(jsonify({
         'error': True,
         'message': e.message,

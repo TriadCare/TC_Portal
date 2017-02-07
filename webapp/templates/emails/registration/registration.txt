@@ -1,0 +1,30 @@
+Hello {{ user_name }},
+
+You have been registered by your company to take Triad Care's Health Assessment as part of your wellness program.
+The link below will allow you to complete the registration process and take the Health Assessment in the Triad Care Portal.
+This assessment is confidential and will take approximately 20 minutes to complete.
+
+Copy the link below into your web browser and you will be taken to the Triad Care Portal where you will set and confirm your password for your new account.
+
+{{ url }}
+
+Please follow the password requirements:
+
+    Must be longer than 8 characters.
+		Must use at least one uppercase, one lowercase, and one special character (e.g.- !$&@, etc.)
+
+After you set your password you will be taken to the login page.
+Please use your email address ({{ user_email }}) and your new password to log in.
+
+Once you have logged in you will be able to begin the questionnaire.
+Please note, all questions are required and you will only be able to see your confidential results after you click the 'Complete' button at the end of the questionnaire.
+
+Please email Triad Care Customer Service at customercare@triadcare.com if you have any trouble.
+
+Sincerely,
+Triad Care, Inc.
+
+As always, if you need any assistance, give us a call at 866-885-7931.
+
+
+{% include '/emails/snippets/notice.txt' %}

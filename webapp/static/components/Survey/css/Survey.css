@@ -45,8 +45,9 @@
   flex: 1 1 100%;
 }
 
+.response__chart-donut,
 .response__chart-bar {
-  height: 100%;
+  height: calc(100% - 50px);
 }
 
 .response__chart-bar .ct-bar {
