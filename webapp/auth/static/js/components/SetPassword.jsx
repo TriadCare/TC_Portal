@@ -75,7 +75,7 @@ class setPassword extends React.Component {
         failureMessage = 'You\'re not authorized to set a password for this user.';
         break;
       default:
-        failureMessage = 'Oops! Someting went wrong.';
+        failureMessage = 'Someting went wrong.';
         break;
     }
 

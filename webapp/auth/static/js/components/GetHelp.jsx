@@ -113,7 +113,7 @@ class helpForm extends React.Component {
             ...this.state.full_name,
             fieldStatus: validation.ERROR,
             valid: false,
-            errorMessage: 'Oops! Someting went wrong.',
+            errorMessage: 'Someting went wrong.',
           },
         });
         break;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+import { setJWT } from 'js/util';
 import { validation, validateEmail, loginUser } from '../util.js';
 
 const fields = [
@@ -76,7 +77,7 @@ class loginPage extends React.Component {
       jwt: data.jwt,
       formSuccess: 'Login Success!',
     });
-    sessionStorage.setItem('tc_jwt', data.jwt);
+    setJWT(data.jwt);
     location.pathname = '/patient';  // redirect to correct portal
   }
 
@@ -88,7 +89,7 @@ class loginPage extends React.Component {
             ...this.state.password,
             valid: false,
             fieldStatus: validation.ERROR,
-            errorMessage: 'Oops! Try your password again.',
+            errorMessage: 'Try your password again.',
           },
         });
         break;

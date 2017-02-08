@@ -1,8 +1,29 @@
 import moment from 'moment';
 
-export const setJWT = (token) => sessionStorage.setItem('tc_jwt', token);
-export const getJWT = () => sessionStorage.getItem('tc_jwt');
-export const removeJWT = () => sessionStorage.removeItem('tc_jwt');
+export const setJWT = (token) => {
+  try {
+    sessionStorage.setItem('tc_jwt', token);
+  } catch (error) {
+    if (typeof window.tc_storage !== 'object') {
+      window.tc_storage = {};
+    }
+    window.tc_storage.tc_jwt = token;
+  }
+};
+export const getJWT = () => {
+  try {
+    return sessionStorage.getItem('tc_jwt');
+  } catch (error) {
+    return window.tc_storage !== undefined ? window.tc_storage.tc_jwt : undefined;
+  }
+};
+export const removeJWT = () => {
+  try {
+    sessionStorage.removeItem('tc_jwt');
+  } catch (error) {
+    delete window.tc_storage.tc_jwt;
+  }
+};
 
 const ifDefined = (token, func) => {
   if (token === null || token === undefined || token === 'undefined' || token === '') {

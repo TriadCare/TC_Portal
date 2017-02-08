@@ -39,13 +39,13 @@ class forgotPassword extends React.Component {
         failureMessage = error.message;
         break;
       case 401:
-        failureMessage = 'Uh oh. This email isn\'t registered yet.';
+        failureMessage = 'This email isn\'t registered yet.';
         break;
       case 404:
-        failureMessage = 'Hm. We couldn\'t find this email address.';
+        failureMessage = 'We couldn\'t find this email address.';
         break;
       default:
-        failureMessage = 'Oops! Someting went wrong.';
+        failureMessage = 'Someting went wrong.';
         break;
     }
 

@@ -642,7 +642,7 @@ class Survey extends React.Component {
         this.setState({
           activeQuestion: unansweredQ,
           error: true,
-          errorMessage: 'Oops! You missed one.',
+          errorMessage: 'You missed one.',
         });
         // add the error class and focus the question
         const questionElement = this.refs[`qid_${unansweredQ}`];
@@ -658,7 +658,7 @@ class Survey extends React.Component {
         this.setState({
           activeQuestion: '1',
           error: true,
-          errorMessage: 'Oops! I don\'t think you\'re this old.',
+          errorMessage: 'I don\'t think you\'re this old.',
         });
         // add the error class and focus the question
         const questionElement = this.refs.qid_1;
