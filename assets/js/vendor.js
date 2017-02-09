@@ -11,5 +11,6 @@ require('react-dom');
 require('font-awesome/css/font-awesome');
 require('react-chartist');
 require('chartist/dist/chartist.min.css');
-// polyfill
+// polyfills
 import 'whatwg-fetch';  // may need a promise polyfill for older browsers
+import 'core-js/client/shim';  // need this for Object.assign in IE
