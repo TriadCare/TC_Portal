@@ -64,12 +64,7 @@ def email_registration(email_address):
             "The provided email address could not be found.",
             404
         )
-    if not user.is_enabled():
-        api_error(
-            AttributeError,
-            "The provided email address is not yet registered.",
-            401
-        )
+
     token = generate_jwt(user.to_json(), 'REGISTRATION')
     set_pw_url = 'https://my.triadcare.com/set?jwt=' + token
     Email({
