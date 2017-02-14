@@ -175,7 +175,7 @@ class setPassword extends React.Component {
             className="pt-button pt-intent-primary form__submit-button"
             type="submit"
           >
-            Set New Password
+            Set Your Password
           </button>
         </form>
         <div className="form__footer">
