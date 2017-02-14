@@ -134,7 +134,7 @@ class setPassword extends React.Component {
   render() {
     return (
       <div className="formContainer formSmall">
-        <h1 className="formTitle">Set New Password</h1>
+        <h1 className="formTitle">Set Your Password</h1>
         <form onSubmit={this.submit} className="auth-form form-set">
           <label htmlFor={'password'} className="form__label">
             {'New Password'}
@@ -175,7 +175,7 @@ class setPassword extends React.Component {
             className="pt-button pt-intent-primary form__submit-button"
             type="submit"
           >
-            Set Your Password
+            Set Password
           </button>
         </form>
         <div className="form__footer">
