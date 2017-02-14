@@ -2,7 +2,7 @@
 .titleBar__logo {
   width: 160px;
   height: 40px;
-  background-image: url("~!file!media/TC_Web_Logo.png");
+  background-image: url("~!file-loader!media/TC_Web_Logo.png");
   background-size: contain;
   background-repeat: no-repeat;
 }

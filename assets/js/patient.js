@@ -1,5 +1,5 @@
-require('js/vendor');
-require('css/base');
+import 'js/vendor';
+import 'css/base';
 
-require('css/patient');
-require('js/PatientApp');
+import 'css/patient';
+import 'js/PatientApp';

@@ -1,5 +1,6 @@
-require('js/vendor');
-require('css/base');
+import 'js/vendor';
 
-require('css/auth');
-require('js/AuthenticationApp');
+import 'css/base.css';
+
+import 'css/auth.css';
+import 'js/AuthenticationApp';
