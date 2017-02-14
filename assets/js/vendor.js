@@ -1,16 +1,15 @@
-require('@blueprintjs/core');
-require('@blueprintjs/core/dist/blueprint.css');
-require('@blueprintjs/datetime');
-require('@blueprintjs/datetime/dist/blueprint-datetime.css');
-require('jquery');
-require('bootstrap');
-require('bootstrap/dist/css/bootstrap');
-require('backbone');
-require('react');
-require('react-dom');
-require('font-awesome/css/font-awesome');
-require('react-chartist');
-require('chartist/dist/chartist.min.css');
+import '@blueprintjs/core';
+import '@blueprintjs/core/dist/blueprint.css';
+import '@blueprintjs/datetime';
+import '@blueprintjs/datetime/dist/blueprint-datetime.css';
+import 'jquery';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react';
+import 'react-dom';
+import 'font-awesome/css/font-awesome.css';
+import 'react-chartist';
+import 'chartist/dist/chartist.min.css';
 // polyfills
 import 'whatwg-fetch';  // may need a promise polyfill for older browsers
 import 'core-js/client/shim';  // need this for Object.assign in IE

@@ -1,5 +1,5 @@
-require('js/vendor');
-require('css/base');
+import 'js/vendor';
+import 'css/base';
 
-require('css/executive');
-require('js/ExecutiveApp');
+import 'css/executive';
+import 'js/ExecutiveApp';
