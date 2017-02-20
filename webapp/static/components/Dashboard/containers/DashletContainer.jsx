@@ -3,7 +3,7 @@ import React from 'react';
 
 import Dashlet from '../components/Dashlet';
 
-const DashletContainer = (props) => (
+const DashletContainer = props => (
   <div className={`dashletContainer dashletContainer__${props.dashlet.cardSize}`}>
     <Dashlet config={props.dashlet} handleClick={props.handleClick} />
   </div>

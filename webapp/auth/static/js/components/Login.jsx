@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import { setJWT } from 'js/util';
+import { setJWT } from 'js/utilREST';
 import { validation, validateEmail, loginUser } from '../util.js';
 
 const fields = [

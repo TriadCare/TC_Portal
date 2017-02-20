@@ -1,7 +1,7 @@
 import React from 'react';
 import { NonIdealState, Spinner /* , Button */ } from '@blueprintjs/core';
 
-import './css/Dashboard';
+import './css/Dashboard.css';
 
 // import AddDashletButton from './components/AddDashletButton';
 import DashletContainer from './containers/DashletContainer';
@@ -57,7 +57,7 @@ const Dashboard = ({ dashlets, isFetching, /* handleRefresh, */handleDashletClic
 Dashboard.propTypes = {
   dashlets: React.PropTypes.array.isRequired,
   isFetching: React.PropTypes.bool,
-  handleRefresh: React.PropTypes.func.isRequired,
+  // handleRefresh: React.PropTypes.func.isRequired,
   handleDashletClick: React.PropTypes.func.isRequired,
 };
 

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { dashboardComponent as Dashboard } from 'components/Dashboard';
 
-import { refreshData, viewData } from '../PatientActions';
+import { refreshData, viewData } from '../ExecutiveActions';
 
 const mapStateToProps = reduxStore => ({
   dashlets: reduxStore.appState.dashboardDashlets,

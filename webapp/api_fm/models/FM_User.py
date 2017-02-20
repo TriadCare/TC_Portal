@@ -190,7 +190,7 @@ class FM_User():
         return self.dob
 
     def get_role(self):
-        return 'PATIENT'
+        return 'EXECUTIVE'  # 'TRIADCARE_ADMIN'  # 'PATIENT'
 
     def eligibleForHRA(self):
         return self.hraEligible == '1'
@@ -227,11 +227,10 @@ class FM_User():
                         "RFMsV" + str(param_iterator) + "=%3D%3D" + value +
                         "&"
                     )
-                query_URL = query_URL[:-len("&")]
+                query_URL = query_URL + "RFMmax=0"
             r = requests.get(query_URL, auth=FM_USER_AUTH).json()
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "User not found.", 404)
-
         if first:
             user_data = r['data'][0]
             user_data['recordID'] = r['meta'][0]['recordID']
