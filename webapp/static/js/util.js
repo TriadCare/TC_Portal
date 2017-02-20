@@ -73,6 +73,8 @@ export const submitRequest = (r, token, success, error, failure) => {
     // should check validity of JWT and request update if needed.
     request.headers.set('Authorization', `Basic ${btoa(token)}`);
   }
+  request.headers.set('pragma', 'no-cache');
+  request.headers.set('cache-control', 'no-cache');
 
   fetch(request)
   .then(status)
