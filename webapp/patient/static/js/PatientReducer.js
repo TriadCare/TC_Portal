@@ -34,17 +34,16 @@ export const buildDashlets = (state) => {
   const dashlets = [];
 
   dashboardConfiguration.forEach((card) => {
-    const cardDatasource = state.datasources[card.datasource];
-    if (cardDatasource.items === undefined || cardDatasource.items.length === 0) {
+    if (state.datasources[card.datasource].items.length === 0) {
       return;  // no data for this card, leave it out.
     }
     switch (card.cardType) {
       case 'group':
         if (card.data.length === 0) {  // Use every datapoint
-          dashlets.push(...cardDatasource.items.sort(compareHRAs).reverse().map(
+          dashlets.push(...state.datasources[card.datasource].items.sort(compareHRAs).reverse().map(
             (item) => populateCard(
                 { ...card, ...{ data: [item.meta[card.dataKey]] } },
-                cardDatasource.items
+                state.datasources[card.datasource].items
               )
           ));
           return;
@@ -53,7 +52,7 @@ export const buildDashlets = (state) => {
         dashlets.push(...card.data.map((data) =>
           populateCard(
             { ...card, ...{ data: [data] } },
-            cardDatasource.items.sort(compareHRAs).reverse
+            state.datasources[card.datasource].items.sort(compareHRAs).reverse
           )
         ));
         return;
@@ -61,7 +60,7 @@ export const buildDashlets = (state) => {
       default:
         dashlets.push(populateCard(
           card,
-          (cardDatasource.items
+          (state.datasources[card.datasource].items
             .filter((item) => item.meta.completed === 1)
             .sort(compareHRAs))
         ));
@@ -71,7 +70,7 @@ export const buildDashlets = (state) => {
   const user = jwtPayload();
   if (user !== undefined) {
     if (user.hraEligible === '1') {
-      if (state.datasources.HRA.items === undefined || state.datasources.HRA.items.reduce(
+      if (state.datasources.HRA.items.reduce(
         (shouldContinue, hra) => (
           shouldContinue && moment().diff(hra.meta.DATE_CREATED, 'days') > 1
         )
@@ -108,19 +107,12 @@ function combineDatasource(datasourceName, oldState, newData) {
 }
 
 function getUpdatedState(state, action) {
-  if (action.dataName === undefined) {
-    return state;
-  }
-  const oldData = state.datasources[action.dataName] ?
-    state.datasources[action.dataName] :
-    { items: undefined };
-  const newData = (action.data && action.data.length > 0) ? action.data : oldData.items;
   const newState = combineDatasource(action.dataName, state, {
     isFetching: action.isFetching || false,
     isFresh: true,
     isPosting: action.isPosting || false,
     receivedAt: action.receivedAt,
-    items: newData,
+    items: action.data || [],
   });
 
   let currentSurveyID = latestSurveyVersion;
@@ -277,11 +269,12 @@ const appReducer = (state = initialState, action) => {
     case IdentityActions.POST_DATA:
     case IdentityActions.REQUEST_DATA:
     case IdentityActions.RECEIVE_DATA:
+      return getUpdatedState(state, action);
     case IdentityActions.POST_FAILURE:
     case IdentityActions.REQUEST_ERROR:
     case IdentityActions.REQUEST_FAILURE:
     default:
-      return getUpdatedState(state, action);
+      return state;
   }
 };
 
