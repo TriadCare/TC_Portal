@@ -1,10 +1,18 @@
 {
   parser: "babel-eslint",
   extends: "airbnb",
-  rules: {},
+  rules: {
+    import/first: [2, {absolute-first: false}]
+  },
   # uses 'eslint-import-resolver-webpack':
   settings: {
     import/resolver: webpack
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "document": true
   },
   "parserOptions": {
         "ecmaVersion": 7,

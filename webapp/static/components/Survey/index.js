@@ -1,3 +1,3 @@
 import Survey from './Survey';
 
-export const surveyComponent = Survey;
+export default Survey;

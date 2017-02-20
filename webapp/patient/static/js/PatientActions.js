@@ -33,7 +33,7 @@ export const refreshData = (dataSets, force = false) =>
     let datasources = [];
     if (dataSets === undefined) {
       datasources = Object.keys(appState.datasources);
-    } else if (typeof(dataSets) === 'string') {
+    } else if (typeof dataSets === 'string') {
       datasources = [dataSets];
     } else {
       datasources = dataSets;
@@ -54,7 +54,7 @@ export const refreshData = (dataSets, force = false) =>
         dispatch(IdentityActions.fetchData(
           appState.datasources[dataName].label,
           request,
-          force
+          force,
         ));
       }
     });
@@ -68,23 +68,24 @@ export const submitHRAResponse = (response, complete) =>
     dispatch(submitHRA());
     dispatch(IdentityActions.submitData(
       'EXPANDED_HRA',
-      new Request(oneLineTrim
-        `${hraState.uri}
+      new Request(
+        oneLineTrim`${hraState.uri}
         ${method === 'PUT' ? `${state.selectedHRA}` : ''}
         ?complete=${complete ? 1 : 0}`,
         {
-          method, body: JSON.stringify({
+          method,
+          body: JSON.stringify({
             meta: { surveyID: state.surveyConfiguration.meta.surveyID },
             response,
           }),
-        }
-      ), refreshData
+        },
+      ), refreshData,
     ));
   };
 
 
 // Open Data Detail depending on data type (HRA Viewer)
-export const viewData = (data) =>
+export const viewData = data =>
   (dispatch, getState) => {
     const appState = getState().appState;
     switch (data.datasource) {
@@ -98,7 +99,7 @@ export const viewData = (data) =>
               ${appState.datasources.HRA.uri}
               ${data.data[0].meta[data.dataKey]}
               ${appState.datasources.HRA.expandParameter}
-            `)
+            `),
           ));
         } else {
           dispatch(newHRA());
@@ -106,6 +107,6 @@ export const viewData = (data) =>
         dispatch(push('/patient/hra'));
         break;
       default:
-        return;
+
     }
   };

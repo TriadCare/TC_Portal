@@ -24,7 +24,7 @@ const store = createStore(
     form: formReducer,
   }),
   initialState,
-  composeEnhancers(applyMiddleware(...[thunkMiddleware, historyMiddleware]))
+  composeEnhancers(applyMiddleware(...[thunkMiddleware, historyMiddleware])),
 );
 
 const history = syncHistoryWithStore(browserHistory, store);

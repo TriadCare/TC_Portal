@@ -6,7 +6,7 @@ import {
   submitSetPassword,
 } from '../util.js';
 
-import { jwtIsExpired } from 'js/util';
+import { jwtIsExpired } from 'js/utilREST';
 
 const checkToken = (token) => {
   let results = ['', '', false];

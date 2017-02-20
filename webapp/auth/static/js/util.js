@@ -1,4 +1,4 @@
-import { submitRequest, jwtPayload } from 'js/util';
+import { submitRequest, jwtPayload } from 'js/utilREST';
 // These strings match: pt-intent-[value]
 export const validation = {
   DEFAULT: 'default', // Use this for no intent (not defined by blueprintjs)

@@ -1,5 +1,5 @@
 import 'js/vendor';
-import 'css/base';
+import 'css/base.css';
 
-import 'css/executive';
+import 'css/executive.css';
 import 'js/ExecutiveApp';

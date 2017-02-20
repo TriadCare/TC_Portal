@@ -3,10 +3,10 @@ import moment from 'moment';
 import { oneLineTrim } from 'common-tags';
 import { NonIdealState, Spinner, Button, Radio } from '@blueprintjs/core';
 
-import { jwtPayload } from 'js/util';
+import { jwtPayload } from 'js/utilREST';
 import { renderChart } from 'components/Charting';
 
-import './css/Survey';
+import './css/Survey.css';
 
 const renderLoadingComponent = () => (
   <NonIdealState
@@ -17,7 +17,7 @@ const renderLoadingComponent = () => (
   />
 );
 
-const renderEmptyComponent = (goBackToDashboard) => (
+const renderEmptyComponent = goBackToDashboard => (
   <NonIdealState
     visual="error"
     title="No HRA has been selected."
@@ -36,7 +36,7 @@ const renderSavingComponent = () => (
 );
 
 
-const pointToPercent = (gradePoint) => Math.round(gradePoint * 100 / 4);
+const pointToPercent = gradePoint => Math.round((gradePoint * 100) / 4);
 
 const gradeLetter = (percentage) => {
   if (percentage > 89) { return 'A'; }
@@ -58,11 +58,11 @@ const reconcileCheckbox = (currentAnswer, checkedValue) => {
 const scrollTo = (element, to, duration) => {
   if (duration <= 0) return;
   const difference = to - element.scrollTop;
-  const perTick = difference / duration * 10;
+  const perTick = (difference / duration) * 10;
 
   setTimeout(() => {
     /* eslint no-param-reassign: ["error", { "props": false }]*/
-    element.scrollTop = element.scrollTop + perTick;
+    element.scrollTop += perTick;
     if (element.scrollTop === to) return;
     scrollTo(element, to, duration - 10);
   }, 10);
@@ -119,7 +119,7 @@ const renderQuestion = (questionNumber, configQuestion,
               type="number"
               name={configQuestion.qid}
               value={(responseQuestion.aid || '')}
-              onChange={(e) => handleAnswer(configQuestion.qid, e.target.value)}
+              onChange={e => handleAnswer(configQuestion.qid, e.target.value)}
               disabled={completed ? 'disabled' : ''}
               autoFocus={configQuestion.qid === activeQuestion}
             />
@@ -137,8 +137,7 @@ const renderQuestion = (questionNumber, configQuestion,
         <div
           key={questionNumber}
           ref={`qid_${configQuestion.qid}`}
-          className={oneLineTrim
-            `panel panel-default response__question ${
+          className={oneLineTrim`panel panel-default response__question ${
               configQuestion.qid === activeQuestion ? `${/* 'question-active'*/''}` : ''
             }`
           }
@@ -147,7 +146,7 @@ const renderQuestion = (questionNumber, configQuestion,
             {configQuestion.text}
           </div>
           <div className="panel-body response__question-answers">
-            {configQuestion.answers.map((answer) =>
+            {configQuestion.answers.map(answer =>
               <div key={answer.aid} className="response__question-answer">
                 <Radio
                   className="response__question-answer-multichoice"
@@ -159,7 +158,7 @@ const renderQuestion = (questionNumber, configQuestion,
                   onChange={() => handleAnswer(configQuestion.qid, answer.aid)}
                   autoFocus={configQuestion.qid === activeQuestion}
                 />
-              </div>
+              </div>,
             )}
           </div>
           {(completed && configQuestion.blurb) ?
@@ -179,11 +178,11 @@ const renderQuestion = (questionNumber, configQuestion,
           <div className="panel-body response__question-answers">
             <table
               className={
-                "table table-bordered table-striped table-hover response__question-grid"
+                'table table-bordered table-striped table-hover response__question-grid'
               }
             ><tbody>
               <tr>
-                <td></td>
+                <td />
                 {configQuestion.columns.map((column, key) =>
                   <td
                     key={key}
@@ -255,12 +254,12 @@ const renderQuestion = (questionNumber, configQuestion,
                                     const answer = row.type === 'GRID_CHECKBOX' ?
                                       reconcileCheckbox(
                                         responseQuestion[row.qid],
-                                        (idx + 1).toString()
+                                        (idx + 1).toString(),
                                       )
                                       : (idx + 1).toString();
                                     handleAnswer(row.qid, answer);
                                   }}
-                                ></span>
+                                />
                               </div>
                             </td>
                           );
@@ -269,7 +268,7 @@ const renderQuestion = (questionNumber, configQuestion,
                       }
                     })}
                   </tr>
-                )
+                ),
               )}
             </tbody></table>
           {configQuestion.rows.filter((row) => row.type === 'GRID_TEXT').map((q, idx) =>
@@ -286,9 +285,9 @@ const renderQuestion = (questionNumber, configQuestion,
                 className="pt-input"
                 type="text"
                 dir="auto"
-                onChange={(e) => handleAnswer(q.qid, e.target.value)}
+                onChange={e => handleAnswer(q.qid, e.target.value)}
               />
-            </label>
+            </label>,
             )}
           </div>
           {(completed && configQuestion.blurb) ?
@@ -304,7 +303,7 @@ const renderQuestion = (questionNumber, configQuestion,
   }
 };
 
-const renderQuestionnaire = (configObj) => (
+const renderQuestionnaire = configObj => (
   <div className="questionnaire">
     {configObj.config.meta.sections.map((section, index) => (
       <div
@@ -347,14 +346,14 @@ const renderQuestionnaire = (configObj) => (
         >
           {section.question_numbers.map((questionNumber) => {
             const configQuestion = configObj.config.questions.find(
-              (qObj) => qObj.question_number === questionNumber
+              qObj => qObj.question_number === questionNumber
             );
             const responseQuestion = (configQuestion.type === 'GRID') ?
               configQuestion.rows.reduce(
                 (responseQs, row) => ({
                   ...responseQs,
                   ...{ [row.qid]: configObj.answers[row.qid] },
-                }), {}
+                }), {},
               ) :
               { aid: configObj.answers[configQuestion.qid] };
 
@@ -365,7 +364,7 @@ const renderQuestionnaire = (configObj) => (
               configObj.activeQuestion,
               configObj.error,
               configObj.completed,
-              configObj.handleAnswer
+              configObj.handleAnswer,
             );
           })}
         </div>
@@ -388,7 +387,7 @@ const renderViewer = (config, answers, response, tcScores) => (
       className="hidden well well-sm topBlock"
       onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
     >
-      <i className="glyphicon glyphicon-chevron-up"></i> Back to Top
+      <i className="glyphicon glyphicon-chevron-up" /> Back to Top
     </span>
     <div className="response__overall">
       <div className="response__overall-date">
@@ -407,7 +406,7 @@ const renderViewer = (config, answers, response, tcScores) => (
       </div>
       {renderChart(
         'point', 'Bar', [response, tcScores],
-        'ct-chart response__chart response__chart-bar'
+        'ct-chart response__chart response__chart-bar',
       )}
     </div>
     <div className="response__questionnaire-breakdown">
@@ -442,7 +441,7 @@ const renderSurvey = (config, answers, activeQuestion,
           onClick={() => handleSectionChange(-1)}
           text="Back"
           className="pt-intent-primary section__button"
-          disabled={config.meta.sections.find((s) => s.qids.includes(activeQuestion)).id === 1}
+          disabled={config.meta.sections.find(s => s.qids.includes(activeQuestion)).id === 1}
         />
       </div>
       {error &&
@@ -454,19 +453,19 @@ const renderSurvey = (config, answers, activeQuestion,
         <Button
           onClick={() => handleSectionChange(1)}
           text={`${config.meta.sections.find(
-                  (s) => s.qids.includes(activeQuestion)
+                  s => s.qids.includes(activeQuestion),
                 ).id === config.meta.sections.length ? 'Submit' : 'Next'}`}
           className={
             `${
               config.meta.sections.find(
-                (s) => s.qids.includes(activeQuestion)
+                s => s.qids.includes(activeQuestion),
               ).id === config.meta.sections.length ?
               `pt-intent-${surveyCompleted ? 'success submit__button ' : 'primary'}` :
               'pt-intent-primary'
             }`
           }
           disabled={config.meta.sections.find(
-            (s) => s.qids.includes(activeQuestion)
+            s => s.qids.includes(activeQuestion),
           ).id === config.meta.sections.length ?
             isPosting :
             false
@@ -484,7 +483,7 @@ const buildSurveyAnswers = (config, response, existingAnswers) => ({
       ...section.qids.reduce((sectionAnswers, qid) => ({
         ...sectionAnswers,
         ...{
-          [qid]: (response.find((q) => q.qid === qid) || { aid: undefined }).aid,
+          [qid]: (response.find(q => q.qid === qid) || { aid: undefined }).aid,
         },
       }), {}),
     }
@@ -495,7 +494,7 @@ const buildSurveyAnswers = (config, response, existingAnswers) => ({
       { ...onlyAnswers, ...{ [a]: existingAnswers[a] } } :
       { ...onlyAnswers }
     ),
-    {}
+    {},
   ),
 });
 
@@ -508,8 +507,8 @@ const nullToUndefined = (o) => {
   return newO;
 };
 
-const getAge = (dob) => moment().diff(moment(dob, 'MM/DD/YYYY'), 'years');
-const getGenderAid = (gender) => (gender === 'Male' ? '1' : '2');
+const getAge = dob => moment().diff(moment(dob, 'MM/DD/YYYY'), 'years');
+const getGenderAid = gender => (gender === 'Male' ? '1' : '2');
 
 const fillInDefaultAnswers = (answers) => {
   const user = jwtPayload();
@@ -537,7 +536,7 @@ const fillInDefaultAnswers = (answers) => {
   });
 
   Object.keys(defaultAnswers).forEach((key) => {
-    if (newAnswers.find((q) => q.qid === key) === undefined) {
+    if (newAnswers.find(q => q.qid === key) === undefined) {
       newAnswers.push({ qid: key, aid: defaultAnswers[key] });
     }
   });
@@ -565,11 +564,11 @@ const updateState = (props, surveyAnswers) => {
       ((
         response.questionnaire
         .sort((q1, q2) => (parseInt(q1.qid, 10) < parseInt(q2.qid, 10) ? -1 : 1))
-        .find((q) => (q.aid === undefined || q.aid === null)) || { qid: '1' }
+        .find(q => (q.aid === undefined || q.aid === null)) || { qid: '1' }
       ).qid);
   return {
     surveyAnswers: nullToUndefined(
-      buildSurveyAnswers(props.config, responseAnswers, surveyAnswers)
+      buildSurveyAnswers(props.config, responseAnswers, surveyAnswers),
     ),
     activeQuestion,
   };
@@ -584,13 +583,13 @@ class Survey extends React.Component {
     };
   }
 
-  componentWillReceiveProps = (nextProps) => (
+  componentWillReceiveProps = nextProps => (
     this.setState(updateState(nextProps, this.state.surveyAnswers))
   );
 
   focusInput = (qid) => {
     const q = this.refs[`qid_${qid}`];
-    const section = this.state.config.meta.sections.find((s) => s.qids.includes(qid));
+    const section = this.state.config.meta.sections.find(s => s.qids.includes(qid));
 
     let to = 0;
     if (q.localName === 'tr') {
@@ -616,7 +615,6 @@ class Survey extends React.Component {
       return;
     }
     q.lastElementChild.firstElementChild.firstElementChild.focus();
-    return;
   }
 
   handleAnswer = (qid, aid) => {
@@ -635,7 +633,7 @@ class Survey extends React.Component {
     if (!section.isRequired) { return true; }
 
     const answers = this.state.surveyAnswers;
-    const unansweredQ = section.qids.find((q) => answers[q] === undefined);
+    const unansweredQ = section.qids.find(q => answers[q] === undefined);
     if (unansweredQ) {
       // ignore text inputs for now (none are required)
       if (this.refs[`qid_${unansweredQ}`].type !== 'text') {
@@ -673,7 +671,7 @@ class Survey extends React.Component {
 
   handleSectionChange = (diff) => {
     const activeSection = this.state.config.meta.sections.find(
-      (section) => section.qids.includes(this.state.activeQuestion)
+      section => section.qids.includes(this.state.activeQuestion),
     );
     // If diff is positive (moving forward),
     // we need to validate the current section
@@ -704,7 +702,7 @@ class Survey extends React.Component {
     }
 
     const qid = this.state.config.meta.sections.find(
-      (section) => section.id === nextID
+      section => section.id === nextID,
     ).qids[0];
 
     this.setState({
@@ -716,10 +714,10 @@ class Survey extends React.Component {
     if (this.state.config === undefined) {
       return false;
     }
-    const incomplete = this.state.config.meta.sections.filter((s) => s.isRequired).find(
-      (s) => s.qids.find(
-        (q) => this.state.surveyAnswers[q] === undefined
-      )
+    const incomplete = this.state.config.meta.sections.filter(s => s.isRequired).find(
+      s => s.qids.find(
+        q => this.state.surveyAnswers[q] === undefined,
+      ),
     );
     return (incomplete === undefined);
   }
@@ -740,7 +738,7 @@ class Survey extends React.Component {
         config,
         this.state.surveyAnswers,
         response.items[0],
-        TCAvgHRA.items[0]
+        TCAvgHRA.items[0],
       );
     }
     return renderSurvey(
@@ -754,7 +752,7 @@ class Survey extends React.Component {
       handleSave,
       handleSubmit,
       this.surveyCompleted(),
-      response.isPosting
+      response.isPosting,
     );
   }
 
@@ -779,7 +777,7 @@ class Survey extends React.Component {
           this.props.TCAvgHRA,
           this.props.handleSave,
           this.props.handleSubmit,
-          this.props.goBackToDashboard
+          this.props.goBackToDashboard,
         )}
       </div>
     );
@@ -799,7 +797,7 @@ Survey.propTypes = {
         meta: React.PropTypes.object.isRequired,
         score: React.PropTypes.object,
         questionnaire: React.PropTypes.array.isRequired,
-      })
+      }),
     ),
   }),
   TCAvgHRA: React.PropTypes.shape({
@@ -807,12 +805,12 @@ Survey.propTypes = {
     items: React.PropTypes.arrayOf(
       React.PropTypes.shape({
         score: React.PropTypes.object.isRequired,
-      })
+      }),
     ),
   }),
   handleSave: React.PropTypes.func.isRequired,
   handleSubmit: React.PropTypes.func.isRequired,
-  handleRefresh: React.PropTypes.func.isRequired,
+  // handleRefresh: React.PropTypes.func.isRequired,
   goBackToDashboard: React.PropTypes.func.isRequired,
 };
 

@@ -1,4 +1,4 @@
-import { submitRequest, removeJWT } from 'js/util';
+import { submitRequest, removeJWT } from 'js/utilREST';
 // Action Types and Creators
 export const REQUEST_JWT = 'REQUEST_JWT';
 export function requestJWT() {

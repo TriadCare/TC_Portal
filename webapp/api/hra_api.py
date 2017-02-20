@@ -64,23 +64,47 @@ def get_hra(tcid, response_id, expand=False):
     )]
 
 
-def get_hras(tcid, expand=False):
+def get_hras(tcid, expand=False, aggregate=False):
+    if aggregate:
+        tcids = [
+            user.get_tcid()
+            for user in User.query(accountID=current_user.get_accountID())
+        ]
+        return [
+            make_public(hra.to_dict(expand, aggregate))
+            for hra in HRA.query.filter(HRA.tcid.in_(tcids))
+        ]
     return [
-        make_public(hra.to_dict(expand))
+        make_public(hra.to_dict(expand, aggregate))
         for hra in HRA.query.filter_by(tcid=tcid)
     ]
 
 
 class HRA_API(MethodView):
     # authorize includes authentication (login_required via Flask-Login)
-    decorators = [csrf.exempt, authorize('PATIENT', 'TRIADCARE_ADMIN')]
+    decorators = [
+        csrf.exempt,
+        authorize('PATIENT', 'EXECUTIVE', 'TRIADCARE_ADMIN')
+    ]
 
     def get(self, response_id=None):
-        # Note: Only Patient and Provider should have authorization to expand
-        expand = (request.args.get('expand', 'false') != 'false')
+        user_role = current_user.get_role()
         tcid = current_user.get_tcid()
+        # Data Viewing variables
+        expand = False
+        aggregate = False
+        # Note: Only Patient and Provider should have authorization to expand
+        if user_role == 'PATIENT' or user_role == 'TRIADCARE_ADMIN':
+            expand = (request.args.get('expand', 'false') != 'false')
+        # Note: Only Executive and Provider should be authorized to aggregate
+        if (
+            not expand and
+            (user_role == 'EXECUTIVE' or user_role == 'TRIADCARE_ADMIN')
+        ):
+            aggregate = (request.args.get('aggregate', 'false') != 'false')
+
         if response_id is None:
-            return jsonify(get_hras(tcid, expand))
+            return jsonify(get_hras(tcid, expand, aggregate))
         elif response_id == '-1':
             return jsonify(get_tc_avg_hra())
         else:

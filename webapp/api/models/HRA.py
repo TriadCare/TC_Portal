@@ -7,12 +7,12 @@ from webapp import db
 from webapp.server.util import api_error
 
 
-class Survey(db.Model):
-    __table__ = db.Model.metadata.tables['surveys']
+# class Survey(db.Model):
+#     __table__ = db.Model.metadata.tables['surveys']
 
 
 class HRA(db.Model):
-    __table__ = db.Model.metadata.tables['responses']
+    __table__ = db.Model.metadata.tables['survey_response']
 
     __private__ = ["_sa_instance_state", "billed", "PaperHra"]
 
@@ -20,6 +20,8 @@ class HRA(db.Model):
         "responseID", "USER_UPDATED", "DATE_UPDATED", "USER_CREATED",
         "DATE_CREATED", "tcid", "surveyID", "completed"
     ]
+    # aggregate key set is expected to be a subset of the meta key set.
+    __aggregate_keys__ = ["DATE_CREATED", "completed"]
     __score_keys__ = [
         "Overall", "Tobacco", "Diet__Nutrition", "Physical_Activity",
         "Stress", "Preventative_Care"
@@ -47,7 +49,7 @@ class HRA(db.Model):
         for k, v in data.iteritems():
             self[k] = v
 
-    def to_dict(self, expand=False):
+    def to_dict(self, expand=False, aggregate=False):
         hra_obj = {}
         meta = {}
         score = {}
@@ -59,6 +61,8 @@ class HRA(db.Model):
             elif k in HRA.__meta_keys__:
                 if "DATE_" in k:
                     v = v.isoformat() if v is not None else v
+                if aggregate and k not in HRA.__aggregate_keys__:
+                    continue
                 meta[k] = v
             elif k in HRA.__score_keys__:
                 k = (HRA.__transform__[k] if

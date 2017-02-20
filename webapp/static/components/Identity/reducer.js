@@ -1,4 +1,4 @@
-import { setJWT, getJWT, jwtExpireTime, jwtIsExpired } from 'js/util';
+import { setJWT, getJWT, jwtExpireTime, jwtIsExpired } from 'js/utilREST';
 import * as actions from './actions';
 
 const getJWTState = () => {

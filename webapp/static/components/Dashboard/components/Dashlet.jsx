@@ -43,7 +43,7 @@ const renderCard = (config, handleClick) => {
   );
 };
 
-const Dashlet = (props) => renderCard(props.config, props.handleClick);
+const Dashlet = props => renderCard(props.config, props.handleClick);
 
 Dashlet.propTypes = {
   config: React.PropTypes.shape({

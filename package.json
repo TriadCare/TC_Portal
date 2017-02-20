@@ -8,6 +8,14 @@
     "build": "NODE_ENV=production webpack --progress --profile --colors",
     "start": "NODE_ENV=development webpack-dev-server --inline --hot --progress --profile --colors"
   },
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "globals": {
+      "document": true
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TriadCare/TC_Portal.git"
@@ -28,6 +36,7 @@
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.0",
+    "moment": "^2.17.1",
     "react": "^15.2.1",
     "react-addons-css-transition-group": "^15.4.1",
     "react-chartist": "^0.12.0",

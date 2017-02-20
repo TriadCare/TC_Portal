@@ -33,15 +33,15 @@ const ifDefined = (token, func) => {
 };
 
 export const jwtDecode = (jwt = getJWT()) => ifDefined(jwt,
-  (token) => token.split('.').splice(0, 2).map(
-    (tokenPart) => JSON.parse(atob(tokenPart))
+  token => token.split('.').splice(0, 2).map(
+    tokenPart => JSON.parse(atob(tokenPart)),
   ));
 export const jwtExpireTime = (jwt = getJWT()) => ifDefined(jwt,
-  (token) => jwtDecode(token)[0].exp * 1000);
+  token => jwtDecode(token)[0].exp * 1000);
 
 export const jwtIsExpired = (jwt = getJWT()) => {
   const result = ifDefined(jwt,
-    (token) => moment().diff(jwtExpireTime(token)) >= 0
+    token => moment().diff(jwtExpireTime(token)) >= 0,
   );
   if (result === undefined) {
     return true;
@@ -50,7 +50,7 @@ export const jwtIsExpired = (jwt = getJWT()) => {
 };
 
 export const jwtPayload = (jwt = getJWT()) => ifDefined(jwt,
-  (token) => jwtDecode(token)[1]);
+  token => jwtDecode(token)[1]);
 
 // Fetch Promise Helpers
 function json(response) {
@@ -77,8 +77,8 @@ export const submitRequest = (r, token, success, error, failure) => {
   fetch(request)
   .then(status)
   .then(
-    (response) => json(response).then(success),
-    (response) => json(response).then(error))
+    response => json(response).then(success),
+    response => json(response).then(error))
   .catch((reason) => {
     /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
     console.error(reason);
