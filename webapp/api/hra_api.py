@@ -60,7 +60,7 @@ def get_tc_avg_hra():
 def get_hra(tcid, response_id, expand=False):
     try:
         return [make_public(
-            HRA.query  # .filter_by(tcid=tcid)
+            HRA.query.filter_by(tcid=tcid)
             .filter_by(responseID=response_id)
             .first_or_404().to_dict(expand)
         )]
