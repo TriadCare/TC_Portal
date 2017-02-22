@@ -64,6 +64,7 @@ class FM_User():
         'NameLast': 'last_name',
         'Gender': 'gender',
         'HraEligible': 'hraEligible',
+        'HraEnrolled': 'hraEnrolled',
         'AccountId': 'accountID',
         'Account::Name': 'account',
         'EmployeeId': 'employeeID'
@@ -129,6 +130,7 @@ class FM_User():
         self.last_name = str(data['last_name'])
         self.gender = str(data['gender'])
         self.hraEligible = str(data['hraEligible'])
+        self.hraEnrolled = str(data['hraEnrolled'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
         self.account = str(data['account'])
@@ -192,6 +194,9 @@ class FM_User():
 
     def eligibleForHRA(self):
         return self.hraEligible == '1'
+
+    def enrolledInHRA(self):
+        return self.hraEnrolled == '1'
 
     # Returns a User from File Maker based on the search criteria
     @staticmethod
