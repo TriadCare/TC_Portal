@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from werkzeug.exceptions import NotFound
 from flask import request, make_response, jsonify, url_for
 from flask_login import login_required, current_user
 from flask.views import MethodView
@@ -57,11 +58,14 @@ def get_tc_avg_hra():
 
 
 def get_hra(tcid, response_id, expand=False):
-    return [make_public(
-        HRA.query.filter_by(tcid=tcid)
-        .filter_by(responseID=response_id)
-        .first_or_404().to_dict(expand)
-    )]
+    try:
+        return [make_public(
+            HRA.query  # .filter_by(tcid=tcid)
+            .filter_by(responseID=response_id)
+            .first_or_404().to_dict(expand)
+        )]
+    except NotFound:
+        api_error(AttributeError, "HRA not found.", 404)
 
 
 def get_hras(tcid, expand=False):
@@ -107,7 +111,12 @@ class HRA_API(MethodView):
 
     def put(self, response_id=None):
         if response_id is None:
-            api_error(AttributeError, "Need Record ID for Update.", 401)
+            api_error(AttributeError, "Need Record ID for Update.", 400)
+
+        hra = HRA.query.get(response_id)
+        if hra.tcid != current_user.get_tcid():
+            api_error(AttributeError, "Unauthorized to update this HRA.", 401)
+
         complete = request.args.get('complete', '0') == '1'
         request_data = get_request_data(request)
 
@@ -115,7 +124,6 @@ class HRA_API(MethodView):
         hra_data['USER_UPDATED'] = current_user.get_email()
         hra_data['DATE_UPDATED'] = datetime.now()
 
-        hra = HRA.query.get(response_id)
         hra.update(hra_data)
         db.session.commit()
 
