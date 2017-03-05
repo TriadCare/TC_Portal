@@ -1,3 +1,3 @@
 import confirmationDialog from './ConfirmationDialog';
 
-export const ConfirmationDialog = confirmationDialog;
+export default confirmationDialog;

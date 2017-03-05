@@ -2,7 +2,7 @@
   {
     "id": 1,
     "DATE_CREATED": "06/09/2015",
-    "cardType": "single",
+    "cardType": "map",
     "datasource": "HRA",
     "dataKey": "responseID",
     "data": [],
@@ -17,7 +17,7 @@
   {
     "id": 2,
     "DATE_CREATED": "06/09/2015",
-    "cardType": "group",
+    "cardType": "unfold",
     "datasource": "HRA",
     "dataKey": "responseID",
     "data": [],

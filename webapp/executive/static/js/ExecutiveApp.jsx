@@ -7,7 +7,7 @@ import ExecutiveBaseLayout from './components/ExecutiveBase';
 import SpaceContainer from 'components/SpaceContainer';
 
 import ExecutiveDashboard from './components/ExecutiveDashboard';
-// import ExecutiveReporting from './components/ExecutiveReporting';
+import ExecutiveReporting from './components/ExecutiveReporting';
 import { profileComponent } from 'components/Profile';
 
 import {
@@ -23,7 +23,7 @@ ReactDOM.render(
         <IndexRedirect to="dashboard" />
         <Route component={SpaceContainer}>
           <Route path="dashboard" component={ExecutiveDashboard} />
-          { /* <Route path="reporting" component={ExecutiveReporting} /> */ }
+          <Route path="reporting" component={ExecutiveReporting} />
           <Route path="profile" component={profileComponent} />
         </Route>
       </Route>

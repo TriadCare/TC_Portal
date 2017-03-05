@@ -6,11 +6,11 @@ import ChartistGraph from 'react-chartist';
 const scrollTo = (element, to, duration) => {
   if (duration <= 0) return;
   const difference = to - element.scrollTop;
-  const perTick = difference / duration * 10;
+  const perTick = (difference / duration) * 10;
 
   setTimeout(() => {
     /* eslint no-param-reassign: ["error", { "props": false }]*/
-    element.scrollTop = element.scrollTop + perTick;
+    element.scrollTop += perTick;
     if (element.scrollTop === to) return;
     scrollTo(element, to, duration - 10);
   }, 10);
@@ -31,8 +31,8 @@ const pie = (chartType, data, classNames) => (
       ],
     }}
     options={{
-      labelInterpolationFnc: (label) => `${
-        Math.round(label * 100 / 4)
+      labelInterpolationFnc: label => `${
+        Math.round((label * 100) / 4)
       }%`,
       donut: true,
       donutWidth: 35,
@@ -115,12 +115,12 @@ const getSection = (k) => {
 const bar = (chartType, data, classNames) => (
   <ChartistGraph
     data={{
-      labels: Object.keys(data[0].score).filter((k) => k !== 'Overall'),
-      series: data.map((d) =>
+      labels: Object.keys(data[0].score).filter(k => k !== 'Overall'),
+      series: data.map(d =>
         Object.keys(d.score)
-        .filter((k) => k !== 'Overall')
-        .map((k) => ({
-          value: Math.round(d.score[k] * 100 / 4),
+        .filter(k => k !== 'Overall')
+        .map(k => ({
+          value: Math.round((d.score[k] * 100) / 4),
           meta: getSection(k),
         })),
       ),
@@ -155,7 +155,7 @@ const bar = (chartType, data, classNames) => (
             scrollTo(
               document.getElementsByClassName('surveyComponent')[0],
               document.querySelector(`#section_${ctx.meta}`).offsetTop - 100,
-              500
+              500,
             );
           };
 
@@ -179,9 +179,9 @@ const line = (chartType, data) => (
     data={{
       series: [
         {
-          data: data.map((d) => ({
+          data: data.map(d => ({
             x: new Date(d.meta.DATE_CREATED),
-            y: (d.score.Overall * 100 / 4),
+            y: ((d.score.Overall * 100) / 4),
           })),
         },
       ],
@@ -191,7 +191,7 @@ const line = (chartType, data) => (
       axisX: {
         type: Chartist.FixedScaleAxis,
         divisor: 5,
-        labelInterpolationFnc: (value) => moment(value).format('MMM YYYY'),
+        labelInterpolationFnc: value => moment(value).format('MMM YYYY'),
       },
       axisY: {
         low: 0,
@@ -229,7 +229,7 @@ const line = (chartType, data) => (
           scoreLabel.addClass('chart__point-label');
           scoreLabel.attr({
             x: (ctx.x + (ctx.element.width() * 0.5)),
-            y: (ctx.y + (ctx.element.height() * -1) - 10),
+            y: ((ctx.y + (ctx.element.height() * -1)) - 10),
             'text-anchor': 'middle',
           });
           ctx.group.append(scoreLabel);
@@ -241,14 +241,16 @@ const line = (chartType, data) => (
   />
 );
 
-export const renderChart = (dataType, chartType, data, classNames = 'ct-chart') => {
+export default (dataType, chartType, data, classNames = 'ct-chart') => {
   switch (dataType) {
     case 'point':
       return (chartType === 'Pie') ?
         pie(chartType, data, classNames) :
         bar(chartType, data, classNames);
     case 'trend':
-      return line(chartType, data, classNames);
+      return (chartType !== 'Bar') ?
+        line(chartType, data, classNames) :
+        bar(chartType, data, classNames);
     default:
       return '';
   }

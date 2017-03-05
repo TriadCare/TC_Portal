@@ -3,7 +3,7 @@ import { Dialog, Intent, Button } from '@blueprintjs/core';
 
 require('./css/ConfirmationDialog');
 
-const ConfirmationDialog = (props) => (
+const ConfirmationDialog = props => (
   <Dialog
     autoFocus={props.autoFocus}
     isOpen={props.isOpen}
@@ -44,6 +44,15 @@ ConfirmationDialog.propTypes = {
   onConfirm: React.PropTypes.func.isRequired,
   cancelButtonText: React.PropTypes.string,
   onCancel: React.PropTypes.func.isRequired,
+};
+
+ConfirmationDialog.defaultProps = {
+  autoFocus: true,
+  iconName: 'warning-sign',
+  title: 'Confirm',
+  body: 'Please confirm this action.',
+  confirmButtonText: 'Confirm',
+  cancelButtonText: 'Cancel',
 };
 
 export default ConfirmationDialog;

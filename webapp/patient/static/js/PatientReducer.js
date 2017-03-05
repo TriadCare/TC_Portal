@@ -1,13 +1,7 @@
-import moment from 'moment';
-
-import { jwtPayload } from 'js/utilREST';
 import { combineDatasource, getTitleBarText } from 'js/utilData';
-import buildDashboardCards from 'js/utilDash';
 
 import { IdentityActions } from 'components/Identity';
 import { SELECT_HRA, NEW_HRA, SUBMIT_HRA } from './PatientActions';
-
-import dashboardConfiguration from './default_card_config.json'; // user pref doc
 
 import surveyConfigV2 from 'hra_files/v3/english/hra_definition.json';
 import surveyConfigV2Spanish from 'hra_files/v3/spanish/hra_definition.json';
@@ -18,38 +12,6 @@ const surveyConfigurations = {
   v2: surveyConfigV2,
   v3: surveyConfigV2Spanish,
   v4: surveyConfigV4,
-};
-
-const compareHRAs = (hraOne, hraTwo) =>
-  -moment(hraOne.meta.DATE_CREATED).diff(moment(hraTwo.meta.DATE_CREATED));
-
-const buildDashlets = (state) => {
-  const dashCards = buildDashboardCards(
-    state,
-    dashboardConfiguration,
-    { HRA: compareHRAs },
-  );
-  // Also add a New HRA card if needed (eligibleForHRA && haven't taken one today)
-  const user = jwtPayload();
-  if (user !== undefined) {
-    if (user.hraEligible === '1') {
-      if (state.datasources.HRA.items.reduce(
-        (shouldContinue, hra) => (
-          shouldContinue && moment().diff(hra.meta.DATE_CREATED, 'days') > 1
-        )
-      , true)) {
-        dashCards.splice(1, 0, {
-          cardSize: 'medium',
-          datasource: 'HRA',
-          title: 'New HRA',
-          description: 'Click here to start a new HRA.',
-          dataType: undefined,
-          chartType: undefined,
-        });
-      }
-    }
-  }
-  return dashCards;
 };
 
 function getUpdatedState(state, action) {
@@ -73,7 +35,6 @@ function getUpdatedState(state, action) {
     ...newState,
     ...{
       initializingDashboard: action.isFetching,
-      dashboardDashlets: buildDashlets(newState),
       surveyConfiguration,
     },
   };

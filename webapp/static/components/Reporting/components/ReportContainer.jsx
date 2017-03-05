@@ -4,27 +4,25 @@ import ReportTitle from './ReportTitle';
 import ConfigurationPanel from './ConfigurationPanel';
 import ReportChart from './ReportChart';
 
-const ReportContainer = (props) => (
+const ReportContainer = props => (
   <div className="reportContainer">
-    <ReportTitle label={props.reportLabel} />
+    <ReportTitle label={props.report.meta.label} />
     <ConfigurationPanel
-      config={props.reportConfig}
-      configOptions={props.configOptions}
-      datasetList={props.datasetList}
+      controlOptions={props.controls}
+      handleControlChange={props.handleControlChange}
     />
+    {/* config should be some kind of combination
+      of the config options and the selected option. */}
     <ReportChart
-      config={props.reportConfig}
-      data={props.dataset}
+      chartConfig={props.report}
     />
   </div>
 );
 
 ReportContainer.propTypes = {
-  reportLabel: React.PropTypes.string.isRequired,
-  reportConfig: React.PropTypes.object.isRequired,
-  configOptions: React.PropTypes.object.isRequired,
-  dataset: React.PropTypes.object.isRequired,
-  datasetList: React.PropTypes.array.isRequired,
+  report: React.PropTypes.shape().isRequired,
+  controls: React.PropTypes.shape().isRequired,
+  handleControlChange: React.PropTypes.func.isRequired,
 };
 
 export default ReportContainer;

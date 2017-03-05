@@ -1,19 +1,6 @@
-import moment from 'moment';
-
 import { combineDatasource, getTitleBarText } from 'js/utilData';
-import buildDashboardCards from 'js/utilDash';
 import { IdentityActions } from 'components/Identity';
 
-import dashboardConfiguration from './default_card_config.json'; // user pref doc
-
-const compareHRAs = (hraOne, hraTwo) =>
-  moment(hraOne.meta.DATE_CREATED).diff(moment(hraTwo.meta.DATE_CREATED));
-
-const buildDashlets = state => buildDashboardCards(
-  state,
-  dashboardConfiguration,
-  { HRA: compareHRAs },
-);
 
 function getUpdatedState(state, action) {
   const newState = combineDatasource(action.dataName, state, {
@@ -27,7 +14,6 @@ function getUpdatedState(state, action) {
     ...newState,
     ...{
       initializingDashboard: action.isFetching,
-      dashboardDashlets: buildDashlets(newState),
     },
   };
 }
@@ -61,7 +47,6 @@ const initialState = {
       receivedAt: undefined,
     },
   },
-  dashboardDashlets: [],  // rehydrate in ReduxStore!
   initializingDashboard: true,
   profileConfiguration: undefined,
 };

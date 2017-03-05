@@ -4,7 +4,7 @@ import { oneLineTrim } from 'common-tags';
 import { NonIdealState, Spinner, Button, Radio } from '@blueprintjs/core';
 
 import { jwtPayload } from 'js/utilREST';
-import { renderChart } from 'components/Charting';
+import renderChart from 'components/Charting';
 
 import './css/Survey.css';
 
@@ -108,7 +108,7 @@ const renderQuestion = (questionNumber, configQuestion,
       return (
         <div
           key={questionNumber}
-          ref={`qid_${configQuestion.qid}`}
+          ref={(c) => { this[`qid_${configQuestion.qid}`] = c; }}
           className={'panel panel-default response__question'}
         >
           <div className="panel-heading response__question-label">
@@ -136,7 +136,7 @@ const renderQuestion = (questionNumber, configQuestion,
       return (
         <div
           key={questionNumber}
-          ref={`qid_${configQuestion.qid}`}
+          ref={(c) => { this[`qid_${configQuestion.qid}`] = c; }}
           className={oneLineTrim`panel panel-default response__question ${
               configQuestion.qid === activeQuestion ? `${/* 'question-active'*/''}` : ''
             }`
@@ -187,107 +187,107 @@ const renderQuestion = (questionNumber, configQuestion,
                   <td
                     key={key}
                     className="grid__column-header"
-                  >{column}</td>
+                  >{column}</td>,
                 )}
               </tr>
               {configQuestion.rows.map((row, key) =>
                 (row.type === 'GRID_TEXT' ? null :
-                  <tr
-                    key={key}
-                    ref={`qid_${row.qid}`}
-                  >
-                    <td className="grid__row-header">{row.text}</td>
-                    {configQuestion.columns.map((column, idx) => {
-                      switch (row.type) {
-                        case 'GRID_RADIO':
-                        case 'GRID_CHECKBOX':
-                          return (
-                            <td
-                              className="grid__cell"
-                              key={idx}
-                              onClick={(e) => {
-                                if (e.target.localName === 'span') {
-                                  return;
-                                }
-                                const answer = row.type === 'GRID_CHECKBOX' ?
-                                  reconcileCheckbox(responseQuestion[row.qid], (idx + 1).toString())
-                                  : (idx + 1).toString();
-                                handleAnswer(row.qid, answer);
-                              }}
+                <tr
+                  key={key}
+                  ref={(c) => { this[`qid_${row.qid}`] = c; }}
+                >
+                  <td className="grid__row-header">{row.text}</td>
+                  {configQuestion.columns.map((column, idx) => {
+                    switch (row.type) {
+                      case 'GRID_RADIO':
+                      case 'GRID_CHECKBOX':
+                        return (
+                          <td
+                            className="grid__cell"
+                            key={idx}
+                            onClick={(e) => {
+                              if (e.target.localName === 'span') {
+                                return;
+                              }
+                              const answer = row.type === 'GRID_CHECKBOX' ?
+                                reconcileCheckbox(responseQuestion[row.qid], (idx + 1).toString())
+                                : (idx + 1).toString();
+                              handleAnswer(row.qid, answer);
+                            }}
+                          >
+                            <div
+                              className={
+                                `pt-control ${
+                                  row.type === 'GRID_RADIO' ? 'pt-radio' : 'pt-checkbox'
+                                } grid__cell-answer`
+                              }
                             >
-                              <div
-                                className={
-                                  `pt-control ${
-                                    row.type === 'GRID_RADIO' ? 'pt-radio' : 'pt-checkbox'
-                                  } grid__cell-answer`
-                                }
-                              >
-                                {(row.type === 'GRID_RADIO') ?
-                                  <input
-                                    name={row.qid}
-                                    type="radio"
-                                    disabled={completed ? 'disabled' : ''}
-                                    checked={
-                                      (responseQuestion[row.qid] === (idx + 1).toString()) ?
-                                      'checked' : ''
-                                    }
-                                    onChange={() => {
-                                      handleAnswer(row.qid, (idx + 1).toString());
-                                    }}
-                                    autoFocus={(idx === 0 && row.qid === activeQuestion)}
-                                  /> :
-                                  <input
-                                    name={row.qid}
-                                    type="checkbox"
-                                    disabled={completed ? 'disabled' : ''}
-                                    checked={
-                                      (responseQuestion[row.qid] === (idx + 1).toString() ||
-                                      responseQuestion[row.qid] === '3') ? 'checked' : ''
-                                    }
-                                    onChange={() => {}}
-                                    autoFocus={(idx === 0 && row.qid === activeQuestion)}
-                                  />
-                                }
-                                <span
-                                  className="pt-control-indicator"
-                                  onClick={() => {
-                                    const answer = row.type === 'GRID_CHECKBOX' ?
-                                      reconcileCheckbox(
-                                        responseQuestion[row.qid],
-                                        (idx + 1).toString(),
-                                      )
-                                      : (idx + 1).toString();
-                                    handleAnswer(row.qid, answer);
+                              {(row.type === 'GRID_RADIO') ?
+                                <input
+                                  name={row.qid}
+                                  type="radio"
+                                  disabled={completed ? 'disabled' : ''}
+                                  checked={
+                                    (responseQuestion[row.qid] === (idx + 1).toString()) ?
+                                    'checked' : ''
+                                  }
+                                  onChange={() => {
+                                    handleAnswer(row.qid, (idx + 1).toString());
                                   }}
+                                  autoFocus={(idx === 0 && row.qid === activeQuestion)}
+                                /> :
+                                <input
+                                  name={row.qid}
+                                  type="checkbox"
+                                  disabled={completed ? 'disabled' : ''}
+                                  checked={
+                                    (responseQuestion[row.qid] === (idx + 1).toString() ||
+                                    responseQuestion[row.qid] === '3') ? 'checked' : ''
+                                  }
+                                  onChange={() => {}}
+                                  autoFocus={(idx === 0 && row.qid === activeQuestion)}
                                 />
-                              </div>
-                            </td>
-                          );
-                        default:
-                          return null;
-                      }
-                    })}
-                  </tr>
+                              }
+                              <span
+                                className="pt-control-indicator"
+                                onClick={() => {
+                                  const answer = row.type === 'GRID_CHECKBOX' ?
+                                    reconcileCheckbox(
+                                      responseQuestion[row.qid],
+                                      (idx + 1).toString(),
+                                    )
+                                    : (idx + 1).toString();
+                                  handleAnswer(row.qid, answer);
+                                }}
+                              />
+                            </div>
+                          </td>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </tr>
                 ),
               )}
             </tbody></table>
-          {configQuestion.rows.filter((row) => row.type === 'GRID_TEXT').map((q, idx) =>
-            <label
-              key={idx}
-              className={`pt-label specify-label ${completed ? 'pt-disabled' : ''}`}
-            >
-              {q.text}
-              <input
-                ref={`qid_${q.qid}`}
-                name={q.qid}
-                value={(responseQuestion[q.qid] || '')}
-                disabled={completed ? 'disabled' : ''}
-                className="pt-input"
-                type="text"
-                dir="auto"
-                onChange={e => handleAnswer(q.qid, e.target.value)}
-              />
-            </label>,
+            {configQuestion.rows.filter(row => row.type === 'GRID_TEXT').map((q, idx) =>
+              <label
+                key={idx}
+                className={`pt-label specify-label ${completed ? 'pt-disabled' : ''}`}
+              >
+                {q.text}
+                <input
+                  ref={`qid_${q.qid}`}
+                  name={q.qid}
+                  value={(responseQuestion[q.qid] || '')}
+                  disabled={completed ? 'disabled' : ''}
+                  className="pt-input"
+                  type="text"
+                  dir="auto"
+                  onChange={e => handleAnswer(q.qid, e.target.value)}
+                />
+              </label>,
             )}
           </div>
           {(completed && configQuestion.blurb) ?
@@ -346,7 +346,7 @@ const renderQuestionnaire = configObj => (
         >
           {section.question_numbers.map((questionNumber) => {
             const configQuestion = configObj.config.questions.find(
-              qObj => qObj.question_number === questionNumber
+              qObj => qObj.question_number === questionNumber,
             );
             const responseQuestion = (configQuestion.type === 'GRID') ?
               configQuestion.rows.reduce(
@@ -383,7 +383,7 @@ const renderViewer = (config, answers, response, tcScores) => (
       */}
     <span
       id="top-link-block"
-      ref="topBlock"
+      ref={(c) => { this.topBlock = c; }}
       className="hidden well well-sm topBlock"
       onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
     >
@@ -425,55 +425,55 @@ const renderSurvey = (config, answers, activeQuestion,
   error, errorMessage,
   handleAnswer, handleSectionChange,
   handleSave, handleSubmit, surveyCompleted, isPosting) => (
-  <div className="survey__viewer">
-    {renderQuestionnaire({
-      config,
-      answers,
-      activeQuestion,
-      error,
-      handleAnswer,
-      handleSave,
-      isPosting,
-    })}
-    <div className="questionnaire-footer">
-      <div className="section__button-container section__button-back">
-        <Button
-          onClick={() => handleSectionChange(-1)}
-          text="Back"
-          className="pt-intent-primary section__button"
-          disabled={config.meta.sections.find(s => s.qids.includes(activeQuestion)).id === 1}
-        />
-      </div>
-      {error &&
-        <div className="section__button-container section__label-error">
-          {errorMessage}
+    <div className="survey__viewer">
+      {renderQuestionnaire({
+        config,
+        answers,
+        activeQuestion,
+        error,
+        handleAnswer,
+        handleSave,
+        isPosting,
+      })}
+      <div className="questionnaire-footer">
+        <div className="section__button-container section__button-back">
+          <Button
+            onClick={() => handleSectionChange(-1)}
+            text="Back"
+            className="pt-intent-primary section__button"
+            disabled={config.meta.sections.find(s => s.qids.includes(activeQuestion)).id === 1}
+          />
         </div>
-      }
-      <div className="section__button-container section__button-next">
-        <Button
-          onClick={() => handleSectionChange(1)}
-          text={`${config.meta.sections.find(
+        {error &&
+          <div className="section__button-container section__label-error">
+            {errorMessage}
+          </div>
+        }
+        <div className="section__button-container section__button-next">
+          <Button
+            onClick={() => handleSectionChange(1)}
+            text={`${config.meta.sections.find(
+                    s => s.qids.includes(activeQuestion),
+                  ).id === config.meta.sections.length ? 'Submit' : 'Next'}`}
+            className={
+              `${
+                config.meta.sections.find(
                   s => s.qids.includes(activeQuestion),
-                ).id === config.meta.sections.length ? 'Submit' : 'Next'}`}
-          className={
-            `${
-              config.meta.sections.find(
-                s => s.qids.includes(activeQuestion),
-              ).id === config.meta.sections.length ?
-              `pt-intent-${surveyCompleted ? 'success submit__button ' : 'primary'}` :
-              'pt-intent-primary'
-            }`
-          }
-          disabled={config.meta.sections.find(
-            s => s.qids.includes(activeQuestion),
-          ).id === config.meta.sections.length ?
-            isPosting :
-            false
-          }
-        />
+                ).id === config.meta.sections.length ?
+                `pt-intent-${surveyCompleted ? 'success submit__button ' : 'primary'}` :
+                'pt-intent-primary'
+              }`
+            }
+            disabled={config.meta.sections.find(
+              s => s.qids.includes(activeQuestion),
+            ).id === config.meta.sections.length ?
+              isPosting :
+              false
+            }
+          />
+        </div>
       </div>
     </div>
-  </div>
 );
 
 const buildSurveyAnswers = (config, response, existingAnswers) => ({
@@ -588,7 +588,7 @@ class Survey extends React.Component {
   );
 
   focusInput = (qid) => {
-    const q = this.refs[`qid_${qid}`];
+    const q = this[`qid_${qid}`];
     const section = this.state.config.meta.sections.find(s => s.qids.includes(qid));
 
     let to = 0;
@@ -599,7 +599,7 @@ class Survey extends React.Component {
       to = q.offsetTop - q.offsetHeight;
     }
 
-    scrollTo(this.refs[`section_${section.id}`], to, 300);
+    scrollTo(this[`section_${section.id}`], to, 300);
 
     if (q.localName === 'input') {
       q.focus();
@@ -618,7 +618,7 @@ class Survey extends React.Component {
   }
 
   handleAnswer = (qid, aid) => {
-    this.refs[`qid_${qid}`].classList.remove('q-error');
+    this[`qid_${qid}`].classList.remove('q-error');
     this.setState({
       error: false,
       errorMessage: '',
@@ -636,14 +636,14 @@ class Survey extends React.Component {
     const unansweredQ = section.qids.find(q => answers[q] === undefined);
     if (unansweredQ) {
       // ignore text inputs for now (none are required)
-      if (this.refs[`qid_${unansweredQ}`].type !== 'text') {
+      if (this[`qid_${unansweredQ}`].type !== 'text') {
         this.setState({
           activeQuestion: unansweredQ,
           error: true,
           errorMessage: 'You missed one.',
         });
         // add the error class and focus the question
-        const questionElement = this.refs[`qid_${unansweredQ}`];
+        const questionElement = this[`qid_${unansweredQ}`];
         questionElement.classList.add('q-error');
         this.focusInput(unansweredQ);
         return false;
@@ -651,7 +651,7 @@ class Survey extends React.Component {
     }
     if (section.id === 1) {
       // Need to validate that age is valid
-      const age = this.refs.qid_1.lastElementChild.firstElementChild.value;
+      const age = this.qid_1.lastElementChild.firstElementChild.value;
       if (age < 0 || age > 150) {
         this.setState({
           activeQuestion: '1',
@@ -659,7 +659,7 @@ class Survey extends React.Component {
           errorMessage: 'I don\'t think you\'re this old.',
         });
         // add the error class and focus the question
-        const questionElement = this.refs.qid_1;
+        const questionElement = this.qid_1;
         questionElement.classList.add('q-error');
         this.focusInput('1');
         return false;
@@ -760,13 +760,13 @@ class Survey extends React.Component {
     return (
       <div
         className="spaceComponent surveyComponent"
-        ref="surveyComponent"
+        ref={(c) => { this.surveyComponent = c; }}
         onScroll={() => {
-          if (this.refs.topBlock !== undefined) {
-            if (this.refs.surveyComponent.scrollTop > 1000) {
-              this.refs.topBlock.classList.remove('hidden');
+          if (this.topBlock !== undefined) {
+            if (this.surveyComponent.scrollTop > 1000) {
+              this.topBlock.classList.remove('hidden');
             } else {
-              this.refs.topBlock.classList.add('hidden');
+              this.topBlock.classList.add('hidden');
             }
           }
         }}

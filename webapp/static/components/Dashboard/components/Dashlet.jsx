@@ -1,16 +1,18 @@
 import React from 'react';
 import moment from 'moment';
 
-import { renderChart } from 'components/Charting';
+import renderChart from 'components/Charting';
 
 const renderCard = (config, handleClick) => {
   const newHRA = config.data === undefined;
   const incompleteHRA = (
     config.dataType === 'point' &&
+    config.data[0].meta &&
     config.data[0].meta.completed === 0
   );
   const trendCard = config.dataType === 'trend';
-  const pointCard = !(newHRA || incompleteHRA || trendCard);
+  const pointCard = (config.dataType === 'point' && !(newHRA || incompleteHRA || trendCard));
+  const foldCard = config.cardType === 'fold';
 
   return (
     <div
@@ -21,24 +23,28 @@ const renderCard = (config, handleClick) => {
       }
       onClick={handleClick}
     >
+      { /* header */ }
       <div className="dashlet__card-header">
         <div className="dashlet__card-title">
           {incompleteHRA ? 'Incomplete HRA' : config.title}
         </div>
-        {(incompleteHRA || pointCard) &&
+        {(!foldCard && (incompleteHRA || pointCard)) &&
           <div className="dashlet__card-date">
             {moment(config.data[0].meta.DATE_CREATED).format('MMM Do, YYYY')}
           </div>
         }
       </div>
+      { /* body */ }
       {(newHRA || incompleteHRA) &&
         <div className="dashlet__card-description">
           {incompleteHRA ? 'Click here to continue this HRA.' : config.description}
         </div>
       }
-      {(trendCard || pointCard) &&
+      { /* chart */ }
+      {(trendCard || pointCard || foldCard) &&
         renderChart(config.dataType, config.chartType, config.data)
       }
+
     </div>
   );
 };

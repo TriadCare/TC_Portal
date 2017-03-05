@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip, Position, Button } from '@blueprintjs/core';
 
-import { ConfirmationDialog } from 'components/ConfirmationDialog';
+import ConfirmationDialog from 'components/ConfirmationDialog';
 
 require('./css/TitleBar');
 
@@ -17,7 +17,7 @@ class TitleBar extends React.Component {
     return (
       <div className="pt-navbar pt-fixed-top titleBar">
         <div className="pt-navbar-group pt-align-left">
-          <div className="titleBar__logo"></div>
+          <div className="titleBar__logo" />
           <div className="titleBar__label">
             <span className="titleBar__text">{this.props.titleBarText}</span>
           </div>
@@ -36,9 +36,9 @@ class TitleBar extends React.Component {
         <ConfirmationDialog
           autoFocus
           isOpen={this.state.confirmationNeeded}
-          iconName={"warning-sign"}
-          title={"You are about to Log Out"}
-          body={"Are you sure you want to log out of your current session?"}
+          iconName={'warning-sign'}
+          title={'You are about to Log Out'}
+          body={'Are you sure you want to log out of your current session?'}
           onCancel={() => this.setState({ confirmationNeeded: false })}
           confirmButtonText="Log Out"
           onConfirm={() => this.setState({ confirmationNeeded: false }, this.props.onLogout)}
@@ -49,11 +49,11 @@ class TitleBar extends React.Component {
 }
 
 TitleBar.propTypes = {
-  titleBarText: React.PropTypes.object.isRequired,
+  titleBarText: React.PropTypes.shape().isRequired,
   onLogout: React.PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (store) => ({
+const mapStateToProps = store => ({
   titleBarText: store.appState.titleBarText,
 });
 

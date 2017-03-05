@@ -1,3 +1,3 @@
-import { renderChart as rc } from './Charting.jsx';
+import renderChart from './Charting';
 
-export const renderChart = rc;
+export default renderChart;
