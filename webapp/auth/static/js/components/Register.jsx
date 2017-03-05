@@ -3,14 +3,14 @@ import moment from 'moment';
 import { Position, RadioGroup, Radio, Popover, Dialog } from '@blueprintjs/core';
 import { DateInput } from '@blueprintjs/datetime';
 
-import { validation, validateEmail, validatePassword, registerNewUser } from '../util.js';
+import { validation, validateEmail, validatePassword, registerNewUser } from '../util';
 
 const fields = [
   {
     name: 'id',
     label: 'ID',
     type: 'text',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
       (!!value ? '' : 'Your ID is required.'),
@@ -23,7 +23,7 @@ const fields = [
       { label: 'Employee ID', value: 'employee_id' },
     ],
     type: 'radio_group',
-    validationFunction: (value) => [  // auto-selects tcid
+    validationFunction: value => [  // auto-selects tcid
       !!value ? value : 'triadcare_id',
       true,
       '',
@@ -33,7 +33,7 @@ const fields = [
     name: 'first_name',
     label: 'First Name',
     type: 'text',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
       (!!value ? '' : 'Your first name is required.'),
@@ -43,7 +43,7 @@ const fields = [
     name: 'last_name',
     label: 'Last Name',
     type: 'text',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
       (!!value ? '' : 'Your last name is required.'),
@@ -72,7 +72,7 @@ const fields = [
     name: 'dob',
     label: 'Date of Birth',
     type: 'date',
-    validationFunction: (value) =>
+    validationFunction: value =>
       [
         (value ? moment(value).format('YYYY-MM-DD') : ''),
         !!value,
@@ -131,12 +131,12 @@ class registerPage extends React.Component {
             errorMessage: '',
           },
         },
-      })
-      )
+      }),
+    ),
     );
   }
 
-  onDateError = (date) => (
+  onDateError = date => (
     date || moment().format('YYYY-MM-DD')
   )
 
@@ -234,7 +234,7 @@ class registerPage extends React.Component {
         registerNewUser(Object.assign({},
           ...fields.map(field => ({
             [field.name]: this.state[field.name].value,
-          }))
+          })),
         ), this.registrationSuccess, this.registrationFailure);
       }
     });
@@ -310,7 +310,7 @@ class registerPage extends React.Component {
     }
   }
 
-  renderFieldError = (errorMessage) => (
+  renderFieldError = errorMessage => (
     <div className="fieldError">
       <span>{errorMessage}</span>
     </div>
@@ -361,7 +361,7 @@ class registerPage extends React.Component {
             selectedValue={this.state[fieldProps.name].value}
             onChange={this.handleChange}
           >
-            {fieldProps.radios.map((radio) => (
+            {fieldProps.radios.map(radio => (
               <Radio
                 className="form__label-inline"
                 key={radio.value}
@@ -385,7 +385,7 @@ class registerPage extends React.Component {
                 && this.renderFieldError(this.state[fieldProps.name].errorMessage))}
               <div className="pt-input-group">
                 {(fieldProps.icon &&
-                  <span className={`pt-icon pt-icon-${fieldProps.icon}`}></span>
+                  <span className={`pt-icon pt-icon-${fieldProps.icon}`} />
                 )}
                 <input
                   className={
@@ -419,11 +419,11 @@ class registerPage extends React.Component {
                 />
                 {(this.state.formSubmitted &&
                   this.state[fieldProps.name].errorMessage !== '' &&
-                  <span className="pt-icon pt-icon-error fieldError"></span>)}
+                  <span className="pt-icon pt-icon-error fieldError" />)}
                 {(this.state[fieldProps.name].fieldStatus === validation.SUCCESS &&
-                  <span className="pt-icon pt-icon-tick fieldSuccess"></span>)}
+                  <span className="pt-icon pt-icon-tick fieldSuccess" />)}
               </div>
-            </label>)
+            </label>),
           )
         );
     }

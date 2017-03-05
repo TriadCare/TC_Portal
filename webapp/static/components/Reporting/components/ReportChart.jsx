@@ -1,31 +1,36 @@
 import React from 'react';
 
-import ReactChart from 'react-chartist';
-import 'chartist/dist/chartist.min.css';
+import {
+  VictoryChart, VictoryTheme, VictoryAxis,
+  VictoryBar, VictoryPie, VictoryLine,
+} from 'victory';
 
-const data = {
-  labels: ['2015', '2016'],
-  series: [
-    [1234, 2345],
-  ],
-};
-
-const options = {
-  high: 5000,
-  low: 0,
-};
-
-const type = 'Bar';
-
-const ReportChart = () => (
+const ReportChart = props => (
   <div className="reportChart">
-    <ReactChart className={"reactChartContainer"} data={data} options={options} type={type} />
+    <VictoryChart theme={VictoryTheme.material} {...props.chartConfig.chart}>
+      <VictoryAxis {...props.chartConfig.independentAxis} />
+      <VictoryAxis {...props.chartConfig.dependentAxis} />
+      { props.chartConfig.bar !== undefined ?
+        <VictoryBar
+          {...props.chartConfig.bar}
+        /> : null
+      }
+      { props.chartConfig.pie !== undefined ?
+        <VictoryPie
+          {...props.chartConfig.pie}
+        /> : null
+      }
+      {props.chartConfig.line !== undefined ?
+        <VictoryLine
+          {...props.chartConfig.line}
+        /> : null
+      }
+    </VictoryChart>
   </div>
 );
 
 ReportChart.propTypes = {
-  config: React.PropTypes.object.isRequired,
-  data: React.PropTypes.object.isRequired,
+  chartConfig: React.PropTypes.shape().isRequired,
 };
 
 export default ReportChart;

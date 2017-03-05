@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "DATE_CREATED": "2016/06/09",
+  "label": "Default HRA Report",
+  "selectedControls": {
+    "data_set": 2,
+    "chart_type": 1,
+    "date_range": "2016/01/01-2017/01/01",
+    "time_period": 2
+  }
+}

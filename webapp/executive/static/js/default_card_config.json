@@ -2,7 +2,7 @@
   {
     "id": 1,
     "DATE_CREATED": "06/09/2015",
-    "cardType": "aggregate",
+    "cardType": "fold",
     "datasource": "HRA",
     "dataKey": "responseID",
     "data": [],
@@ -11,13 +11,14 @@
       "description": "Subjective Health Scores over time.",
       "cardSize": "medium",
       "dataType": "trend",
-      "chartType": "Line"
+      "chartType": "Bar",
+      "features": ["score"]
     }
   },
   {
     "id": 2,
     "DATE_CREATED": "06/09/2015",
-    "cardType": "aggregate",
+    "cardType": "fold",
     "datasource": "HRA",
     "dataKey": "responseID",
     "data": [],
@@ -26,13 +27,14 @@
       "description": "Your Overall Score for this Assessment.",
       "cardSize": "medium",
       "dataType": "point",
-      "chartType": "Pie"
+      "chartType": "Pie",
+      "features": ["Overall"]
     }
   },
   {
     "id": 3,
     "DATE_CREATED": "06/09/2015",
-    "cardType": "aggregate",
+    "cardType": "fold",
     "datasource": "HRA",
     "dataKey": "responseID",
     "data": [],
@@ -40,7 +42,8 @@
       "title": "HRA Compliance",
       "description": "",
       "cardSize": "small",
-      "dataType": "status"
+      "dataType": "status",
+      "features": ["completed"]
     }
   }
 ]

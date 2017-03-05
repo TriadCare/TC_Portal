@@ -68,6 +68,7 @@ def get_hra(tcid, response_id, expand=False):
         api_error(AttributeError, "HRA not found.", 404)
 
 
+# TODO: Need Executive authorization here for aggregate access
 def get_hras(tcid, expand=False, aggregate=False):
     if aggregate:
         tcids = [

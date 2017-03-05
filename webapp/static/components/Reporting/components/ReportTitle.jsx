@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ReportTitle = (props) => (
+const ReportTitle = props => (
   <div className="reportTitle">
     <div className="reportTitle__label">{props.label}</div>
     {
