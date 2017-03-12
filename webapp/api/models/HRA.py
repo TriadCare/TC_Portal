@@ -21,7 +21,7 @@ class HRA(db.Model):
         "DATE_CREATED", "tcid", "surveyID", "completed"
     ]
     # aggregate key set is expected to be a subset of the meta key set.
-    __aggregate_keys__ = ["DATE_CREATED", "completed"]
+    __aggregate_keys__ = ["DATE_CREATED", "tcid", "completed"]
     __score_keys__ = [
         "Overall", "Tobacco", "Diet__Nutrition", "Physical_Activity",
         "Stress", "Preventative_Care"
@@ -72,9 +72,11 @@ class HRA(db.Model):
                 questionnaire.append({"qid": k, "aid": v})
 
         hra_obj['meta'] = meta
-        hra_obj['score'] = score
-        if expand:
-            hra_obj['questionnaire'] = questionnaire
+        # aggregate only gets meta (compliance) data at the moment.
+        if not aggregate:
+            hra_obj['score'] = score
+            if expand:
+                hra_obj['questionnaire'] = questionnaire
         return hra_obj
 
     @staticmethod

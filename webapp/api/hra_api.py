@@ -26,6 +26,7 @@ def make_public(hra):
             response_id=hra['meta']['responseID'],
             _external=True
         )
+        return new_hra
     return hra
 
 
@@ -71,13 +72,13 @@ def get_hra(tcid, response_id, expand=False):
 # TODO: Need Executive authorization here for aggregate access
 def get_hras(tcid, expand=False, aggregate=False):
     if aggregate:
-        tcids = [
-            user.get_tcid()
-            for user in User.query(accountID=current_user.get_accountID())
-        ]
+        # tcids = [
+        #     user.get_tcid()
+        #     for user in User.query(accountID=current_user.get_accountID())
+        # ]
         return [
             make_public(hra.to_dict(expand, aggregate))
-            for hra in HRA.query.filter(HRA.tcid.in_(tcids))
+            for hra in HRA.query.all()  # .filter(HRA.tcid.in_(tcids))
         ]
     return [
         make_public(hra.to_dict(expand, aggregate))

@@ -16,10 +16,9 @@ class FM_User_API(MethodView):
     def get(self, record_id=None):
         if record_id is None:
             # Need to narrow scope to AccountID of current user, here.
-            # return jsonify(users=[
-            #     user.to_json() for user in User.query.all()
-            # ])
-            return jsonify({})
+            return jsonify([
+                user.to_json() for user in User.query()
+            ])
         else:
             user = User.query(recordID=record_id, first=True)
             if user is None:

@@ -2,48 +2,61 @@
   {
     "id": 1,
     "DATE_CREATED": "06/09/2015",
-    "cardType": "fold",
-    "datasource": "HRA",
-    "dataKey": "responseID",
-    "data": [],
-    "cardDefinition": {
-      "title": "Trending Health Assessment",
-      "description": "Subjective Health Scores over time.",
-      "cardSize": "medium",
-      "dataType": "trend",
-      "chartType": "Bar",
-      "features": ["score"]
-    }
-  },
-  {
-    "id": 2,
-    "DATE_CREATED": "06/09/2015",
-    "cardType": "fold",
-    "datasource": "HRA",
-    "dataKey": "responseID",
-    "data": [],
-    "cardDefinition": {
-      "title": "HRA Overall",
-      "description": "Your Overall Score for this Assessment.",
-      "cardSize": "medium",
-      "dataType": "point",
-      "chartType": "Pie",
-      "features": ["Overall"]
-    }
-  },
-  {
-    "id": 3,
-    "DATE_CREATED": "06/09/2015",
-    "cardType": "fold",
     "datasource": "HRA",
     "dataKey": "responseID",
     "data": [],
     "cardDefinition": {
       "title": "HRA Compliance",
       "description": "",
-      "cardSize": "small",
-      "dataType": "status",
-      "features": ["completed"]
+      "cardSize": "medium"
+    },
+    "selectedControls": {
+      "chart_type": {"selectedValue": 1},
+      "data_set": {"selectedValue": 2},
+      "date_range": {
+        "min_date": ["2016"],
+        "max_date": []
+      }
+    }
+  },
+  {
+    "id": 2,
+    "DATE_CREATED": "06/09/2015",
+    "datasource": "HRA",
+    "dataKey": "responseID",
+    "data": [],
+    "cardDefinition": {
+      "title": "HRA Compliance",
+      "description": "",
+      "cardSize": "medium"
+    },
+    "selectedControls": {
+      "chart_type": {"selectedValue": 1},
+      "data_set": {"selectedValue": 2},
+      "date_range": {
+        "min_date": ["2016"],
+        "max_date": []
+      }
+    }
+  },
+  {
+    "id": 3,
+    "DATE_CREATED": "06/09/2015",
+    "datasource": "HRA",
+    "dataKey": "responseID",
+    "data": [],
+    "cardDefinition": {
+      "title": "HRA Compliance",
+      "description": "",
+      "cardSize": "medium"
+    },
+    "selectedControls": {
+      "chart_type": {"selectedValue": 1},
+      "data_set": {"selectedValue": 2},
+      "date_range": {
+        "min_date": ["2016"],
+        "max_date": []
+      }
     }
   }
 ]

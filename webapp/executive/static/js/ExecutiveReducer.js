@@ -1,6 +1,7 @@
 import { combineDatasource, getTitleBarText } from 'js/utilData';
 import { IdentityActions } from 'components/Identity';
 
+import { SELECT_REPORT_CONFIG } from './ExecutiveActions';
 
 function getUpdatedState(state, action) {
   const newState = combineDatasource(action.dataName, state, {
@@ -46,6 +47,14 @@ const initialState = {
       isFresh: false,
       receivedAt: undefined,
     },
+    User: {
+      label: 'User',
+      uri: '/users/',
+      items: [],
+      isFetching: false,
+      isFresh: false,
+      receivedAt: undefined,
+    },
   },
   initializingDashboard: true,
   profileConfiguration: undefined,
@@ -53,6 +62,11 @@ const initialState = {
 
 const appReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SELECT_REPORT_CONFIG:
+      return {
+        ...state,
+        ...{ selectedConfig: action.config },
+      };
     case '@@router/LOCATION_CHANGE':
       return {
         ...state,

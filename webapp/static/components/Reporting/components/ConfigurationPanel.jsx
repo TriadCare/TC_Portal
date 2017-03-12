@@ -5,6 +5,7 @@ import React from 'react';
 
 const renderControlSet = (controlName, controlSet, handleControlChange) => {
   switch (controlSet.type) {
+    case 'datafilter':
     case 'select':
       return (
         <select
@@ -13,6 +14,14 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
           value={controlSet.selectedValue}
           onChange={e => handleControlChange(controlName, parseInt(e.target.value, 10))}
         >
+          {controlSet.type === 'datafilter' &&
+            <option
+              key={0}
+              value={undefined}
+            >
+              Show All
+            </option>
+          }
           {controlSet.options.map(option =>
             <option
               key={option.id}

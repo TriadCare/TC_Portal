@@ -22,6 +22,11 @@ FM_USER_URL = (
 )
 
 
+# Helper function to strip out non-ascii characters
+def to_ascii(s):
+    return ''.join([i for i in s if ord(i) < 128])
+
+
 # helper function to sanitize and validate the password. Rules are as follows:
 # 1. Between min and max length (globals set at top of file)
 # 2. Contains at least one upper and lower case letter,
@@ -48,7 +53,8 @@ def getFMField(field):
 class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
-        'dob', 'gender', 'hraEligible', 'tcid', 'email', 'accountID', 'account'
+        'dob', 'gender', 'hraEligible', 'tcid', 'email',
+        'accountID', 'visit_locationID', 'work_locationID'
     ]
 
     __fm_fields__ = {
@@ -66,8 +72,14 @@ class FM_User():
         'HraEligible': 'hraEligible',
         'HraEnrolled': 'hraEnrolled',
         'AccountId': 'accountID',
-        'Account::Name': 'account',
-        'EmployeeId': 'employeeID'
+        # 'Account::Name': 'account',
+        'EmployeeId': 'employeeID',
+        'AccountLocationIdVisitLocation': 'visit_locationID',
+        'AccountLocationIdCostCenter': 'billing_locationID',
+        'AccountLocationIdWorkLocation': 'work_locationID'
+        # 'PtVisitLocation::Name': 'location_visit',
+        # 'PtCostCenter::Name': 'location_billing',
+        # 'PtWorkLocation::Name': 'location_work'
     }
 
     __immutable_fields__ = [
@@ -125,15 +137,15 @@ class FM_User():
         self.tcid = str(data['tcid'])
         self.hash = str(data['hash'])
         self.dob = str(data['dob'])
-        self.first_name = str(data['first_name'])
-        self.preferred_first_name = str(data['preferred_first_name'])
-        self.last_name = str(data['last_name'])
+        self.first_name = str(to_ascii(data['first_name']))
+        self.preferred_first_name = str(to_ascii(data['preferred_first_name']))
+        self.last_name = str(to_ascii(data['last_name']))
         self.gender = str(data['gender'])
         self.hraEligible = str(data['hraEligible'])
         self.hraEnrolled = str(data['hraEnrolled'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
-        self.account = str(data['account'])
+        # self.account = str(data['account'])
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -214,10 +226,9 @@ class FM_User():
                 auth=FM_USER_AUTH
             ).json()
         else:
-            query_URL = FM_USER_URL + '.json'
+            query_URL = FM_USER_URL + '.json?RFMsF1=HraEnrolled&RFMsV1=1&'
             if len(kwargs) > 0:
-                query_URL += "?"
-                param_iterator = 1
+                param_iterator = 2
                 for arg in kwargs.keys():
                     key = str(arg)
                     value = str(kwargs[arg])
@@ -227,7 +238,7 @@ class FM_User():
                         "RFMsV" + str(param_iterator) + "=%3D%3D" + value +
                         "&"
                     )
-                query_URL = query_URL + "RFMmax=0"
+            query_URL = query_URL + "RFMmax=0"
             r = requests.get(query_URL, auth=FM_USER_AUTH).json()
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "User not found.", 404)
@@ -236,17 +247,18 @@ class FM_User():
             user_data['recordID'] = r['meta'][0]['recordID']
 
             return FM_User({
-                FM_User.__fm_fields__[key]: user_data[key] for key in user_data
+                FM_User.__fm_fields__[key]: user_data[key]
+                for key in user_data if key in FM_User.__fm_fields__
             })
         else:
             data = []
             for index, d in enumerate(r['data']):
                 user = d
-                user['recordID'] = r['meta'][index]['recordID']
+                user[u'recordID'] = r['meta'][index]['recordID']
                 data.append(user)
-
             return [FM_User({
-                FM_User.__fm_fields__[key]: user_data[key] for key in user_data
+                FM_User.__fm_fields__[key]: user_data[key]
+                for key in user_data if key in FM_User.__fm_fields__
             }) for user_data in data]
 
         return None
@@ -283,10 +295,12 @@ class FM_User():
             api_error(ValueError, "User is not enabled.", 403)
         # sanitize inputs and validate the user
         if isValidEmail(self.email):
-            if bcrypt.verify(password, self.hash):
-                return True
-            else:
-                api_error(ValueError, "Unauthorized, Wrong Password.", 401)
+            try:
+                if bcrypt.verify(password, self.hash):
+                    return True
+            except ValueError:
+                pass
+            api_error(ValueError, "Unauthorized, Wrong Password.", 401)
         api_error(ValueError, "Unauthorized, Invalid Username", 401)
 
     def to_json(self):

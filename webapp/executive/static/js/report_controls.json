@@ -1,43 +1,60 @@
 {
   "Base": {
-    "ControlSets": {
-      "chart_type": {
-        "label": "Chart Type",
-        "type": "select",
-        "options": [
-          {"id": 1, "label": "Bar", "value": "bar"},
-          {"id": 2, "label": "Line", "value": "line"},
-          {"id": 3, "label": "Pie", "value": "pie"}
-        ]
-      },
-      "data_set": {
-        "label": "Data Set",
-        "type": "select",
-        "options": [
-          {"id": 1, "label": "Biometric Data", "value": "Biometrics"},
-          {"id": 2, "label": "Health Scores", "value": "HRA"}
-        ]
-      },
-      "date_range": {
-        "label": "Date Range",
-        "type": "date",
-        "min_date": {"year": "2017", "month": "0", "day": "1"},
-        "max_date": {}
-      }
-    }
-  },
-  "Bar": {},
-  "Line": {
-    "time_period": {
-      "label": "Time Period",
+    "chart_type": {
+      "label": "Chart Type",
       "type": "select",
-      "values": ["3 months", "6 months", "12 months"],
       "options": [
-        {"id": 1, "label": "3 months", "value": "3 months"},
-        {"id": 2, "label": "6 months", "value": "6 months"},
-        {"id": 3, "label": "12 months", "value": "12 months"}
+        {"id": 1, "label": "Pie", "value": "pie"}
       ]
+    },
+    "data_set": {
+      "label": "Data Set",
+      "type": "select",
+      "options": [
+        {"id": 1, "label": "Biometric Compliance", "value": "Biometrics"},
+        {"id": 2, "label": "HRA Compliance", "value": "HRA"}
+      ]
+    },
+    "date_range": {
+      "label": "Date Range",
+      "type": "date",
+      "key": "DATE_CREATED",
+      "min_date": ["2016"],
+      "max_date": []
     }
   },
-  "Pie": {}
+  "Chart": {
+    "bar": {},
+    "line": {
+      "time_period": {
+        "label": "Time Period",
+        "type": "select",
+        "options": [
+          {"id": 1, "label": "3 months", "value": "3 months"},
+          {"id": 2, "label": "6 months", "value": "6 months"},
+          {"id": 3, "label": "12 months", "value": "12 months"}
+        ]
+      }
+    },
+    "pie": {}
+  },
+  "Data": {
+    "HRA": {
+      "account": {
+        "label": "Account",
+        "type": "datafilter",
+        "datasource": "User",
+        "key": "accountID",
+        "options": []
+      },
+      "location": {
+        "label": "Location",
+        "type": "datafilter",
+        "datasource": "User",
+        "key": "locationID",
+        "options": []
+      }
+    },
+    "Biometrics": {}
+  }
 }
