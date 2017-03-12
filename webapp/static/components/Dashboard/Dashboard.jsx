@@ -30,9 +30,9 @@ const renderDashboard = (dashlets, isFetching, handleDashletClick) => {
   // Need to build dashlets from provided configuration and datasources.
   if (dashlets.length !== 0) {
     return (
-      dashlets.map((dashlet, index) => (
+      dashlets.map(dashlet => (
         <DashletContainer
-          key={index}
+          key={dashlet.id}
           dashlet={dashlet}
           handleClick={() => handleDashletClick(dashlet)}
         />

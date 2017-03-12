@@ -1,6 +1,15 @@
-// import { push } from 'react-router-redux';
+import { push } from 'react-router-redux';
 // import { oneLineTrim } from 'common-tags';
 import { IdentityActions } from 'components/Identity';
+
+// Action Creators
+export const SELECT_REPORT_CONFIG = 'SELECT_REPORT_CONFIG';
+export function selectReportConfig(config) {
+  return {
+    type: SELECT_REPORT_CONFIG,
+    config,
+  };
+}
 
 // Async Actions
 export const refreshData = (dataSets, force = false) =>
@@ -36,4 +45,11 @@ export const viewData = data =>
       default:
 
     }
+  };
+
+// Open Reporting Component and feed it the provided configuration
+export const showReport = config =>
+  (dispatch) => {
+    dispatch(selectReportConfig(config));
+    dispatch(push('/executive/reporting'));
   };

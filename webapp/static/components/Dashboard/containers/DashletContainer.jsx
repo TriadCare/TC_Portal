@@ -10,8 +10,8 @@ const DashletContainer = props => (
 );
 
 DashletContainer.propTypes = {
-  dashlet: React.PropTypes.object.isRequired,
-  handleClick: React.PropTypes.func,
+  dashlet: React.PropTypes.shape().isRequired,
+  handleClick: React.PropTypes.func.isRequired,
 };
 
 export default DashletContainer;
