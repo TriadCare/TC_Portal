@@ -48,10 +48,10 @@ class ExecutiveReporting extends React.Component {
     };
   }
 
-  handleControlChange = (control, newValue) => {
+  handleControlChange = (control, value) => {
     const newConfigObj = (control === 'date_range') ?
-      { min_date: newValue[0], max_date: newValue[1] } :
-      { selectedValue: newValue };
+      { min_date: value[0], max_date: value[1] } :
+      { selectedValue: value !== '0' ? parseInt(value, 10) : undefined };
 
     this.setState({
       controlObject: {

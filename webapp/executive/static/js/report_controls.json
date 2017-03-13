@@ -11,8 +11,9 @@
       "label": "Data Set",
       "type": "select",
       "options": [
-        {"id": 1, "label": "Biometric Compliance", "value": "Biometrics"},
-        {"id": 2, "label": "HRA Compliance", "value": "HRA"}
+        {"id": 1, "label": "Biometric Compliance", "value": "Biometric"},
+        {"id": 2, "label": "Visit Compliance", "value": "Visit"},
+        {"id": 3, "label": "HRA Compliance", "value": "HRA"}
       ]
     },
     "date_range": {
@@ -43,18 +44,55 @@
       "account": {
         "label": "Account",
         "type": "datafilter",
-        "datasource": "User",
+        "datasource": "Account",
+        "dataKey": "AccountId",
         "key": "accountID",
         "options": []
       },
       "location": {
         "label": "Location",
         "type": "datafilter",
-        "datasource": "User",
-        "key": "locationID",
+        "datasource": "Location",
+        "dataKey": "AccountLocationId",
+        "key": "visit_locationID",
         "options": []
       }
     },
-    "Biometrics": {}
+    "Biometrics": {
+      "account": {
+        "label": "Account",
+        "type": "datafilter",
+        "datasource": "Account",
+        "dataKey": "AccountId",
+        "key": "accountID",
+        "options": []
+      },
+      "location": {
+        "label": "Location",
+        "type": "datafilter",
+        "datasource": "Location",
+        "dataKey": "AccountLocationId",
+        "key": "visit_locationID",
+        "options": []
+      }
+    },
+    "Visit": {
+      "account": {
+        "label": "Account",
+        "type": "datafilter",
+        "datasource": "Account",
+        "dataKey": "AccountId",
+        "key": "accountID",
+        "options": []
+      },
+      "location": {
+        "label": "Location",
+        "type": "datafilter",
+        "datasource": "Location",
+        "dataKey": "AccountLocationId",
+        "key": "visit_locationID",
+        "options": []
+      }
+    }
   }
 }

@@ -6,6 +6,12 @@ export const sortHRAsAscending = (hraOne, hraTwo) =>
 export const sortHRAsDescending = (hraOne, hraTwo) =>
   -moment(hraOne.meta.DATE_CREATED).diff(moment(hraTwo.meta.DATE_CREATED));
 
+export const sortBiometricsDescending = (bioOne, bioTwo) =>
+  -moment(bioOne.Dt, 'MM/DD/YYYY').diff(moment(bioTwo.Dt, 'MM/DD/YYYY'));
+
+export const sortVisitsDescending = (visitOne, visitTwo) =>
+  -moment(visitOne.VisitDate, 'MM/DD/YYYY').diff(moment(visitTwo.Dt, 'MM/DD/YYYY'));
+
 // This function sums the values in the objects with the same key.
 const sumObj = dataList => dataList.reduce((acc, item) => {
   if (acc === undefined) {
@@ -48,6 +54,8 @@ export function buildChartData(datasources, controlObject) {
 
   const dataItems = datasources[datasourceName].items;
   const users = datasources.User.items;
+
+  // TODO: write a function to combine Users, Accounts, and Locations
 
   const reportData = [];
   const chartData = [];
@@ -94,24 +102,27 @@ export function buildChartData(datasources, controlObject) {
                   option => option.value === user[v.key],
                 ) === undefined
               ) {
-                v.options.push(
-                  {
-                    id: v.options.length + 1,
-                    label: user[v.key],
-                    value: user[v.key],
-                  },
+                const userOption = datasources[v.datasource].items.find(
+                  item => item[v.dataKey] === user[v.key],
                 );
+                if (userOption) {
+                  v.options.push(
+                    {
+                      id: v.options.length + 1,
+                      label: userOption.Name,
+                      value: user[v.key],
+                    },
+                  );
+                }
               }
               // Then make sure this user meets the criteria
               // Note: don't break loop immediately on disqualification because
               // the user might have some unique data filter values we still need to grab.
-              if (v.selectedValue !== undefined) {
-                if (v.datasource === 'User') {
-                  meetsRequirements = (
-                    user[v.key] === v.options.find(
-                      option => option.id === v.selectedValue,
-                    ).value) ? meetsRequirements : false;
-                }
+              if (v.selectedValue !== undefined && v.datasource !== undefined) {
+                meetsRequirements = (
+                  user[v.key] === v.options.find(
+                    option => option.id === v.selectedValue,
+                  ).value) ? meetsRequirements : false;
               }
             });
             return meetsRequirements;
@@ -148,6 +159,145 @@ export function buildChartData(datasources, controlObject) {
         }
       }
       return { [chartType]: chartData, reportData };
+    case 'Biometric':
+      if (chartType === 'pie') {
+        if (dataItems.length > 0) {
+          // Accumulate the options for each datafilter control.
+          const filteredUsers = users.filter((user) => {
+            let meetsRequirements = true;
+            Object.values(controlObject.controls).forEach((v) => {
+              // Only care about data filters here.
+              if (v.type !== 'datafilter') { return; }
+                // First add the distinct datafilter value if it does not exist
+              if (v.options.find(
+                  option => option.value === user[v.key],
+                ) === undefined
+              ) {
+                const userOption = datasources[v.datasource].items.find(
+                  item => item[v.dataKey] === user[v.key],
+                );
+                if (userOption) {
+                  v.options.push(
+                    {
+                      id: v.options.length + 1,
+                      label: userOption.Name,
+                      value: user[v.key],
+                    },
+                  );
+                }
+              }
+              // Then make sure this user meets the criteria
+              // Note: don't break loop immediately on disqualification because
+              // the user might have some unique data filter values we still need to grab.
+              if (v.selectedValue !== undefined && v.datasource !== undefined) {
+                meetsRequirements = (
+                  user[v.key] === v.options.find(
+                    option => option.id === v.selectedValue,
+                  ).value) ? meetsRequirements : false;
+              }
+            });
+            return meetsRequirements;
+          });
+          // I need to show complete, started, not started as parts of a whole
+          const pieData = { Completed: 0, Pending: 0, 'Not Completed': 0 };
+          // Filter HRAs by the control date range
+          const biometricsInDate = dataItems.filter(item => (
+            moment(item.Dt, 'MM/DD/YYYY').isSameOrAfter(controlObject.controls.date_range.min_date, 'day') &&
+            moment(item.Dt, 'MM/DD/YYYY').isSameOrBefore(controlObject.controls.date_range.max_date, 'day')
+          ));
+          // Build the HRA Compliance Data from the list of filtered users.
+          filteredUsers.forEach((user) => {
+            const userBiometrics = biometricsInDate.filter(
+              biometric => biometric.PatientId === user.patientID,
+            ).sort(sortBiometricsDescending);
+            if (userBiometrics.length === 0) {
+              pieData['Not Completed'] += 1;
+              reportData.push({ meta: { user } });
+            } else {
+              pieData[
+                userBiometrics[0].Verified === '1' ? 'Completed' : 'Pending'
+              ] += 1;
+              reportData.push(...userBiometrics.map(biometric => ({
+                ...biometric,
+                ...{ user },
+              })));
+            }
+          });
+          Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));
+        }
+      }
+      return { [chartType]: chartData, reportData };
+
+    case 'Visit':
+      if (chartType === 'pie') {
+        if (dataItems.length > 0) {
+          // Accumulate the options for each datafilter control.
+          const filteredUsers = users.filter((user) => {
+            let meetsRequirements = true;
+            Object.values(controlObject.controls).forEach((v) => {
+              // Only care about data filters here.
+              if (v.type !== 'datafilter') { return; }
+                // First add the distinct datafilter value if it does not exist
+              if (v.options.find(
+                  option => option.value === user[v.key],
+                ) === undefined
+              ) {
+                const userOption = datasources[v.datasource].items.find(
+                  item => item[v.dataKey] === user[v.key],
+                );
+                if (userOption) {
+                  v.options.push(
+                    {
+                      id: v.options.length + 1,
+                      label: userOption.Name,
+                      value: user[v.key],
+                    },
+                  );
+                }
+              }
+              // Then make sure this user meets the criteria
+              // Note: don't break loop immediately on disqualification because
+              // the user might have some unique data filter values we still need to grab.
+              if (v.selectedValue !== undefined && v.datasource !== undefined) {
+                meetsRequirements = (
+                  user[v.key] === v.options.find(
+                    option => option.id === v.selectedValue,
+                  ).value) ? meetsRequirements : false;
+              }
+            });
+            return meetsRequirements;
+          });
+          // I need to show complete, started, not started as parts of a whole
+          const pieData = {
+            'Not Completed': 0,
+          };
+          // Filter HRAs by the control date range
+          const visitsInDate = dataItems.filter(item => (
+            moment(item.VisitDate, 'MM/DD/YYYY').isSameOrAfter(controlObject.controls.date_range.min_date, 'day') &&
+            moment(item.VisitDate, 'MM/DD/YYYY').isSameOrBefore(controlObject.controls.date_range.max_date, 'day')
+          ));
+          // Build the HRA Compliance Data from the list of filtered users.
+          filteredUsers.forEach((user) => {
+            const userVisits = visitsInDate.filter(
+              visit => visit.PatientId === user.patientID,
+            ).sort(sortVisitsDescending);
+            if (userVisits.length === 0) {
+              pieData['Not Completed'] += 1;
+              reportData.push({ meta: { user } });
+            } else {
+              const statusCount = pieData[userVisits[0].VisitStatus] || 0;
+              pieData[userVisits[0].VisitStatus] = statusCount + 1;
+              reportData.push(...userVisits.map(visit => ({
+                ...visit,
+                ...{ user },
+              })));
+            }
+          });
+          Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));
+        }
+      }
+      return { [chartType]: chartData, reportData };
+
     default:
       return { [chartType]: datasources[datasourceName] };
   }
@@ -172,7 +322,13 @@ export function buildReport(datasources, controlObject) {
         }
         return `${Math.trunc(datum.y)}\n${datum.x}`;
       },
-      colorScale: ['rgb(0,120,185)', 'rgba(0,120,185, 0.75)', 'rgb(180,180,180)'],
+      colorScale: [
+        'rgb(0,120,185)',
+        'rgba(0,120,185, 0.75)',
+        'rgb(180,180,180)',
+        'rgba(0,120,185, 0.5)',
+        'rgba(0,120,185, 0.25)',
+      ],
       padAngle: 1,
       innerRadius: 1,
       cornerRadius: 5,

@@ -12,12 +12,12 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
           id={`select_${controlName}`}
           className="form-control"
           value={controlSet.selectedValue}
-          onChange={e => handleControlChange(controlName, parseInt(e.target.value, 10))}
+          onChange={e => handleControlChange(controlName, e.target.value)}
         >
           {controlSet.type === 'datafilter' &&
             <option
               key={0}
-              value={undefined}
+              value={0}
             >
               Show All
             </option>
@@ -49,12 +49,12 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
             }
             onChange={(e) => {
               const dateRange = e.target.value.split('>');
-              if (!moment(dateRange[0]).isValid() || !moment(dateRange[1]).isValid()) {
+              if (!moment(dateRange[0], 'MM/D/YYYY').isValid() || !moment(dateRange[1], 'MM/D/YYYY').isValid()) {
                 console.log('Invalid Date');
                 return;
               }
-              const minDate = moment(dateRange[0]);
-              const maxDate = moment(dateRange[1]);
+              const minDate = moment(dateRange[0], 'MM/D/YYYY');
+              const maxDate = moment(dateRange[1], 'MM/D/YYYY');
               handleControlChange(controlName, [minDate, maxDate]);
             }}
           />
