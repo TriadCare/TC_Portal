@@ -40,6 +40,10 @@ from .executive import executive
 from .patient import patient
 # Using the File Maker User API as a RestFM Proxy
 from .api_fm import fm_user_view as user_view
+from .api_fm import fm_account_view as account_view
+from .api_fm import fm_location_view as location_view
+from .api_fm import fm_biometric_view as biometric_view
+from .api_fm import fm_visit_view as visit_view
 # from .api import user_view
 from .api import auth_view, email_view, hra_view, pdf_view
 from .auth import auth as auth_app
@@ -57,6 +61,10 @@ app.add_url_rule('/hras/<string:response_id>', view_func=hra_view,)
 
 app.add_url_rule('/users/', view_func=user_view,)
 app.add_url_rule('/users/<string:record_id>', view_func=user_view,)
+app.add_url_rule('/accounts/', view_func=account_view,)
+app.add_url_rule('/locations/', view_func=location_view,)
+app.add_url_rule('/biometrics/', view_func=biometric_view,)
+app.add_url_rule('/visits/', view_func=visit_view,)
 
 
 @app.errorhandler(Exception)

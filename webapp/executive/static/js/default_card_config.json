@@ -12,7 +12,7 @@
     },
     "selectedControls": {
       "chart_type": {"selectedValue": 1},
-      "data_set": {"selectedValue": 2},
+      "data_set": {"selectedValue": 3},
       "date_range": {
         "min_date": ["2016"],
         "max_date": []
@@ -22,17 +22,17 @@
   {
     "id": 2,
     "DATE_CREATED": "06/09/2015",
-    "datasource": "HRA",
-    "dataKey": "responseID",
+    "datasource": "Biometric",
+    "dataKey": "PtBiometricId",
     "data": [],
     "cardDefinition": {
-      "title": "HRA Compliance",
+      "title": "Biometric Compliance",
       "description": "",
       "cardSize": "medium"
     },
     "selectedControls": {
       "chart_type": {"selectedValue": 1},
-      "data_set": {"selectedValue": 2},
+      "data_set": {"selectedValue": 1},
       "date_range": {
         "min_date": ["2016"],
         "max_date": []
@@ -42,11 +42,11 @@
   {
     "id": 3,
     "DATE_CREATED": "06/09/2015",
-    "datasource": "HRA",
-    "dataKey": "responseID",
+    "datasource": "Visit",
+    "dataKey": "PtVisitId",
     "data": [],
     "cardDefinition": {
-      "title": "HRA Compliance",
+      "title": "Visit Compliance",
       "description": "",
       "cardSize": "medium"
     },

@@ -53,7 +53,7 @@ def getFMField(field):
 class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
-        'dob', 'gender', 'hraEligible', 'tcid', 'email',
+        'dob', 'gender', 'hraEligible', 'patientID', 'tcid', 'email',
         'accountID', 'visit_locationID', 'work_locationID'
     ]
 
@@ -134,6 +134,7 @@ class FM_User():
 
     def __init__(self, data):
         self.recordID = str(data['recordID'])
+        self.patientID = str(data['patientID'])
         self.tcid = str(data['tcid'])
         self.hash = str(data['hash'])
         self.dob = str(data['dob'])
@@ -145,7 +146,9 @@ class FM_User():
         self.hraEnrolled = str(data['hraEnrolled'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
-        # self.account = str(data['account'])
+        self.visit_locationID = str(data['visit_locationID'])
+        self.billing_locationID = str(data['billing_locationID'])
+        self.work_locationID = str(data['work_locationID'])
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -215,7 +218,9 @@ class FM_User():
     def query(**kwargs):
         # decide if user wants first record from query, or all (default)
         first = False
+        recordLimit = '0'
         if 'first' in kwargs.keys():
+            recordLimit = '1'
             first = kwargs['first']
             del kwargs['first']
         # build the request URL from the provided query parameters
@@ -238,7 +243,7 @@ class FM_User():
                         "RFMsV" + str(param_iterator) + "=%3D%3D" + value +
                         "&"
                     )
-            query_URL = query_URL + "RFMmax=0"
+            query_URL = query_URL + "RFMmax=" + recordLimit
             r = requests.get(query_URL, auth=FM_USER_AUTH).json()
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "User not found.", 404)
