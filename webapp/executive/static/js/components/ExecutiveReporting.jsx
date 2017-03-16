@@ -53,6 +53,16 @@ class ExecutiveReporting extends React.Component {
       { min_date: value[0], max_date: value[1] } :
       { selectedValue: value !== '0' ? parseInt(value, 10) : undefined };
 
+    // Check if any other controls depend on this one.
+    const resetControls = {};
+    Object.keys(this.state.controlObject.controls).filter(k =>
+      this.state.controlObject.controls[k].childOf === control,
+    ).forEach((controlKey) => {
+      resetControls[controlKey] = {
+        ...this.state.controlObject.controls[controlKey],
+        ...{ selectedValue: undefined },
+      };
+    });
     this.setState({
       controlObject: {
         ...this.state.controlObject,
@@ -65,6 +75,7 @@ class ExecutiveReporting extends React.Component {
                 ...newConfigObj,
               },
             },
+            ...resetControls,
           },
         },
       },

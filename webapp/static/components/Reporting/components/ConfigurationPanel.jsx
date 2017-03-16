@@ -1,7 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-// import { DateInput } from '@blueprintjs/datetime';
-// import { Position } from '@blueprintjs/core';
+import { DateRangeInput } from '@blueprintjs/datetime';
 
 const renderControlSet = (controlName, controlSet, handleControlChange) => {
   switch (controlSet.type) {
@@ -11,7 +10,7 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
         <select
           id={`select_${controlName}`}
           className="form-control"
-          value={controlSet.selectedValue}
+          value={controlSet.selectedValue || 0}
           onChange={e => handleControlChange(controlName, e.target.value)}
         >
           {controlSet.type === 'datafilter' &&
@@ -34,31 +33,20 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
       );
     case 'date':
       return (
-        <div
-          className="pt-input-group"
-        >
-          <input
-            type="text"
-            className="pt-input pt-fill"
-            value={
-              `${
-                moment(controlSet.min_date).format('MM/D/YYYY')
-              }>${
-                moment(controlSet.max_date).format('MM/D/YYYY')
-              }`
-            }
-            onChange={(e) => {
-              const dateRange = e.target.value.split('>');
-              if (!moment(dateRange[0], 'MM/D/YYYY').isValid() || !moment(dateRange[1], 'MM/D/YYYY').isValid()) {
-                console.log('Invalid Date');
-                return;
-              }
-              const minDate = moment(dateRange[0], 'MM/D/YYYY');
-              const maxDate = moment(dateRange[1], 'MM/D/YYYY');
-              handleControlChange(controlName, [minDate, maxDate]);
-            }}
-          />
-        </div>
+        <DateRangeInput
+          value={[
+            (controlSet.min_date === null ?
+              null : moment(controlSet.min_date).format('MM/D/YYYY')),
+            (controlSet.max_date === null ?
+              null : moment(controlSet.max_date).format('MM/D/YYYY')),
+          ]}
+          onChange={(dateRange) => {
+            console.log('Changing');
+            handleControlChange(controlName, dateRange);
+          }}
+          format={'MM/D/YYYY'}
+          onHover={() => console.log('Hovering')}
+        />
       );
     default:
       return '';
