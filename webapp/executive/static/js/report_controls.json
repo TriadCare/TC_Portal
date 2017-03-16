@@ -55,6 +55,8 @@
         "datasource": "Location",
         "dataKey": "AccountLocationId",
         "key": "visit_locationID",
+        "childOf": "account",
+        "parentKey": "AccountId",
         "options": []
       }
     },
@@ -73,6 +75,8 @@
         "datasource": "Location",
         "dataKey": "AccountLocationId",
         "key": "visit_locationID",
+        "childOf": "account",
+        "parentKey": "AccountId",
         "options": []
       }
     },
@@ -91,6 +95,8 @@
         "datasource": "Location",
         "dataKey": "AccountLocationId",
         "key": "visit_locationID",
+        "childOf": "account",
+        "parentKey": "AccountId",
         "options": []
       }
     }

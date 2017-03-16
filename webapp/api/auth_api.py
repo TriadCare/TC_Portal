@@ -112,7 +112,7 @@ def load_user_from_request(request, token_type='API', throws=False):
                 recordID=verify_jwt(auth_token, token_type)['recordID'],
                 first=True
             )
-        if user and user.is_enabled():
+        if user:
             login_user(user)
             return user
         else:
