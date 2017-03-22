@@ -2,6 +2,8 @@ import '@blueprintjs/core';
 import '@blueprintjs/core/dist/blueprint.css';
 import '@blueprintjs/datetime';
 import '@blueprintjs/datetime/dist/blueprint-datetime.css';
+import '@blueprintjs/table';
+import '@blueprintjs/table/dist/table.css';
 import 'jquery';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';

@@ -4,13 +4,14 @@ import { browserHistory } from 'react-router';
 import { routerReducer, routerMiddleware, syncHistoryWithStore } from 'react-router-redux';
 import { reducer as formReducer } from 'redux-form';
 
+// import { loadState, saveState } from 'js/utilLocalStorage';
 import { IdentityReducer } from 'components/Identity';
 
 import { refreshData } from './ExecutiveActions';
 import appReducer from './ExecutiveReducer';
 
 // Use this to "rehydrate" the store or provide initial configuration
-const initialState = {};
+const persistedState = {}; // loadState();
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 /* eslint-enable */
@@ -23,9 +24,13 @@ const store = createStore(
     routing: routerReducer,
     form: formReducer,
   }),
-  initialState,
+  persistedState,
   composeEnhancers(applyMiddleware(...[thunkMiddleware, historyMiddleware])),
 );
+
+// store.subscribe(() => saveState({
+//   datasources: store.getState().datasources,
+// }));
 
 const history = syncHistoryWithStore(browserHistory, store);
 

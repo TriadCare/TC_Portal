@@ -96,6 +96,32 @@ const filterUsers = (datasources, controlObject, users) => {
   return filteredUsers;
 };
 
+// TODO: may need to remove extraneous entries.
+const hraKeyExchange = {
+  first_name: 'First Name',
+  last_name: 'Last Name',
+  email: 'Email',
+  DATE_CREATED: 'Date',
+  completed: 'Completed',
+};
+const hraValueExchange = {
+  first_name: v => v,
+  last_name: v => v,
+  email: v => v,
+  DATE_CREATED: v => moment(v).format('MM/DD/YYYY'),
+  completed: v => (v === 1 ? 'Complete' : 'Incomplete'),
+};
+const formatHRA = hra => Object.entries(hra).reduce((formattedHRA, [k, v]) => {
+  if (hraKeyExchange[k] === undefined) {
+    return formattedHRA;
+  }
+  return {
+    ...formattedHRA,
+    ...{ [hraKeyExchange[k]]: hraValueExchange[k](v) },
+  };
+}, {});
+const buildHRAReportRecord = (hra, user) => formatHRA({ ...hra, ...user });
+
 
 // This is the start of the Data Transformation for the Reporting Tool.
 // Depending on the datasource and configuration, the data needs to take a
@@ -111,8 +137,6 @@ export function buildChartData(datasources, controlObject) {
   if (dataItems.length === 0 || users.length === 0) { return { [chartType]: [] }; }
   // Accumulate the options for each datafilter control.
   const filteredUsers = filterUsers(datasources, controlObject, users);
-
-  // TODO: write a function to combine Users, Accounts, and Locations
 
   const reportData = [];
   const chartData = [];
@@ -159,18 +183,12 @@ export function buildChartData(datasources, controlObject) {
           ).sort(sortHRAsDescending);
           if (userHRAs.length === 0) {
             pieData['Not Started'] += 1;
-            reportData.push({ meta: { user } });
+            reportData.push(buildHRAReportRecord(undefined, user));
           } else {
             pieData[
               userHRAs[0].meta.completed === 1 ? 'Completed' : 'Started'
             ] += 1;
-            reportData.push(...userHRAs.map(hra => ({
-              ...hra,
-              ...{
-                ...hra.meta,
-                ...{ user },
-              },
-            })));
+            reportData.push(...userHRAs.map(hra => buildHRAReportRecord(hra.meta, user)));
           }
         });
         Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));

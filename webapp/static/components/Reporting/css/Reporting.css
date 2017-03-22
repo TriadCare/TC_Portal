@@ -9,15 +9,24 @@
     flex: 1;
 }
 
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 15px 10px 15px;
+}
+
 .reportTitle {
   display: flex;
   justify-content: flex-start;
-  width: 100%;
 }
 
 .reportTitle__label {
   font-size: 1.5em;
-  margin: 20px;
+}
+
+.reportToolbar__button {
+  font-size: 1.5em;
 }
 
 .configPanel {
@@ -25,7 +34,7 @@
   justify-content: space-around;
   background-color: #f7f7f7;
   border: 2px solid #fff;
-  margin: 5px 15px;
+  margin: 0 15px;
 }
 
 .configPanel__controlset {
@@ -33,8 +42,15 @@
   padding: 5px;
 }
 
-.reportChart{
+.form-control-container > input {
+  height: 34px;
+  width: 125px;
+}
+
+
+.reportElement{
   margin: 15px;
+  padding: 10px 10px 0 10px;
   background-color: #f7f7f7;
   border: 2px solid #fff;
   flex: 1;
@@ -42,6 +58,20 @@
   flex-flow: column;
 }
 
-.reactChartContainer {
-  flex: 1;
+.reportTable__controlPanel {
+  display: flex;
+  justify-content: space-between;
+}
+.reportTable__header {
+  margin: 5px;
+}
+.reportTable__footer {
+  padding: 5px;
+}
+.reportTable__footer > .pagination {
+  margin: 0;
+}
+.reportTable__footer > .pagination > li > a,
+.reportTable__footer > .pagination > li > span {
+  padding: 0 10px;
 }

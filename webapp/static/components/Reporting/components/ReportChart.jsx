@@ -1,12 +1,23 @@
 import React from 'react';
+import { NonIdealState, Spinner } from '@blueprintjs/core';
 
 import {
   VictoryChart, VictoryTheme, VictoryAxis,
   VictoryBar, VictoryPie, VictoryLine,
 } from 'victory';
 
+const getLoadingComponent = () => (
+  <NonIdealState
+    visual="cloud-download"
+    title="Fetching Report"
+    description={'Hang tight while we set this up...'}
+    action={<Spinner />}
+  />
+);
+
 const ReportChart = props => (
-  <div className="reportChart">
+  (props.isFetching ? getLoadingComponent() :
+  <div className="reportElement reportChart">
     { /* Pie Chart */ }
     { props.chartConfig.pie !== undefined ?
       <VictoryPie {...props.chartConfig.pie} /> :
@@ -25,10 +36,11 @@ const ReportChart = props => (
       </VictoryChart>
     }
   </div>
-);
+));
 
 ReportChart.propTypes = {
   chartConfig: React.PropTypes.shape().isRequired,
+  isFetching: React.PropTypes.bool.isRequired,
 };
 
 export default ReportChart;
