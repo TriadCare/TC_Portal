@@ -52,6 +52,9 @@
     "victory": "^0.18.0",
     "whatwg-fetch": "^2.0.1"
   },
+  "optionalDependencies": {
+    "fsevents": "*"
+  },
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.10.4",
