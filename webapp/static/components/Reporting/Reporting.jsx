@@ -18,7 +18,7 @@ const Reporting = props => (
     {props.isFetching ?
       getLoadingComponent() :
       <ReportContainer {...props} />
-  }
+    }
   </div>
 );
 

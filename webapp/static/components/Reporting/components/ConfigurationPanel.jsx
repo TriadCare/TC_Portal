@@ -41,11 +41,11 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
               null : moment(controlSet.max_date).format('MM/D/YYYY')),
           ]}
           onChange={(dateRange) => {
-            console.log('Changing');
             handleControlChange(controlName, dateRange);
           }}
           format={'MM/D/YYYY'}
-          onHover={() => console.log('Hovering')}
+          endInputProps={{ className: 'form-control-container' }}
+          startInputProps={{ className: 'form-control-container' }}
         />
       );
     default:
