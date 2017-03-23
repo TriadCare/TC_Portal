@@ -108,8 +108,11 @@ const hraValueExchange = {
   first_name: v => v,
   last_name: v => v,
   email: v => v,
-  DATE_CREATED: v => moment(v).format('MM/DD/YYYY'),
-  completed: v => (v === 1 ? 'Complete' : 'Incomplete'),
+  DATE_CREATED: v => (v !== undefined ? moment(v).format('MM/DD/YYYY') : ''),
+  completed: (v) => {
+    if (Number.isInteger(v)) { return (v === 1 ? 'Complete' : 'Incomplete'); }
+    return v;
+  },
 };
 const formatHRA = hra => Object.entries(hra).reduce((formattedHRA, [k, v]) => {
   if (hraKeyExchange[k] === undefined) {
@@ -183,7 +186,11 @@ export function buildChartData(datasources, controlObject) {
           ).sort(sortHRAsDescending);
           if (userHRAs.length === 0) {
             pieData['Not Started'] += 1;
-            reportData.push(buildHRAReportRecord(undefined, user));
+            reportData.push(buildHRAReportRecord({
+              DATE_CREATED: undefined,
+              completed: 'Not Started',
+              tcid: user.tcid,
+            }, user));
           } else {
             pieData[
               userHRAs[0].meta.completed === 1 ? 'Completed' : 'Started'
