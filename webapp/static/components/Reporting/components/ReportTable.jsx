@@ -1,11 +1,19 @@
+import moment from 'moment';
 import React from 'react';
+import { Menu, MenuItem } from '@blueprintjs/core';
 import {
   Table, Column, ColumnHeaderCell, CopyCellsMenuItem,
-  IMenuContext, Cell, RowHeaderCell, TableLoadingOption,
+  Cell, RowHeaderCell, TableLoadingOption,
 } from '@blueprintjs/table';
 import Pagination from 'react-bootstrap/es/Pagination';
 
 import { oneLine } from 'common-tags';
+
+const compareDates = (dateOne, dateTwo) => {
+  if (dateOne === '') { return -1; }
+  if (dateTwo === '') { return 1; }
+  return moment(dateOne).diff(dateTwo);
+};
 
 class ReportTable extends React.Component {
   constructor(props) {
@@ -60,15 +68,63 @@ class ReportTable extends React.Component {
     </Cell>
   );
 
+  getColumnHeader = name =>
+    <ColumnHeaderCell
+      name={name}
+      menu={this.getColumnMenu(name)}
+    />
+
   getColumns = () => Object.keys(this.state.data[0]).map(
     k => (
       <Column
         key={k}
-        name={k}
         renderCell={this.getCell}
+        renderColumnHeader={() => this.getColumnHeader(k)}
       />
     ),
   )
+
+  getColumnMenu = (columnName) => {
+    const ascIconName = columnName === 'Date' ? 'sort-numerical' : 'sort-alphabetical';
+    const descIconName = columnName === 'Date' ? 'sort-numerical-desc' : 'sort-alphabetical-desc';
+    const sortAsc = columnName === 'Date' ?
+      (a, b) => compareDates(a, b) :
+      (a, b) => a.toString().localeCompare(b);
+    const sortDesc = columnName === 'Date' ?
+      (a, b) => -compareDates(a, b) :
+      (a, b) => -a.toString().localeCompare(b);
+
+    return (
+      <Menu>
+        <MenuItem
+          iconName={ascIconName}
+          text="Sort Asc"
+          onClick={() => this.sortColumn(columnName, sortAsc)}
+        />
+        <MenuItem
+          iconName={descIconName}
+          text="Sort Desc"
+          onClick={() => this.sortColumn(columnName, sortDesc)}
+        />
+      </Menu>
+    );
+  }
+
+  getBodyContextMenu = context =>
+    <Menu>
+      <CopyCellsMenuItem
+        context={context}
+        getCellData={this.getCellValue}
+        onCopy={b => console.log(b)}
+        text="Copy"
+      />
+    </Menu>
+
+  sortColumn = (name, sortFunc) => {
+    const sortedData = Array.from(this.state.data);
+    sortedData.sort((a, b) => sortFunc(a[name], b[name]));
+    this.setState({ data: sortedData });
+  }
 
   handlePageSelect = (selectedPage) => {
     this.setState({
@@ -93,6 +149,7 @@ class ReportTable extends React.Component {
             />
           }
           loadingOptions={this.getLoadingOptions()}
+          renderBodyContextMenu={this.getBodyContextMenu}
           getCellClipboardData={this.getCellValue}
         >
           { this.state.data.length === 0 ?
