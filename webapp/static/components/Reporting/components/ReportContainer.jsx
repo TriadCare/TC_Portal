@@ -6,37 +6,55 @@ import ConfigurationPanel from './ConfigurationPanel';
 import ReportChart from './ReportChart';
 import ReportTable from './ReportTable';
 
+import DownloadCSV from 'components/DownloadCSV';
 
-const ReportContainer = props => (
-  <div className="reportContainer">
-    <div className="reportHeader">
-      <ReportTitle label={props.report.meta.label} />
-      <div className="reportToolbar">
-        <Button
-          iconName="download"
-          className="pt-large pt-minimal reportToolbar__button"
-          onClick={e => console.log(e.target)}
+
+class ReportContainer extends React.Component {
+  constructor() {
+    super();
+    this.state = { shouldRenderCSVDownload: false };
+  }
+
+  render() {
+    return (
+      <div id="reportContainer" className="reportContainer">
+        <div className="reportHeader">
+          <ReportTitle label={this.props.report.meta.label} />
+          <div className="reportToolbar">
+            <Button
+              iconName="download"
+              className="pt-large pt-minimal reportToolbar__button"
+              onClick={() => this.setState({ shouldRenderCSVDownload: true })}
+            />
+          </div>
+        </div>
+        <ConfigurationPanel
+          controlOptions={this.props.controls}
+          handleControlChange={this.props.handleControlChange}
         />
+        <ReportChart
+          chartConfig={this.props.report}
+          isFetching={
+            this.props.isFetching ||
+            this.props.report.reportData === undefined ||
+            this.props.report.reportData.length === 0
+          }
+        />
+        <ReportTable
+          isFetching={this.props.isFetching}
+          data={this.props.report.reportData || []}
+          columnDef={this.props.report.columnDef || []}
+        />
+        {this.state.shouldRenderCSVDownload &&
+          <DownloadCSV
+            data={this.props.report.reportData}
+            callback={() => this.setState({ shouldRenderCSVDownload: false })}
+          />
+        }
       </div>
-    </div>
-    <ConfigurationPanel
-      controlOptions={props.controls}
-      handleControlChange={props.handleControlChange}
-    />
-    <ReportChart
-      chartConfig={props.report}
-      isFetching={
-        props.isFetching ||
-        props.report.reportData === undefined ||
-        props.report.reportData.length === 0
-      }
-    />
-    <ReportTable
-      isFetching={props.isFetching}
-      data={props.report.reportData || []}
-    />
-  </div>
-);
+    );
+  }
+}
 
 ReportContainer.propTypes = {
   isFetching: React.PropTypes.bool.isRequired,

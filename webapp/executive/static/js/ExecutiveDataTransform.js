@@ -96,13 +96,20 @@ const filterUsers = (datasources, controlObject, users) => {
   return filteredUsers;
 };
 
-// TODO: may need to remove extraneous entries.
+// HRA Record Formatting
+const hraColumnDef = [
+  { label: 'First Name', type: 'text' },
+  { label: 'Last Name', type: 'text' },
+  { label: 'Email', type: 'text' },
+  { label: 'Status', type: 'text' },
+  { label: 'Date', type: 'date' },
+];
 const hraKeyExchange = {
   first_name: 'First Name',
   last_name: 'Last Name',
   email: 'Email',
   DATE_CREATED: 'Date',
-  completed: 'Completed',
+  completed: 'Status',
 };
 const hraValueExchange = {
   first_name: v => v,
@@ -124,6 +131,83 @@ const formatHRA = hra => Object.entries(hra).reduce((formattedHRA, [k, v]) => {
   };
 }, {});
 const buildHRAReportRecord = (hra, user) => formatHRA({ ...hra, ...user });
+
+// Biometric Record Formatting
+const biometricColumnDef = [
+  { label: 'First Name', type: 'text' },
+  { label: 'Last Name', type: 'text' },
+  { label: 'Email', type: 'text' },
+  { label: 'Status', type: 'text' },
+  { label: 'Date', type: 'date' },
+];
+const bioKeyExchange = {
+  first_name: 'First Name',
+  last_name: 'Last Name',
+  email: 'Email',
+  Dt: 'Date',
+  Verified: 'Status',
+};
+const bioValueExchange = {
+  first_name: v => v,
+  last_name: v => v,
+  email: v => v,
+  Dt: v => (v !== undefined ? moment(v).format('MM/DD/YYYY') : ''),
+  Verified: (v) => {
+    if (Number.isInteger(Number(v))) { return (v === '1' ? 'Verified' : 'Pending'); }
+    return v;
+  },
+};
+const formatBio = bio => Object.entries(bio).reduce((formattedBio, [k, v]) => {
+  if (bioKeyExchange[k] === undefined) {
+    return formattedBio;
+  }
+  return {
+    ...formattedBio,
+    ...{ [bioKeyExchange[k]]: bioValueExchange[k](v) },
+  };
+}, {});
+const buildBiometricReportRecord = (bio, user) => formatBio({ ...bio, ...user });
+
+// Visit Record Formatting
+const visitColumnDef = [
+  { label: 'First Name', type: 'text' },
+  { label: 'Last Name', type: 'text' },
+  { label: 'Email', type: 'text' },
+  { label: 'Status', type: 'text' },
+  { label: 'Date', type: 'date' },
+];
+const visitKeyExchange = {
+  first_name: 'First Name',
+  last_name: 'Last Name',
+  email: 'Email',
+  VisitDate: 'Date',
+  VisitStatus: 'Status',
+};
+const visitValueExchange = {
+  first_name: v => v,
+  last_name: v => v,
+  email: v => v,
+  VisitDate: v => (v !== undefined ? moment(v).format('MM/DD/YYYY') : ''),
+  VisitStatus: (v) => {
+    if (v === 'Pt Missed Appointment') {
+      return 'Missed';
+    }
+    // All other misc. statuses should be included in 'Scheduled'
+    return [
+      'Completed', 'Scheduled', 'Missed', 'Not Completed',
+    ].includes(v) ? v : 'Scheduled';
+  },
+};
+const formatVisit = visit => Object.entries(visit).reduce((formattedVisit, [k, v]) => {
+  if (visitKeyExchange[k] === undefined) {
+    return formattedVisit;
+  }
+  return {
+    ...formattedVisit,
+    ...{ [visitKeyExchange[k]]: visitValueExchange[k](v) },
+  };
+}, {});
+const buildVisitReportRecord = (visit, user) => formatVisit({ ...visit, ...user });
 
 
 // This is the start of the Data Transformation for the Reporting Tool.
@@ -200,11 +284,11 @@ export function buildChartData(datasources, controlObject) {
         });
         Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));
       }
-      return { [chartType]: chartData, reportData };
+      return { [chartType]: chartData, reportData, columnDef: hraColumnDef };
     case 'Biometric':
       if (chartType === 'pie') {
         // I need to show complete, started, not started as parts of a whole
-        const pieData = { Completed: 0, Pending: 0, 'Not Completed': 0 };
+        const pieData = { Verified: 0, Pending: 0, 'Not Verified': 0 };
         // Filter Biometrics by the control date range
         const biometricsInDate = dataItems.filter(item => (
           moment(item.Dt, 'MM/DD/YYYY').isSameOrAfter(controlObject.controls.date_range.min_date, 'day') &&
@@ -216,21 +300,23 @@ export function buildChartData(datasources, controlObject) {
             biometric => biometric.PatientId === user.patientID,
           ).sort(sortBiometricsDescending);
           if (userBiometrics.length === 0) {
-            pieData['Not Completed'] += 1;
-            reportData.push({ meta: { user } });
+            pieData['Not Verified'] += 1;
+            reportData.push(buildBiometricReportRecord({
+              Dt: undefined,
+              Verified: 'Not Verified',
+            }, user));
           } else {
             pieData[
-              userBiometrics[0].Verified === '1' ? 'Completed' : 'Pending'
+              userBiometrics[0].Verified === '1' ? 'Verified' : 'Pending'
             ] += 1;
-            reportData.push(...userBiometrics.map(biometric => ({
-              ...biometric,
-              ...{ user },
-            })));
+            reportData.push(...userBiometrics.map(biometric =>
+              buildBiometricReportRecord(biometric, user),
+            ));
           }
         });
         Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));
       }
-      return { [chartType]: chartData, reportData };
+      return { [chartType]: chartData, reportData, columnDef: biometricColumnDef };
 
     case 'Visit':
       if (chartType === 'pie') {
@@ -253,21 +339,22 @@ export function buildChartData(datasources, controlObject) {
           ).sort(sortVisitsDescending);
           if (userVisits.length === 0) {
             pieData['Not Completed'] += 1;
-            reportData.push({ meta: { user } });
+            reportData.push(buildVisitReportRecord({
+              Dt: undefined,
+              VisitStatus: 'Not Completed',
+            }, user));
           } else {
             // All other misc. statuses should be included in 'Scheduled'
             let visitStatus = userVisits[0].VisitStatus === 'Pt Missed Appointment' ? 'Missed' : userVisits[0].VisitStatus;
             visitStatus = Object.keys(pieData).includes(visitStatus) ? visitStatus : 'Scheduled';
             pieData[visitStatus] += 1;
-            reportData.push(...userVisits.map(visit => ({
-              ...visit,
-              ...{ user },
-            })));
+            reportData.push(...userVisits.map(visit =>
+              buildVisitReportRecord(visit, user)));
           }
         });
         Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));
       }
-      return { [chartType]: chartData, reportData };
+      return { [chartType]: chartData, reportData, columnDef: visitColumnDef };
 
     default:
       return { [chartType]: datasources[datasourceName] };
@@ -307,6 +394,7 @@ export function buildReport(datasources, controlObject) {
       animate: { duration: 1000 },
     };
     reportConfig.reportData = data.reportData;
+    reportConfig.columnDef = data.columnDef;
   } else {
     reportConfig.chart = {
       domainPadding: 20,

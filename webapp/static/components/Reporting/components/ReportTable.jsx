@@ -21,11 +21,13 @@ class ReportTable extends React.Component {
     this.state = {
       pageOptions: { page: 1, numRecords: 50, pagerMaxButtons: 5 },
       data: props.data,
+      columnDef: props.columnDef,
     };
   }
 
   componentWillReceiveProps = nextProps => this.setState({
     data: nextProps.data,
+    columnDef: nextProps.columnDef,
     pageOptions: {
       ...this.state.pageOptions,
       ...{ page: 1 },
@@ -50,14 +52,14 @@ class ReportTable extends React.Component {
 
   getCellKey = (rowIndex, columnIndex) => {
     const dataIndex = this.getDataStart() + rowIndex;
-    const columnName = Object.keys(this.state.data[0])[columnIndex];
+    const columnName = this.state.columnDef[columnIndex].label;
 
     return `${columnName}_${dataIndex}`;
   }
   getCellValue = (rowIndex, columnIndex) => {
     const dataIndex = this.getDataStart() + rowIndex;
     const item = this.state.data[dataIndex];
-    const columnName = Object.keys(this.state.data[0])[columnIndex];
+    const columnName = this.state.columnDef[columnIndex].label;
 
     return (item === undefined) ? '' : item[columnName];
   }
@@ -68,29 +70,30 @@ class ReportTable extends React.Component {
     </Cell>
   );
 
-  getColumnHeader = name =>
+  getColumnHeader = colDef =>
     <ColumnHeaderCell
-      name={name}
-      menu={this.getColumnMenu(name)}
+      name={colDef.label}
+      key={colDef.label}
+      menu={this.getColumnMenu(colDef)}
     />
 
-  getColumns = () => Object.keys(this.state.data[0]).map(
-    k => (
+  getColumns = () => this.state.columnDef.map(
+    col => (
       <Column
-        key={k}
+        key={col.label}
         renderCell={this.getCell}
-        renderColumnHeader={() => this.getColumnHeader(k)}
+        renderColumnHeader={() => this.getColumnHeader(col)}
       />
     ),
   )
 
-  getColumnMenu = (columnName) => {
-    const ascIconName = columnName === 'Date' ? 'sort-numerical' : 'sort-alphabetical';
-    const descIconName = columnName === 'Date' ? 'sort-numerical-desc' : 'sort-alphabetical-desc';
-    const sortAsc = columnName === 'Date' ?
+  getColumnMenu = (colDef) => {
+    const ascIconName = colDef.type === 'date' ? 'sort-numerical' : 'sort-alphabetical';
+    const descIconName = colDef.type === 'date' ? 'sort-numerical-desc' : 'sort-alphabetical-desc';
+    const sortAsc = colDef.type === 'date' ?
       (a, b) => compareDates(a, b) :
       (a, b) => a.toString().localeCompare(b);
-    const sortDesc = columnName === 'Date' ?
+    const sortDesc = colDef.type === 'date' ?
       (a, b) => -compareDates(a, b) :
       (a, b) => -a.toString().localeCompare(b);
 
@@ -99,12 +102,12 @@ class ReportTable extends React.Component {
         <MenuItem
           iconName={ascIconName}
           text="Sort Asc"
-          onClick={() => this.sortColumn(columnName, sortAsc)}
+          onClick={() => this.sortColumn(colDef.label, sortAsc)}
         />
         <MenuItem
           iconName={descIconName}
           text="Sort Desc"
-          onClick={() => this.sortColumn(columnName, sortDesc)}
+          onClick={() => this.sortColumn(colDef.label, sortDesc)}
         />
       </Menu>
     );
@@ -182,6 +185,7 @@ class ReportTable extends React.Component {
 ReportTable.propTypes = {
   isFetching: React.PropTypes.bool,
   data: React.PropTypes.arrayOf(React.PropTypes.shape()),
+  columnDef: React.PropTypes.arrayOf(React.PropTypes.shape()).isRequired,
 };
 
 ReportTable.defaultProps = {
