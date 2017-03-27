@@ -29,7 +29,7 @@ const ReportChart = props => (
           <VictoryAxis {...props.chartConfig.dependentAxis} /> }
         { /* Bar Chart */ }
         { props.chartConfig.bar !== undefined &&
-          <VictoryBar {...props.chartConfig.bar} /> }
+          <VictoryBar theme={VictoryTheme.material} {...props.chartConfig.bar} /> }
         { /* Line Chart */ }
         { props.chartConfig.line !== undefined &&
           <VictoryLine {...props.chartConfig.line} /> }

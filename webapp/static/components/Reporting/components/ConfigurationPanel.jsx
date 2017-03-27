@@ -60,7 +60,7 @@ const ConfigurationPanel = props => (
   <div className="configPanel">
     {Object.keys(props.controlOptions).map(key =>
         (props.controlOptions[key].options === undefined ||
-        props.controlOptions[key].options.length > 2) &&
+        props.controlOptions[key].options.length > 1) &&
         <div key={key} className="configPanel__controlset">
           <label htmlFor={`select_${key}`}>{props.controlOptions[key].label}</label>
           {renderControlSet(key, props.controlOptions[key], props.handleControlChange)}

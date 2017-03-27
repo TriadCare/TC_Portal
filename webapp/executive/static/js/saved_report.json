@@ -4,7 +4,7 @@
   "label": "Compliance Report",
   "selectedControls": {
     "data_set": 3,
-    "chart_type": 1,
+    "chart_type": 2,
     "date_range": "2016/01/01-2017/01/01"
   }
 }
