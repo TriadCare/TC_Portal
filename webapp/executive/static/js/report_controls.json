@@ -4,7 +4,8 @@
       "label": "Chart Type",
       "type": "select",
       "options": [
-        {"id": 1, "label": "Pie", "value": "pie"}
+        {"id": 1, "label": "Bar", "value": "bar"},
+        {"id": 2, "label": "Pie", "value": "pie"}
       ]
     },
     "data_set": {
