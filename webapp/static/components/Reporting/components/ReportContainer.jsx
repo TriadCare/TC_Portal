@@ -13,6 +13,11 @@ const getSelectedOption = controlSet =>
   controlSet.options.find(
     o => o.id === controlSet.selectedValue,
   );
+const getSelectedOptionID = (controlSet) => {
+  const option = getSelectedOption(controlSet);
+  if (option === undefined) { return undefined; }
+  return option.id;
+};
 
 class ReportContainer extends React.Component {
   constructor(props) {
@@ -38,6 +43,13 @@ class ReportContainer extends React.Component {
     });
   }
 
+  doesHaveDataFilters = () => {
+    const dataFilters = Object.values(this.state.dataControls).filter(
+      value => value.options.length !== 0,
+    );
+    return dataFilters.length !== 0;
+  }
+
   renderControlSet = (controlSetName, controlName, controlSet, classNames) => {
     switch (controlSet.type) {
       case 'select':
@@ -51,14 +63,6 @@ class ReportContainer extends React.Component {
                 controlSetName, controlName, e.target.value,
               )}
             >
-              {controlSet.type === 'datafilter' &&
-                <option
-                  key={0}
-                  value={0}
-                >
-                  Show All
-                </option>
-              }
               {controlSet.options.map(option =>
                 <option
                   key={option.id}
@@ -104,15 +108,25 @@ class ReportContainer extends React.Component {
               'Show All' :
               getSelectedOption(controlSet).label}
           >
+            <MenuItem
+              text="Show All"
+              onClick={() =>
+                this.props.handleControlChange(
+                controlSetName, controlName, '0',
+              )}
+              className={
+                getSelectedOption(controlSet) === undefined ? 'pt-intent-primary' : ''
+              }
+            />
             {controlSet.options.map(option =>
               <MenuItem
                 key={option.id}
-                value={option.id}
                 text={option.label}
                 iconName={option.icon}
                 onClick={() => this.props.handleControlChange(
                   controlSetName, controlName, option.id,
                 )}
+                className={getSelectedOptionID(controlSet) === option.id ? 'pt-intent-primary' : ''}
               />)}
           </MenuItem>
         );
@@ -152,27 +166,32 @@ class ReportContainer extends React.Component {
           { this.state.baseControls.data_set.label }
           { this.renderControlSet('Base', 'data_set', this.state.baseControls.data_set) }
         </label>
+        <Popover
+          isDisabled={!this.doesHaveDataFilters()}
+          position={Position.BOTTOM}
+          content={
+            <Menu>
+              {Object.entries(this.state.dataControls).map(([key, control], i) =>
+                  (control.options === undefined ||
+                  control.options.length > 1) &&
+                  <div key={key} className="filterMenuGroup">
+                    <MenuDivider
+                      title={control.label}
+                      className={i === 0 ? 'firstMenuDivider' : ''}
+                    />
+                    {this.renderControlSet('Data', key, control)}
+                  </div>,
+              )}
+            </Menu>
+          }
+          className="filterButton"
+        >
+          <Button
+            className={`pt-minimal ${this.doesHaveDataFilters() ? 'pt-intent-primary' : ''}`}
+            iconName="filter"
+          />
+        </Popover>
       </div>
-      <Popover
-        position={Position.BOTTOM}
-        content={
-          <Menu>
-            {Object.entries(this.state.dataControls).map(([key, control]) =>
-                (control.options === undefined ||
-                control.options.length > 1) &&
-                <div key={key}>
-                  <MenuDivider title={control.label} />
-                  {this.renderControlSet('Data', key, control)}
-                </div>,
-            )}
-          </Menu>
-        }
-      >
-        <Button
-          className="pt-minimal pt-intent-primary"
-          iconName="filter"
-        />
-      </Popover>
       <div className="reportToolbar">
         <Tooltip
           content="Export CSV"
