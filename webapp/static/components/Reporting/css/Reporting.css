@@ -13,25 +13,37 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10px 15px 10px 15px;
+  margin: 10px 15px 0 15px;
 }
 
 .reportTitle {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
+  margin: 0 15px;
 }
 
 .reportTitle__label {
   font-size: 1.5em;
+  margin-bottom: 5px;
 }
 
-.reportToolbar__button {
+.baseControlSet {
+  align-self: flex-end;
+}
+.baseControlSet > label {
+  margin: 0;
+  font-weight: inherit;
+}
+
+.exportTooltipWrapper > .reportToolbar__button::before {
   font-size: 1.5em;
 }
 
 .configPanel {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  flex-flow: row wrap;
   background-color: #f7f7f7;
   border: 2px solid #fff;
   margin: 0 15px;
@@ -42,31 +54,65 @@
   padding: 5px;
 }
 
-.form-control-container > input {
-  height: 34px;
-  width: 125px;
+.configPanel__controlset > .pt-label > .pt-popover-target {
+  display: inherit;
 }
 
+.configPanel__controlset > .pt-label > .pt-popover-target > .pt-control-group {
+  flex-direction: column;
+}
+
+.form-control-container {
+  width: 100px;
+}
 
 .reportElement{
   margin: 15px;
-  padding: 10px 10px 0 10px;
   background-color: #f7f7f7;
   border: 2px solid #fff;
   flex: 1;
   display: flex;
-  flex-flow: column;
+  flex-direction: column;
 }
 
-.reportTable__controlPanel {
+.reportChart {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.reportChart > .pt-popover-target {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.reportChart__container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.reportChart__container > svg {
+  height: 100% !important;
+  width: 100%;
+}
+
+.reportTable {
+  padding: 10px 10px 0 10px;
 }
 .reportTable__header {
   margin: 5px;
 }
 .reportTable__footer {
   padding: 5px;
+}
+.reportTable__controlPanel {
+  display: flex;
+  justify-content: space-between;
 }
 .reportTable__footer > .pagination {
   margin: 0;

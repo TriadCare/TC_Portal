@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 require('./css/SpaceExplorer');
 
 const SpaceExplorer = (props) => {
-  let spaceLinks = [];
-  let profileLink = undefined;
+  const spaceLinks = [];
+  let profileLink;
   // If no spaces, don't render
   if (props.spaces.length === 0) {
     return null;
@@ -16,7 +16,7 @@ const SpaceExplorer = (props) => {
     spaceLinks.push(
       <div key={space.label} className="spaceExplorer__item">
         <span
-          className={"sr-only"}
+          className={'sr-only'}
           id={`${space.label}-label`}
         >{space.label}</span>
         <Link
@@ -25,7 +25,7 @@ const SpaceExplorer = (props) => {
           activeClassName="spaceLinkActive"
           aria-labelledby={`${space.label}-label`}
         />
-      </div>
+      </div>,
     );
     if (space.label === 'Profile') {  // Profile goes at the end
       profileLink = spaceLinks.pop();
@@ -35,7 +35,7 @@ const SpaceExplorer = (props) => {
   return (
     <div className="spaceExplorer">
       <div className="spaceExplorer__item spaceExplorer__toggle">
-        <span className="spaceIcon fa fa-bars"></span>
+        <span className="spaceIcon fa fa-bars" />
       </div>
       <div className="spaceExplorer__list">{spaceLinks}</div>
       {profileLink}
@@ -44,7 +44,7 @@ const SpaceExplorer = (props) => {
 };
 
 SpaceExplorer.propTypes = {
-  spaces: React.PropTypes.array.isRequired,
+  spaces: React.PropTypes.arrayOf(React.PropTypes.shape()).isRequired,
 };
 
 const mapStateToProps = function mapStateToProps(store) {

@@ -20,11 +20,24 @@ function initControls(controlObj, report) {
       ...{ selectedValue: selectedControls[key] },
     };
   });
+
+  const chartControls = {};
+  Object.entries(controlObj.Chart).forEach(([key, control]) => {
+    chartControls[key] = {
+      ...control,
+      ...{ selectedValue: selectedControls[key] },
+    };
+  });
+
   // Add controls specfic to the dataset
-  const dataControls = controlObj.Data[getSelectedDataName({ controls: baseControls })];
+  const dataControls = controlObj.Data[getSelectedDataName(
+    { controls: { Base: baseControls } },
+  )];
+
   const combinedControls = {
-    ...baseControls,
-    ...dataControls,
+    Base: baseControls,
+    Chart: chartControls,
+    Data: dataControls,
   };
   return { controls: combinedControls, reportMetaData };
 }
@@ -48,18 +61,18 @@ class ExecutiveReporting extends React.Component {
     };
   }
 
-  handleControlChange = (control, value) => {
+  handleControlChange = (controlSet, control, value) => {
     const newConfigObj = (control === 'date_range') ?
       { min_date: value[0], max_date: value[1] } :
       { selectedValue: value !== '0' ? parseInt(value, 10) : undefined };
 
     // Check if any other controls depend on this one.
     const resetControls = {};
-    Object.keys(this.state.controlObject.controls).filter(k =>
-      this.state.controlObject.controls[k].childOf === control,
+    Object.keys(this.state.controlObject.controls[controlSet]).filter(k =>
+      this.state.controlObject.controls[controlSet][k].childOf === control,
     ).forEach((controlKey) => {
       resetControls[controlKey] = {
-        ...this.state.controlObject.controls[controlKey],
+        ...this.state.controlObject.controls[controlSet][controlKey],
         ...{ selectedValue: undefined },
       };
     });
@@ -70,9 +83,14 @@ class ExecutiveReporting extends React.Component {
           controls: {
             ...this.state.controlObject.controls,
             ...{
-              [control]: {
-                ...this.state.controlObject.controls[control],
-                ...newConfigObj,
+              [controlSet]: {
+                ...this.state.controlObject.controls[controlSet],
+                ...{
+                  [control]: {
+                    ...this.state.controlObject.controls[controlSet][control],
+                    ...newConfigObj,
+                  },
+                },
               },
             },
             ...resetControls,

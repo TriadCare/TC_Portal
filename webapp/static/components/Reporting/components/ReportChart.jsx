@@ -8,37 +8,44 @@ import {
 
 const getLoadingComponent = () => (
   <NonIdealState
-    visual="cloud-download"
-    title="Fetching Report"
-    description={'Hang tight while we set this up...'}
+    visual="info-sign"
+    title="Processing Data"
+    description={'Shouldn\'t take much longer...'}
     action={<Spinner />}
   />
 );
 
+const renderChart = chartConfig => (
+  /* Pie Chart */
+  (chartConfig.pie !== undefined ?
+    <VictoryPie {...chartConfig.pie} /> :
+    <VictoryChart theme={VictoryTheme.material} {...chartConfig.chart}>
+      { /* Axes  */}
+      { chartConfig.independentAxis !== undefined &&
+        <VictoryAxis {...chartConfig.independentAxis} /> }
+      { chartConfig.dependentAxis !== undefined &&
+        <VictoryAxis {...chartConfig.dependentAxis} /> }
+      { /* Bar Chart */ }
+      { chartConfig.bar !== undefined &&
+        <VictoryBar theme={VictoryTheme.material} {...chartConfig.bar} /> }
+      { /* Line Chart */ }
+      { chartConfig.line !== undefined &&
+        <VictoryLine {...chartConfig.line} /> }
+    </VictoryChart>
+  )
+);
+
 const ReportChart = props => (
-  (props.isFetching ? getLoadingComponent() :
   <div className="reportElement reportChart">
-    { /* Pie Chart */ }
-    { props.chartConfig.pie !== undefined ?
-      <VictoryPie {...props.chartConfig.pie} /> :
-      <VictoryChart theme={VictoryTheme.material} {...props.chartConfig.chart}>
-        { /* Axes  */}
-        { props.chartConfig.independentAxis !== undefined &&
-          <VictoryAxis {...props.chartConfig.independentAxis} /> }
-        { props.chartConfig.dependentAxis !== undefined &&
-          <VictoryAxis {...props.chartConfig.dependentAxis} /> }
-        { /* Bar Chart */ }
-        { props.chartConfig.bar !== undefined &&
-          <VictoryBar theme={VictoryTheme.material} {...props.chartConfig.bar} /> }
-        { /* Line Chart */ }
-        { props.chartConfig.line !== undefined &&
-          <VictoryLine {...props.chartConfig.line} /> }
-      </VictoryChart>
-    }
+    {props.isFetching ? '' : props.chartControl}
+    <div className="reportChart__container">
+      {props.isFetching ? getLoadingComponent() : renderChart(props.chartConfig)}
+    </div>
   </div>
-));
+);
 
 ReportChart.propTypes = {
+  chartControl: React.PropTypes.element,
   chartConfig: React.PropTypes.shape().isRequired,
   isFetching: React.PropTypes.bool.isRequired,
 };
