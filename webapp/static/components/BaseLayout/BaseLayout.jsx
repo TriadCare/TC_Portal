@@ -5,7 +5,7 @@ import { LoginComponent } from 'components/Identity';
 import TitleBar from './components/TitleBar';
 import SpaceExplorer from './components/SpaceExplorer';
 
-const BaseLayout = (props) => (
+const BaseLayout = props => (
   <div className="baseLayout">
     <LoginComponent onLogin={props.onLogin} />
     <TitleBar onLogout={props.onLogout} />
@@ -21,7 +21,13 @@ const BaseLayout = (props) => (
 BaseLayout.propTypes = {
   onLogin: React.PropTypes.func,
   onLogout: React.PropTypes.func,
-  children: React.PropTypes.object,
+  children: React.PropTypes.shape(),
+};
+
+BaseLayout.defaultProps = {
+  onLogin: () => {},
+  onLogout: () => {},
+  children: {},
 };
 
 export default BaseLayout;

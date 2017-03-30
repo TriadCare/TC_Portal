@@ -23,23 +23,22 @@ import moment from 'moment';
 //   return result;
 // };
 
-export const getSelectedDataName = configuration => configuration.controls.data_set.options.find(
-    option => option.id === configuration.controls.data_set.selectedValue,
+export const getSelectedDataName = configuration =>
+  configuration.controls.Base.data_set.options.find(
+    option => option.id === configuration.controls.Base.data_set.selectedValue,
   ).value;
 
-export const getOptionValue = (optionName, controlObject) =>
-  controlObject.controls[optionName].options.find(option =>
-    option.id === controlObject.controls[optionName].selectedValue,
+export const getOptionValue = (optionGroup, optionName, controlObject) =>
+  controlObject.controls[optionGroup][optionName].options.find(option =>
+    option.id === controlObject.controls[optionGroup][optionName].selectedValue,
   ).value;
 
 const filterUsers = (datasources, controlObject, users) => {
   const newOptionObject = {};
-  Object.keys(controlObject.controls).forEach((k) => { newOptionObject[k] = []; });
+  Object.keys(controlObject.controls.Data).forEach((k) => { newOptionObject[k] = []; });
   const filteredUsers = users.filter((user) => {
     let meetsRequirements = true;
-    Object.entries(controlObject.controls).forEach(([k, v]) => {
-      // Only care about data filters here.
-      if (v.type !== 'datafilter') { return; }
+    Object.entries(controlObject.controls.Data).forEach(([k, v]) => {
       // First add the distinct datafilter value if it does not exist
       if (newOptionObject[k].find(
           option => option.value === user[v.key],
@@ -51,8 +50,8 @@ const filterUsers = (datasources, controlObject, users) => {
         if (userOption) {
           // check dependencies on other fields
           if (v.childOf === undefined ||
-            controlObject.controls[v.childOf].selectedValue === undefined ||
-            getOptionValue(v.childOf, controlObject) === userOption[v.parentKey]) {
+            controlObject.controls.Data[v.childOf].selectedValue === undefined ||
+            getOptionValue('Data', v.childOf, controlObject) === userOption[v.parentKey]) {
             newOptionObject[k].push(
               {
                 id: newOptionObject[k].length + 1,
@@ -76,11 +75,9 @@ const filterUsers = (datasources, controlObject, users) => {
     return meetsRequirements;
   });
   // Update the options for each control
-  Object.entries(controlObject.controls).forEach(([key, control]) => {
-    if (control.type === 'datafilter') {
-      control.options.splice(0);
-      control.options.push(...newOptionObject[key]);
-    }
+  Object.entries(controlObject.controls.Data).forEach(([key, control]) => {
+    control.options.splice(0);
+    control.options.push(...newOptionObject[key]);
   });
   return filteredUsers;
 };
@@ -246,8 +243,8 @@ const formatRecord = (record, datasourceName) =>
 // certain format in order for the Victory Charts component to render.
 // This function will be called everytime the user changes the configuration.
 export function buildChartData(datasources, controlObject) {
-  const datasourceName = getOptionValue('data_set', controlObject);
-  const chartType = getOptionValue('chart_type', controlObject);
+  const datasourceName = getOptionValue('Base', 'data_set', controlObject);
+  const chartType = getOptionValue('Chart', 'chart_type', controlObject);
 
   const dataItems = datasources[datasourceName].items;
   const users = datasources.User.items;
@@ -264,9 +261,9 @@ export function buildChartData(datasources, controlObject) {
   // Filter records by the control date range
   const recordsInDate = dataItems.filter(item => (
     dateMapper[datasourceName](item)
-      .isSameOrAfter(controlObject.controls.date_range.min_date, 'day') &&
+      .isSameOrAfter(controlObject.controls.Base.date_range.min_date, 'day') &&
     dateMapper[datasourceName](item)
-      .isSameOrBefore(controlObject.controls.date_range.max_date, 'day')
+      .isSameOrBefore(controlObject.controls.Base.date_range.max_date, 'day')
   ));
   // Build the Compliance Data from the list of filtered users.
   filteredUsers.forEach((user) => {
@@ -304,7 +301,7 @@ export function buildChartData(datasources, controlObject) {
 // Will need to be called everytime the user changes the
 // configuration of the report.
 export function buildReport(datasources, controlObject) {
-  const chartType = getOptionValue('chart_type', controlObject);
+  const chartType = getOptionValue('Chart', 'chart_type', controlObject);
   const reportConfig = {
     meta: controlObject.reportMetaData,
   };
@@ -335,11 +332,7 @@ export function buildReport(datasources, controlObject) {
     reportConfig.chart = {
       domainPadding: 30,
       animate: { duration: 500 },
-      style: {
-        width: '100%',
-        height: '100%',
-        padding: '5px',
-      },
+      style: { padding: '5px' },
     };
     reportConfig.independentAxis = {
       style: {

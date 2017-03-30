@@ -7,29 +7,31 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
     case 'datafilter':
     case 'select':
       return (
-        <select
-          id={`select_${controlName}`}
-          className="form-control"
-          value={controlSet.selectedValue || 0}
-          onChange={e => handleControlChange(controlName, e.target.value)}
-        >
-          {controlSet.type === 'datafilter' &&
-            <option
-              key={0}
-              value={0}
-            >
-              Show All
-            </option>
-          }
-          {controlSet.options.map(option =>
-            <option
-              key={option.id}
-              value={option.id}
-            >
-              {option.label}
-            </option>,
-          )}
-        </select>
+        <div className="pt-minimal pt-select">
+          <select
+            id={`select_${controlName}`}
+            className="form-control"
+            value={controlSet.selectedValue || 0}
+            onChange={e => handleControlChange(controlName, e.target.value)}
+          >
+            {controlSet.type === 'datafilter' &&
+              <option
+                key={0}
+                value={0}
+              >
+                Show All
+              </option>
+            }
+            {controlSet.options.map(option =>
+              <option
+                key={option.id}
+                value={option.id}
+              >
+                {option.label}
+              </option>,
+            )}
+          </select>
+        </div>
       );
     case 'date':
       return (
@@ -44,6 +46,7 @@ const renderControlSet = (controlName, controlSet, handleControlChange) => {
             handleControlChange(controlName, dateRange);
           }}
           format={'MM/D/YYYY'}
+          className="dateRange__container"
           endInputProps={{ className: 'form-control-container' }}
           startInputProps={{ className: 'form-control-container' }}
         />
@@ -62,8 +65,10 @@ const ConfigurationPanel = props => (
         (props.controlOptions[key].options === undefined ||
         props.controlOptions[key].options.length > 1) &&
         <div key={key} className="configPanel__controlset">
-          <label htmlFor={`select_${key}`}>{props.controlOptions[key].label}</label>
-          {renderControlSet(key, props.controlOptions[key], props.handleControlChange)}
+          <label htmlFor={`select_${key}`} className="pt-label">
+            {props.controlOptions[key].label}
+            {renderControlSet(key, props.controlOptions[key], props.handleControlChange)}
+          </label>
         </div>,
     )}
   </div>

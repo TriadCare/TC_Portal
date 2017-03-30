@@ -22,21 +22,21 @@ function getUpdatedState(state, action) {
 const initialState = {
   titleBarText: 'Executive Portal',
   spaces: [
-    {
-      uri: '/executive/dashboard',
-      label: 'Dashboard',
-      icon: 'heartbeat',
-    },
-    {
-      uri: '/executive/reporting',
-      label: 'Reporting',
-      icon: 'bar-chart',
-    },
-    {
-      uri: '/executive/profile',
-      label: 'Profile',
-      icon: 'user-circle',
-    },
+    // {
+    //   uri: '/executive/dashboard',
+    //   label: 'Dashboard',
+    //   icon: 'heartbeat',
+    // },
+    // {
+    //   uri: '/executive/reporting',
+    //   label: 'Reporting',
+    //   icon: 'bar-chart',
+    // },
+    // {
+    //   uri: '/executive/profile',
+    //   label: 'Profile',
+    //   icon: 'user-circle',
+    // },
   ],
   datasources: {
     HRA: {
