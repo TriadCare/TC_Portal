@@ -344,13 +344,16 @@ export function buildReport(datasources, controlObject) {
     reportConfig.chart = {
       domainPadding: 30,
       animate: { duration: 500 },
-      style: { padding: '5px' },
+      style: { padding: '10px' },
+      padding: 50,
+      width: 450,
+      height: 300,
     };
     reportConfig.independentAxis = {
       style: {
         tickLabels: {
-          fontSize: 16,
-          padding: 0,
+          fontSize: 12,
+          padding: 10,
         },
       },
     };
@@ -371,7 +374,7 @@ export function buildReport(datasources, controlObject) {
           fill: d => chartColorScale[d.eventKey],
           width: 50,
         },
-        labels: { fontSize: 16 },
+        labels: { fontSize: 12 },
       },
     };
   }

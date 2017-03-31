@@ -21,6 +21,10 @@
   font-size: 1.7em;
 }
 
+.navigationContainer > a {
+  margin: 0 5px;
+}
+
 .titleBar__log-out {
   margin-left: auto;
   padding: 10px;

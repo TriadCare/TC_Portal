@@ -55,10 +55,12 @@ const Dashboard = ({ dashlets, isFetching, /* handleRefresh, */handleDashletClic
 );
 
 Dashboard.propTypes = {
-  dashlets: React.PropTypes.array.isRequired,
+  dashlets: React.PropTypes.arrayOf(React.PropTypes.shape()).isRequired,
   isFetching: React.PropTypes.bool,
   // handleRefresh: React.PropTypes.func.isRequired,
   handleDashletClick: React.PropTypes.func.isRequired,
 };
+
+Dashboard.defaultProps = { isFetching: false };
 
 export default Dashboard;
