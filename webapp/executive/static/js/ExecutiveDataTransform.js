@@ -23,6 +23,14 @@ import moment from 'moment';
 //   return result;
 // };
 
+const chartColorScale = [
+  'rgb(0,120,185)',
+  'rgba(0,120,185, 0.75)',
+  'rgb(180,180,180)',
+  'rgba(0,120,185, 0.5)',
+  'rgba(0,120,185, 0.25)',
+];
+
 export const getSelectedDataName = configuration =>
   configuration.controls.Base.data_set.options.find(
     option => option.id === configuration.controls.Base.data_set.selectedValue,
@@ -315,13 +323,9 @@ export function buildReport(datasources, controlObject) {
         }
         return `${Math.trunc(datum.y)}\n${datum.x}`;
       },
-      colorScale: [
-        'rgb(0,120,185)',
-        'rgba(0,120,185, 0.75)',
-        'rgb(180,180,180)',
-        'rgba(0,120,185, 0.5)',
-        'rgba(0,120,185, 0.25)',
-      ],
+      colorScale: chartColorScale,
+      labelRadius: pieSlice => Math.max((175 - (pieSlice.eventKey * 23)), 50),
+      padding: 50,
       padAngle: 1,
       innerRadius: 1,
       cornerRadius: 5,
@@ -353,15 +357,11 @@ export function buildReport(datasources, controlObject) {
         }
         return `${Math.trunc(datum.y)}`;
       },
-      colorScale: [
-        'rgb(0,120,185)',
-        'rgba(0,120,185, 0.75)',
-        'rgb(180,180,180)',
-        'rgba(0,120,185, 0.5)',
-        'rgba(0,120,185, 0.25)',
-      ],
       style: {
-        data: { width: 50 },
+        data: {
+          fill: d => chartColorScale[d.eventKey],
+          width: 50,
+        },
         labels: { fontSize: 16 },
       },
     };
