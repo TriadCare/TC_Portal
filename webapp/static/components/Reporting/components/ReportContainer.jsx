@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import { Button, Tooltip, Popover,
+import { Spinner, Button, Tooltip, Popover,
   Position, Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 import { DateRangeInput } from '@blueprintjs/datetime';
 
@@ -24,10 +24,15 @@ class ReportContainer extends React.Component {
     super(props);
     this.state = {
       shouldRenderCSVDownload: false,
+      processing: false,
       report: props.report,
       baseControls: props.controls.Base,
       chartControls: props.controls.Chart,
       dataControls: props.controls.Data,
+      handleControlChange: (...args) => {
+        this.setState({ processing: true });
+        this.props.handleControlChange(...args);
+      },
     };
   }
 
@@ -35,6 +40,7 @@ class ReportContainer extends React.Component {
     this.setState({
       ...this.state,
       ...{
+        processing: false,
         report: newProps.report,
         baseControls: newProps.controls.Base,
         chartControls: newProps.controls.Chart,
@@ -59,7 +65,7 @@ class ReportContainer extends React.Component {
               id={`select_${controlName}`}
               className="form-control"
               value={controlSet.selectedValue || 0}
-              onChange={e => this.props.handleControlChange(
+              onChange={e => this.state.handleControlChange(
                 controlSetName, controlName, e.target.value,
               )}
             >
@@ -87,7 +93,7 @@ class ReportContainer extends React.Component {
                       value={option.id}
                       text={option.label}
                       iconName={option.icon}
-                      onClick={() => this.props.handleControlChange(
+                      onClick={() => this.state.handleControlChange(
                         controlSetName, controlName, option.id,
                       )}
                     />)}
@@ -111,7 +117,7 @@ class ReportContainer extends React.Component {
             <MenuItem
               text="Show All"
               onClick={() =>
-                this.props.handleControlChange(
+                this.state.handleControlChange(
                 controlSetName, controlName, '0',
               )}
               className={
@@ -123,7 +129,7 @@ class ReportContainer extends React.Component {
                 key={option.id}
                 text={option.label}
                 iconName={option.icon}
-                onClick={() => this.props.handleControlChange(
+                onClick={() => this.state.handleControlChange(
                   controlSetName, controlName, option.id,
                 )}
                 className={getSelectedOptionID(controlSet) === option.id ? 'pt-intent-primary' : ''}
@@ -140,9 +146,10 @@ class ReportContainer extends React.Component {
                 null : moment(controlSet.max_date).format('MM/D/YYYY')),
             ]}
             onChange={(dateRange) => {
-              this.props.handleControlChange(controlSetName, controlName, dateRange);
+              this.state.handleControlChange(controlSetName, controlName, dateRange);
             }}
             format={'MM/D/YYYY'}
+            closeOnSelection
             className={`dateRange__container ${classNames}`}
             endInputProps={{ className: 'form-control-container' }}
             startInputProps={{ className: 'form-control-container' }}
@@ -164,11 +171,12 @@ class ReportContainer extends React.Component {
       <div className="baseControlSet baseControlSet-data_set">
         <label htmlFor="select_data_set" className="pt-label">
           { this.state.baseControls.data_set.label }
+          { this.state.processing && <Spinner className="pt-small" />}
           { this.renderControlSet('Base', 'data_set', this.state.baseControls.data_set) }
         </label>
         <Popover
           isDisabled={!this.doesHaveDataFilters()}
-          position={Position.BOTTOM}
+          position={Position.RIGHT_TOP}
           content={
             <Menu>
               {Object.entries(this.state.dataControls).map(([key, control], i) =>
