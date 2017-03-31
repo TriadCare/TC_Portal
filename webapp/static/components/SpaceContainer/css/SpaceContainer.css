@@ -1,4 +1,5 @@
 .spaceContainer {
+  width: 100%;
   flex: auto;
   display: flex;
 }

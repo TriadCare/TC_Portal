@@ -3,10 +3,11 @@
 }
 
 .reportContainer {
-    height: 100%;
-    display: flex;
-    flex-flow: column;
-    flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .reportHeader {
@@ -91,7 +92,12 @@
 }
 
 .form-control-container {
+  display: inline-block;
   width: 100px;
+}
+
+.form-control-container > input {
+  padding: 0 10px;
 }
 
 .reportElement{
@@ -124,11 +130,6 @@
   height: 100%;
 }
 
-.reportChart__container > svg {
-  height: 100% !important;
-  width: 100%;
-}
-
 .reportTable {
   padding: 10px 10px 0 10px;
 }
@@ -144,8 +145,28 @@
 }
 .reportTable__footer > .pagination {
   margin: 0;
+  display: flex;
+  justify-content: flex-end;
+  flex: 2;
 }
 .reportTable__footer > .pagination > li > a,
 .reportTable__footer > .pagination > li > span {
   padding: 0 10px;
+}
+
+.recordLabel {
+  font-size: 0.9em;
+  flex: 1;
+}
+@media (max-width: 550px) {
+  .recordLabel {
+    font-size: 0.65em;
+  }
+  .reportTable__footer > .pagination {
+    flex: 3;
+  }
+  .reportTable__footer > .pagination > li > a,
+  .reportTable__footer > .pagination > li > span {
+    padding: 0 3px;
+  }
 }
