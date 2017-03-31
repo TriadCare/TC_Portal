@@ -1,7 +1,7 @@
 import React from 'react';
 // import moment from 'moment';
 
-import ReportChart from 'components/Reporting/components/ReportChart';
+import DashChart from './DashChart';
 
 const renderCard = (config, handleClick) => (
   <div
@@ -28,7 +28,10 @@ const renderCard = (config, handleClick) => (
       {config.description}
     </div>
     { /* chart */ }
-    <ReportChart chartConfig={config} />
+    <DashChart
+      chartConfig={config}
+      isFetching={config.reportData === undefined || config.reportData.length === 0}
+    />
 
   </div>
 );

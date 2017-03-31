@@ -8,7 +8,10 @@ import SpaceExplorer from './components/SpaceExplorer';
 const BaseLayout = props => (
   <div className="baseLayout">
     <LoginComponent onLogin={props.onLogin} />
-    <TitleBar onLogout={props.onLogout} />
+    <TitleBar
+      onLogout={props.onLogout}
+      navigationComponent={props.navigationComponent}
+    />
     <div className="mainContainer">
       <SpaceExplorer />
       <div className="appletContainer">
@@ -19,12 +22,14 @@ const BaseLayout = props => (
 );
 
 BaseLayout.propTypes = {
+  navigationComponent: React.PropTypes.shape(),
   onLogin: React.PropTypes.func,
   onLogout: React.PropTypes.func,
   children: React.PropTypes.shape(),
 };
 
 BaseLayout.defaultProps = {
+  navigationComponent: {},
   onLogin: () => {},
   onLogout: () => {},
   children: {},

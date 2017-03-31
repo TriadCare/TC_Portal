@@ -1,4 +1,4 @@
-import { combineDatasource, getTitleBarText } from 'js/utilData';
+import { combineDatasource } from 'js/utilData';
 import { IdentityActions } from 'components/Identity';
 
 import { SELECT_REPORT_CONFIG } from './ExecutiveActions';
@@ -20,7 +20,7 @@ function getUpdatedState(state, action) {
 }
 
 const initialState = {
-  titleBarText: 'Executive Portal',
+  titleBarText: undefined,
   spaces: [
     // {
     //   uri: '/executive/dashboard',
@@ -99,24 +99,10 @@ const appReducer = (state = initialState, action) => {
         ...state,
         ...{ selectedConfig: action.config },
       };
-    case '@@router/LOCATION_CHANGE':
-      return {
-        ...state,
-        ...{
-          titleBarText: getTitleBarText(state, action.payload),
-        },
-      };
     case IdentityActions.POST_RESULT:
       return {
         ...state,
         ...{ selectedHRA: action.data.id },
-      };
-    case IdentityActions.RECEIVE_JWT:
-      return {
-        ...state,
-        ...{
-          titleBarText: getTitleBarText(state, action.response),
-        },
       };
     case IdentityActions.POST_DATA:
     case IdentityActions.REQUEST_DATA:
