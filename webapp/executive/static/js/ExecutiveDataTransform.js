@@ -31,6 +31,9 @@ const chartColorScale = [
   'rgba(0,120,185, 0.25)',
 ];
 
+const getTotal = data => data.reduce((acc, d) => acc + d.y, 0);
+const getPercentage = (part, whole) => Math.trunc((part / whole) * 100);
+
 export const getSelectedDataName = configuration =>
   configuration.controls.Base.data_set.options.find(
     option => option.id === configuration.controls.Base.data_set.selectedValue,
@@ -324,7 +327,12 @@ export function buildReport(datasources, controlObject) {
         return `${Math.trunc(datum.y)}\n${datum.x}`;
       },
       colorScale: chartColorScale,
-      labelRadius: pieSlice => Math.max((175 - (pieSlice.eventKey * 23)), 50),
+      labelRadius: (pieSlice) => {
+        if (getPercentage(pieSlice.y, getTotal(data[chartType])) > 10) {
+          return 75;
+        }
+        return Math.max((175 - (pieSlice.eventKey * 23)), 50);
+      },
       padding: 50,
       padAngle: 1,
       innerRadius: 1,
@@ -348,6 +356,7 @@ export function buildReport(datasources, controlObject) {
     };
     reportConfig.dependentAxis = {
       dependentAxis: true,
+      tickFormat: t => `${getPercentage(t, getTotal(data[chartType]))}%`,
     };
     reportConfig[chartType] = {
       data: data[chartType],
