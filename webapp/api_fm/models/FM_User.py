@@ -42,6 +42,10 @@ def validate_password(password):
     return True
 
 
+def getFMColumnString():
+    return ",".join(FM_User.__fm_fields__.keys())
+
+
 def getFMField(field):
     for k, v in FM_User.__fm_fields__.iteritems():
         if field == v:
@@ -195,6 +199,9 @@ class FM_User():
     def get_tcid(self):
         return unicode(self.tcid)  # python 2
 
+    def get_patientID(self):
+        return unicode(self.patientID)  # python 2
+
     def get_accountID(self):
         return unicode(self.accountID)  # python 2
 
@@ -205,7 +212,7 @@ class FM_User():
         return self.dob
 
     def get_role(self):
-        return 'EXECUTIVE'  # 'TRIADCARE_ADMIN'  # 'PATIENT'
+        return 'PATIENT'
 
     def eligibleForHRA(self):
         return self.hraEligible == '1'
@@ -223,6 +230,11 @@ class FM_User():
             recordLimit = '1'
             first = kwargs['first']
             del kwargs['first']
+        # If this is a Find query, the query uses a SQL statement
+        find = False
+        if 'find' in kwargs.keys():
+            find = kwargs['find']
+            del kwargs['find']
         # build the request URL from the provided query parameters
         if 'recordID' in kwargs.keys():
             # If we have recordID, short circuit search
@@ -231,18 +243,37 @@ class FM_User():
                 auth=FM_USER_AUTH
             ).json()
         else:
-            query_URL = FM_USER_URL + '.json?RFMsF1=HraEnrolled&RFMsV1=1&'
-            if len(kwargs) > 0:
-                param_iterator = 2
+            if find:
+                query_URL = (
+                    FM_USER_URL + '.json?RFMfind=SELECT ' +
+                    getFMColumnString() +
+                    ' WHERE '
+                )
                 for arg in kwargs.keys():
-                    key = str(arg)
-                    value = str(kwargs[arg])
-                    query_URL += (
-                        "RFMsF" + str(param_iterator) + "=" + getFMField(key) +
-                        "&" +
-                        "RFMsV" + str(param_iterator) + "=%3D%3D" + value +
-                        "&"
+                    key = getFMField(str(arg))
+                    value = (
+                        [kwargs[arg]]
+                        if isinstance(kwargs[arg], str)
+                        else kwargs[arg]
                     )
+                    for v in value:
+                        query_URL += (key + '%3D' + v + ' OR ')
+                query_URL = (
+                    query_URL[:-(len('OR '))] + 'OMIT HraEnrolled%3D0&'
+                )
+            else:
+                query_URL = FM_USER_URL + '.json?RFMsF1=HraEnrolled&RFMsV1=1&'
+                if len(kwargs) > 0:
+                    param_iterator = 2
+                    for arg in kwargs.keys():
+                        key = str(arg)
+                        value = str(kwargs[arg])
+                        query_URL += (
+                            "RFMsF" + str(param_iterator) + "=" +
+                            getFMField(key) + "&" +
+                            "RFMsV" + str(param_iterator) + "=%3D%3D" +
+                            value + "&"
+                        )
             query_URL = query_URL + "RFMmax=" + recordLimit
             r = requests.get(query_URL, auth=FM_USER_AUTH).json()
         if len(r) == 0 or 'data' not in r:

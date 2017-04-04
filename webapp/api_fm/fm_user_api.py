@@ -6,24 +6,39 @@ from datetime import datetime
 from webapp import csrf
 from webapp.api.auth_api import load_user_from_request
 from webapp.server.util import api_error, get_request_data
+from webapp.api.models.Permission import Permission
 from .models.FM_User import FM_User as User
 
 
 class FM_User_API(MethodView):
     # Decorator list here (auth hook)
+    # Cannot put authorize here because it requires a logged-in user
+    # The POST endpoint requires a new user, that by nature cannot be logged-in
+    # Therefore, you must handle authentication manually in each endpoint
     decorators = [csrf.exempt]
 
     def get(self, record_id=None):
+        # To get users, you must be logged in
+        user = load_user_from_request(request, throws=True)
+        permissions = Permission.query.filter_by(tcid=user.get_tcid())
+        authorized_accounts = [p.accountID for p in permissions]
         if record_id is None:
-            # Need to narrow scope to AccountID of current user, here.
             return jsonify([
-                user.to_json() for user in User.query()
+                u.to_json()
+                for u in User.query(accountID=authorized_accounts, find=True)
             ])
         else:
-            user = User.query(recordID=record_id, first=True)
-            if user is None:
+            found_user = User.query(recordID=record_id, first=True)
+            if found_user is None:
                 api_error(ValueError, "User ID not found.", 404)
-            return jsonify(user.to_json())
+            # If this user is not the current user and the current user is not
+            # authorized to access this user, return error
+            if (
+                user != found_user and
+                found_user.get_accountID() not in authorized_accounts
+            ):
+                api_error(ValueError, "Unauthorized to access this User.", 403)
+            return jsonify(found_user.to_json())
 
     # Registering a new user
     # (Registering other users will require another endpoint.
