@@ -2,12 +2,14 @@ import json
 import datetime
 from flask import jsonify, request
 from flask.views import MethodView
+from flask_login import current_user
 from datetime import datetime
 import requests
 
 from webapp import app
 from webapp import csrf
-from webapp.api.auth_api import load_user_from_request
+from webapp.api.auth_api import authorize
+from webapp.api.models.Permission import Permission
 from webapp.server.util import api_error, get_request_data
 
 FM_AUTH = (
@@ -22,10 +24,24 @@ FM_LOCATION_URL = (
 
 class FM_Location_API(MethodView):
     # Decorator list here (auth hook)
-    decorators = [csrf.exempt]
+    decorators = [csrf.exempt, authorize('PATIENT')]
+
+    __fm_fields__ = [
+        "AccountLocationId", "AccountId", "DateStart",
+        "DateEnd", "Status", "Name"
+    ]
 
     def get(self, record_id=None):
-        query_URL = FM_LOCATION_URL + '.json?RFMmax=0'
+        permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
+        authorized_accounts = [p.accountID for p in permissions]
+        if len(authorized_accounts) == 0:
+            return []
+
+        query_URL = (FM_LOCATION_URL + ".json?RFMfind=SELECT " +
+                     ",".join(FM_Location_API.__fm_fields__) + " WHERE ")
+        for accountID in authorized_accounts:
+            query_URL += "AccountId%3D" + accountID + " OR "
+        query_URL = query_URL[:-len(" OR ")] + '&RFMmax=0'
         r = requests.get(query_URL, auth=FM_AUTH).json()
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "Location not found.", 404)

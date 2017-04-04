@@ -2,7 +2,7 @@ from datetime import datetime
 
 from werkzeug.exceptions import NotFound
 from flask import request, make_response, jsonify, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user
 from flask.views import MethodView
 
 from sqlalchemy.sql import func
@@ -10,6 +10,7 @@ from sqlalchemy.sql import func
 from webapp import csrf
 from webapp.server.util import api_error, get_request_data
 from ..api.auth_api import authorize
+from .models.Permission import Permission
 from .models.HRA import HRA
 from webapp.api_fm.models.FM_User import FM_User as User
 
@@ -72,13 +73,17 @@ def get_hra(tcid, response_id, expand=False):
 # TODO: Need Executive authorization here for aggregate access
 def get_hras(tcid, expand=False, aggregate=False):
     if aggregate:
-        # tcids = [
-        #     user.get_tcid()
-        #     for user in User.query(accountID=current_user.get_accountID())
-        # ]
+        permissions = Permission.query.filter_by(tcid=tcid)
+        authorized_accounts = [p.accountID for p in permissions]
+        if len(authorized_accounts) == 0:
+            return []
+        tcids = [
+            user.get_tcid()
+            for user in User.query(accountID=authorized_accounts, find=True)
+        ]
         return [
             make_public(hra.to_dict(expand, aggregate))
-            for hra in HRA.query.all()  # .filter(HRA.tcid.in_(tcids))
+            for hra in HRA.query.filter(HRA.tcid.in_(tcids))
         ]
     return [
         make_public(hra.to_dict(expand, aggregate))
@@ -88,25 +93,17 @@ def get_hras(tcid, expand=False, aggregate=False):
 
 class HRA_API(MethodView):
     # authorize includes authentication (login_required via Flask-Login)
-    decorators = [
-        csrf.exempt,
-        authorize('PATIENT', 'EXECUTIVE', 'TRIADCARE_ADMIN')
-    ]
+    decorators = [csrf.exempt, authorize('PATIENT')]
 
     def get(self, response_id=None):
-        user_role = current_user.get_role()
         tcid = current_user.get_tcid()
         # Data Viewing variables
         expand = False
         aggregate = False
         # Note: Only Patient and Provider should have authorization to expand
-        if user_role == 'PATIENT' or user_role == 'TRIADCARE_ADMIN':
-            expand = (request.args.get('expand', 'false') != 'false')
+        expand = (request.args.get('expand', 'false') != 'false')
         # Note: Only Executive and Provider should be authorized to aggregate
-        if (
-            not expand and
-            (user_role == 'EXECUTIVE' or user_role == 'TRIADCARE_ADMIN')
-        ):
+        if (not expand):
             aggregate = (request.args.get('aggregate', 'false') != 'false')
 
         if response_id is None:

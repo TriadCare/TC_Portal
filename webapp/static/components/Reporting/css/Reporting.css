@@ -31,11 +31,13 @@
 .baseControlSet {
   align-self: flex-end;
   position: relative;
-  margin: 0 10px;
 }
 .baseControlSet > label {
   margin: 0;
   font-weight: inherit;
+}
+.baseControlSet-data_set {
+  margin: 0 10px;
 }
 
 .filterButton {

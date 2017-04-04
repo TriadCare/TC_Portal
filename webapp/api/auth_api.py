@@ -1,6 +1,10 @@
 import base64
 from functools import wraps
 
+# itsdangerous
+from itsdangerous import (TimedJSONWebSignatureSerializer,
+                          SignatureExpired, BadSignature, base64_decode)
+
 from flask_login import LoginManager, login_user, logout_user
 from flask import request, jsonify
 from flask.views import MethodView
@@ -15,10 +19,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.auth_app'
 login_manager.session_protection = "strong"
-
-# itsdangerous
-from itsdangerous import (TimedJSONWebSignatureSerializer,
-                          SignatureExpired, BadSignature, base64_decode)
 
 jwt_tjwss = TimedJSONWebSignatureSerializer(app.config['SECRET_KEY'])
 
