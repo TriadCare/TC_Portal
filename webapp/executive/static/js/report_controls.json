@@ -48,6 +48,7 @@
         "datasource": "Account",
         "dataKey": "AccountId",
         "key": "accountID",
+        "childOf": "data_set",
         "options": []
       },
       "location": {
@@ -68,6 +69,7 @@
         "datasource": "Account",
         "dataKey": "AccountId",
         "key": "accountID",
+        "childOf": "data_set",
         "options": []
       },
       "location": {
@@ -88,6 +90,7 @@
         "datasource": "Account",
         "dataKey": "AccountId",
         "key": "accountID",
+        "childOf": "data_set",
         "options": []
       },
       "location": {

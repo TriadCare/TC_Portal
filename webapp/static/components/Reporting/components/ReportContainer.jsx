@@ -51,7 +51,7 @@ class ReportContainer extends React.Component {
 
   doesHaveDataFilters = () => {
     const dataFilters = Object.values(this.state.dataControls).filter(
-      value => value.options.length !== 0,
+      value => value.options.length > 1,
     );
     return dataFilters.length !== 0;
   }
@@ -174,14 +174,16 @@ class ReportContainer extends React.Component {
           { this.state.processing && <Spinner className="pt-small" />}
           { this.renderControlSet('Base', 'data_set', this.state.baseControls.data_set) }
         </label>
-        <Popover
-          isDisabled={!this.doesHaveDataFilters()}
-          position={Position.RIGHT_TOP}
-          content={
-            <Menu>
-              {Object.entries(this.state.dataControls).map(([key, control], i) =>
-                  (control.options === undefined ||
-                  control.options.length > 1) &&
+        { this.doesHaveDataFilters() &&
+          <Popover
+            position={Position.RIGHT_TOP}
+            content={
+              <Menu>
+                {Object.entries(this.state.dataControls).filter(([key, control]) =>
+                  (key !== undefined &&
+                    control.options !== undefined &&
+                    control.options.length > 1),
+                ).map(([key, control], i) =>
                   <div key={key} className="filterMenuGroup">
                     <MenuDivider
                       title={control.label}
@@ -189,16 +191,16 @@ class ReportContainer extends React.Component {
                     />
                     {this.renderControlSet('Data', key, control)}
                   </div>,
-              )}
-            </Menu>
-          }
-          className="filterButton"
-        >
-          <Button
-            className={`pt-minimal ${this.doesHaveDataFilters() ? 'pt-intent-primary' : ''}`}
-            iconName="filter"
-          />
-        </Popover>
+                )}
+              </Menu>
+            }
+            className="filterButton"
+          >
+            <Button
+              className="pt-minimal pt-intent-primary"
+              iconName="filter"
+            />
+          </Popover> }
       </div>
       <div className="reportToolbar">
         <Tooltip
