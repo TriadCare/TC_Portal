@@ -30,7 +30,7 @@ class FM_Account_API(MethodView):
         permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
         authorized_accounts = [p.accountID for p in permissions]
         if len(authorized_accounts) == 0:
-            return []
+            return jsonify([])
 
         query_URL = FM_ACCOUNT_URL + '.json?RFMmax=0'
         r = requests.get(query_URL, auth=FM_AUTH).json()

@@ -31,7 +31,7 @@ class FM_Biometric_API(MethodView):
         permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
         authorized_accounts = [p.accountID for p in permissions]
         if len(authorized_accounts) == 0:
-            return []
+            return jsonify([])
         patientIds = [
             user.get_patientID()
             for user in User.query(accountID=authorized_accounts, find=True)
