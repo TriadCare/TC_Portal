@@ -34,15 +34,22 @@ const chartColorScale = [
 const getTotal = data => data.reduce((acc, d) => acc + d.y, 0);
 const getPercentage = (part, whole) => Math.trunc((part / whole) * 100);
 
-export const getSelectedDataName = configuration =>
-  configuration.controls.Base.data_set.options.find(
-    option => option.id === configuration.controls.Base.data_set.selectedValue,
-  ).value;
+export const getSelectedDataName = (configurationControls) => {
+  const selectedDataset = configurationControls.Base.data_set.options.find(
+    option => option.id === configurationControls.Base.data_set.selectedValue,
+  );
 
-export const getOptionValue = (optionGroup, optionName, controlObject) =>
-  controlObject.controls[optionGroup][optionName].options.find(option =>
+  return selectedDataset === undefined ? undefined : selectedDataset.value;
+};
+
+export const getOptionValue = (optionGroup, optionName, controlObject) => {
+  const controlGroup = controlObject.controls[optionGroup][optionName];
+  if (controlGroup === undefined) { return undefined; }
+  const selectedControl = controlGroup.options.find(option =>
     option.id === controlObject.controls[optionGroup][optionName].selectedValue,
-  ).value;
+  );
+  return selectedControl === undefined ? undefined : selectedControl.value;
+};
 
 const filterUsers = (datasources, controlObject, users) => {
   const newOptionObject = {};
@@ -61,8 +68,9 @@ const filterUsers = (datasources, controlObject, users) => {
         if (userOption) {
           // check dependencies on other fields
           if (v.childOf === undefined ||
-            controlObject.controls.Data[v.childOf].selectedValue === undefined ||
-            getOptionValue('Data', v.childOf, controlObject) === userOption[v.parentKey]) {
+              controlObject.controls.Data[v.childOf] === undefined ||
+              controlObject.controls.Data[v.childOf].selectedValue === undefined ||
+              getOptionValue('Data', v.childOf, controlObject) === userOption[v.parentKey]) {
             newOptionObject[k].push(
               {
                 id: newOptionObject[k].length + 1,
@@ -93,13 +101,13 @@ const filterUsers = (datasources, controlObject, users) => {
   return filteredUsers;
 };
 
-// Chart & Data Definitions
+// Chart & Data Definitions (most recent comes first)
 const recordDateSort = {
-  HRA: (hraOne, hraTwo) => moment(hraOne.meta.DATE_CREATED)
+  HRA: (hraOne, hraTwo) => -moment(hraOne.meta.DATE_CREATED)
     .diff(moment(hraTwo.meta.DATE_CREATED)),
-  Biometric: (bioOne, bioTwo) => moment(bioOne.Dt, 'MM/DD/YYYY')
+  Biometric: (bioOne, bioTwo) => -moment(bioOne.Dt, 'MM/DD/YYYY')
     .diff(moment(bioTwo.Dt, 'MM/DD/YYYY')),
-  Visit: (visitOne, visitTwo) => moment(visitOne.VisitDate, 'MM/DD/YYYY')
+  Visit: (visitOne, visitTwo) => -moment(visitOne.VisitDate, 'MM/DD/YYYY')
     .diff(moment(visitTwo.Dt, 'MM/DD/YYYY')),
 };
 
@@ -257,7 +265,8 @@ export function buildChartData(datasources, controlObject) {
   const datasourceName = getOptionValue('Base', 'data_set', controlObject);
   const chartType = getOptionValue('Chart', 'chart_type', controlObject);
 
-  const dataItems = datasources[datasourceName].items;
+  const dataItems = datasourceName !== undefined ?
+    datasources[datasourceName].items : [];
   const users = datasources.User.items;
   // return if no data
   if (dataItems.length === 0 || users.length === 0) { return { [chartType]: [] }; }
@@ -291,12 +300,11 @@ export function buildChartData(datasources, controlObject) {
       );
     } else {
       pieData[statusExchange[datasourceName](userRecords[0])] += 1;
-      reportData.push(...userRecords.map(
-        record => formatRecord(
-          { ...metaMapper[datasourceName](record), ...user },
+      reportData.push(formatRecord(
+          { ...metaMapper[datasourceName](userRecords[0]), ...user },
           datasourceName,
         ),
-      ));
+      );
     }
   });
   Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));

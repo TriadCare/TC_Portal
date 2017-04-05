@@ -31,7 +31,7 @@ function initControls(controlObj, report) {
 
   // Add controls specfic to the dataset
   const dataControls = controlObj.Data[getSelectedDataName(
-    { controls: { Base: baseControls } },
+    { Base: baseControls },
   )];
 
   const combinedControls = {
@@ -54,11 +54,41 @@ class ExecutiveReporting extends React.Component {
 
     this.state = {
       isFetching: props.datasources[
-        getSelectedDataName(controlObject)
+        getSelectedDataName(controlObject.controls)
       ].isFetching,
       report: buildReport(props.datasources, controlObject),
       controlObject,
     };
+  }
+
+  getFiltereredControls = () => (
+    // filter the data sets if no relevant data
+    {
+      ...this.state.controlObject.controls,
+      ...{
+        Base: {
+          ...this.state.controlObject.controls.Base,
+          ...{
+            data_set: {
+              ...this.state.controlObject.controls.Base.data_set,
+              ...{
+                options: this.state.controlObject.controls.Base.data_set.options.filter(option =>
+                  (this.props.datasources[option.value] !== undefined &&  // data object exists
+                    this.props.datasources[option.value].isFetching !== true &&  // is not fetching
+                    this.props.datasources[option.value].items.length !== 0),  // and has data
+                ),
+              },
+            },
+          },
+        },
+      },
+    }
+  );
+
+  isFetching = () => {
+    const datasourceName = getSelectedDataName(this.getFiltereredControls());
+    if (datasourceName === undefined) { return true; }
+    return this.props.datasources[datasourceName].isFetching;
   }
 
   handleControlChange = (controlSet, control, value) => {
@@ -103,12 +133,9 @@ class ExecutiveReporting extends React.Component {
   render() {
     return (
       <ReportingComponent
-        isFetching={
-          this.props.datasources[
-            getSelectedDataName(this.state.controlObject)
-          ].isFetching}
+        isFetching={this.isFetching()}
         report={buildReport(this.props.datasources, this.state.controlObject)}
-        controls={this.state.controlObject.controls}
+        controls={this.getFiltereredControls()}
         handleControlChange={this.handleControlChange}
       />
     );
