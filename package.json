@@ -4,9 +4,8 @@
   "description": "Triad Care Portal",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_ENV=production webpack --progress --profile --colors",
-    "start": "NODE_ENV=development webpack-dev-server --inline --hot --progress --profile --colors"
+    "prod": "NODE_ENV=production webpack -p",
+    "dev": "webpack-dev-server --progress --profile --colors"
   },
   "eslintConfig": {
     "env": {
@@ -31,8 +30,6 @@
     "@blueprintjs/datetime": "^1.1.0",
     "@blueprintjs/table": "^1.9.0",
     "bootstrap": "^3.3.6",
-    "chart.js": "^2.2.0-rc.1",
-    "chartist": "^0.10.1",
     "common-tags": "^1.4.0",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
@@ -41,7 +38,6 @@
     "react": "^15.2.1",
     "react-addons-css-transition-group": "^15.4.1",
     "react-bootstrap": "^0.30.8",
-    "react-chartist": "^0.12.0",
     "react-csv": "^1.0.5",
     "react-dom": "^15.2.1",
     "react-redux": "^5.0.2",
