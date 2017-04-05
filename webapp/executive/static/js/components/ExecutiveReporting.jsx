@@ -46,11 +46,19 @@ class ExecutiveReporting extends React.Component {
   constructor(props) {
     super(props);
 
-    if (props.selectedConfig) {
-      console.log(props.selectedConfig.title);
-    }
+    const selectedReport = props.selectedConfig.selectedControls !== undefined ?
+    {
+      ...savedReport,
+      ...{
+        selectedControls: Object.entries(
+          props.selectedConfig.selectedControls,
+        ).reduce((acc, [k, v]) => ({ ...acc, ...{ [k]: v.selectedValue } }), {}),
+      },
+    } :
+    savedReport;
 
-    const controlObject = initControls(reportControls, savedReport);
+
+    const controlObject = initControls(reportControls, selectedReport);
 
     this.state = {
       isFetching: props.datasources[

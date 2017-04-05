@@ -62,7 +62,7 @@
         "options": []
       }
     },
-    "Biometrics": {
+    "Biometric": {
       "account": {
         "label": "Account",
         "type": "datafilter",

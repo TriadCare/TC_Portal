@@ -18,7 +18,7 @@ const getLoadingComponent = () => (
 const renderChart = chartConfig => (
   /* Pie Chart */
   (chartConfig.pie !== undefined ?
-    <VictoryPie {...chartConfig.pie} /> :
+    <VictoryPie theme={VictoryTheme.material} {...chartConfig.pie} /> :
     <VictoryChart theme={VictoryTheme.material} {...chartConfig.chart}>
       { /* Axes  */}
       { chartConfig.independentAxis !== undefined &&
