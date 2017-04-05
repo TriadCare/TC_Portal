@@ -19,6 +19,15 @@ const PATHS = {
   dist: path.join(__dirname, 'bundle'),
 };
 
+
+const isProd = process.env.NODE_ENV === 'production';
+const cssProd = ExtractTextPlugin.extract({
+  fallback: 'style-loader',
+  use: [{ loader: 'css-loader' }, { loader: 'resolve-url-loader' }],
+});
+const cssDev = ['style-loader', 'css-loader', 'resolve-url-loader'];
+const cssConfig = isProd ? cssProd : cssDev;
+
 module.exports = {
   entry: {
     // admin: 'admin/static/src/admin.js',
@@ -42,6 +51,12 @@ module.exports = {
     extensions: ['.js', '.jsx', '.json', '.css'],
   },
   devtool: 'source-map',
+  devServer: {
+    contentBase: PATHS.dist,
+    compress: true,
+    hot: true,
+    stats: 'errors-only',
+  },
   module: {
     rules: [
       {
@@ -60,13 +75,10 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [{ loader: 'css-loader' }, { loader: 'resolve-url-loader' }],
-        }),
+        use: cssConfig,
       },
       {
-        test: /\.(jpe?g|png|gif([?]?.*))$/i,
+        test: /\.(jpe?g|png|svg|gif([?]?.*))$/i,
         use: [
           {
             loader: 'file-loader',
@@ -78,6 +90,10 @@ module.exports = {
           {
             loader: 'image-webpack-loader',
             query: {
+              pngquant: {
+                quality: '65-90',
+                speed: 4,
+              },
               optipng: { optimizationLevel: 7 },
               gifsicle: { interlaced: false },
             },
@@ -104,14 +120,6 @@ module.exports = {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file-loader',
       },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader',
-        query: {
-          limit: 10000,
-          mimetype: 'image/svg+xml',
-        },
-      },
     ],
   },
   plugins: [
@@ -123,27 +131,17 @@ module.exports = {
         },
       },
     }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-    }),
     new ManifestRevisionPlugin(path.join('bundle', 'webpack_manifest.json'), {
       rootAssetPath,
       ignorePaths: ['/js', '/css', '/fonts'],
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false,
-      },
-      output: {
-        comments: false,
-      },
-    }),
     new ExtractTextPlugin({
       filename: '[name].[chunkhash].css',
       allChunks: true,
-      disable: false,
+      disable: !isProd,
     }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       filename: 'common.js',
       name: 'common',
