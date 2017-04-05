@@ -3,6 +3,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
+  align-content: flex-start;
 }
 
 .dashletContainer {
@@ -15,26 +16,16 @@
 }
 
 .dashletContainer__medium {
-  width: calc(33.3% - 20px);
+  flex: 1;
   max-height: 300px;
+  max-width: 300px;
+  min-height: 250px;
+  min-width: 250px;
 }
 
 .dashletContainer__small {
   width: calc(33.3% - 20px);
   max-height: 150px;
-}
-
-@media (max-width: 600px) {
-  .dashletContainer__medium,
-  .dashletContainer__small {
-    width: calc(50% - 20px);
-  }
-}
-@media (max-width: 450px) {
-  .dashletContainer__medium,
-  .dashletContainer__small {
-    width: 100%;
-  }
 }
 
 .dashlet__card {
@@ -43,6 +34,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
 .dashlet__card-header {

@@ -345,7 +345,9 @@ export function buildReport(datasources, controlObject) {
       padAngle: 1,
       innerRadius: 1,
       cornerRadius: 5,
-      style: { fontFamily: 'inherit' },
+      style: { labels:
+        { fill: '#1f292d', fontSize: 22, fontFamily: 'inherit', fontWeight: 'normal' },
+      },
       animate: { duration: 1000 },
     };
   } else {
