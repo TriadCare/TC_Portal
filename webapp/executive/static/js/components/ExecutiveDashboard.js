@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { dashboardComponent as Dashboard } from 'components/Dashboard';
+import Dashboard from 'components/Dashboard';
 
 import { buildReport } from '../ExecutiveDataTransform';
 import { showReport } from '../ExecutiveActions';

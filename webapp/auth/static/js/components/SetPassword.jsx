@@ -1,10 +1,7 @@
 import React from 'react';
 import { Dialog } from '@blueprintjs/core';
 
-import {
-  validation, validatePassword,
-  submitSetPassword,
-} from '../util.js';
+import { validation, validatePassword, submitSetPassword } from '../util';
 
 import { jwtIsExpired } from 'js/utilREST';
 
@@ -14,7 +11,7 @@ const checkToken = (token) => {
     results = [
       'Missing Token!',
       (<div>
-        <p>Looks like you're missing your identification token!</p>
+        <p>{"Looks like you're missing your identification token!"}</p>
         <p>Head over <a href="/forgot">here to get a Reset Password link.</a></p>
       </div>),
       true,
@@ -24,8 +21,7 @@ const checkToken = (token) => {
       'Expired Token!',
       (<div>
         <p>
-          Looks like it's been too long since we
-          sent you the Password Reset Email.
+          {"Looks like it's been too long since we sent you the Password Reset Email."}
         </p>
         <p>
           Head over <a href="/forgot">here to request a new one.</a>
@@ -62,7 +58,7 @@ class setPassword extends React.Component {
     showDialog: true,
     dialogIcon: 'thumbs-up',
     dialogTitle: 'You\'re all set!',
-    dialogMessage: <p>Let's get you <a href="/login">logged in!</a></p>,
+    dialogMessage: <p>{"Let's get you "}<a href="/login">logged in!</a></p>,
   })
 
   submitFailure = (error) => {
@@ -144,7 +140,7 @@ class setPassword extends React.Component {
               </div> : ''
             }
             <div className="pt-input-group">
-              <span className={'pt-icon pt-icon-lock'}></span>
+              <span className={'pt-icon pt-icon-lock'} />
               <input
                 className={`pt-input
                   ${this.state.formSubmitted &&
@@ -160,15 +156,19 @@ class setPassword extends React.Component {
                 value={this.state.password}
               />
               {
-                <span
+                <button
                   className={
                     `pt-icon pt-icon-${this.state.showPassword ?
                       'eye-off' : 'eye-open'}
                       ${(this.state.formSubmitted &&
-                        this.state.errorMessage !== '') ? ' fieldError' : ''}`
+                        this.state.errorMessage !== '') ? ' fieldError' : ''}
+                      password-view`
                   }
-                  onClick={this.togglePasswordVisibility}
-                ></span>}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.togglePasswordVisibility();
+                  }}
+                />}
             </div>
           </label>
           <button
@@ -204,7 +204,7 @@ class setPassword extends React.Component {
 }
 
 setPassword.propTypes = {
-  location: React.PropTypes.object.isRequired,
+  location: React.PropTypes.shape().isRequired,
 };
 
-export const SetPassword = setPassword;
+export default setPassword;

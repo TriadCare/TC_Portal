@@ -118,7 +118,6 @@ class ReportTable extends React.Component {
       <CopyCellsMenuItem
         context={context}
         getCellData={this.getCellValue}
-        onCopy={b => console.log(b)}
         text="Copy"
       />
     </Menu>

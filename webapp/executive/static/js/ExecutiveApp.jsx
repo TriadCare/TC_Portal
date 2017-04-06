@@ -8,7 +8,7 @@ import SpaceContainer from 'components/SpaceContainer';
 
 import ExecutiveDashboard from './components/ExecutiveDashboard';
 import ExecutiveReporting from './components/ExecutiveReporting';
-import { profileComponent } from 'components/Profile';
+import ProfileComponent from 'components/Profile';
 
 import {
   ReduxStore as ExecutiveReduxStore,
@@ -24,7 +24,7 @@ ReactDOM.render(
         <Route component={SpaceContainer}>
           <Route path="dashboard" component={ExecutiveDashboard} />
           <Route path="reporting" component={ExecutiveReporting} />
-          <Route path="profile" component={profileComponent} />
+          <Route path="profile" component={ProfileComponent} />
         </Route>
       </Route>
     </Router>

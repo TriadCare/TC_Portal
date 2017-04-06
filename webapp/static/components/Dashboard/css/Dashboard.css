@@ -35,6 +35,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  border: none;
 }
 
 .dashlet__card-header {

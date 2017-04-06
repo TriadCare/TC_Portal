@@ -13,7 +13,7 @@ const fields = [
     validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'Your ID is required.'),
+      (value ? '' : 'Your ID is required.'),
     ],
   },
   {
@@ -24,7 +24,7 @@ const fields = [
     ],
     type: 'radio_group',
     validationFunction: value => [  // auto-selects tcid
-      !!value ? value : 'triadcare_id',
+      value || 'triadcare_id',
       true,
       '',
     ],
@@ -36,7 +36,7 @@ const fields = [
     validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'Your first name is required.'),
+      (value ? '' : 'Your first name is required.'),
     ],
   },
   {
@@ -46,7 +46,7 @@ const fields = [
     validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'Your last name is required.'),
+      (value ? '' : 'Your last name is required.'),
     ],
   },
   {
@@ -76,7 +76,7 @@ const fields = [
       [
         (value ? moment(value).format('YYYY-MM-DD') : ''),
         !!value,
-        (!!value ? '' : 'Your date of birth is required.'),
+        (value ? '' : 'Your date of birth is required.'),
       ],
   },
   {
@@ -451,7 +451,7 @@ class registerPage extends React.Component {
             className="dialog-auth"
           >
             <div className="pt-dialog-body">
-              Welcome aboard! Let's get you <a href="/login">logged in.</a>
+              {"Welcome aboard! Let's get you "}<a href="/login">logged in.</a>
             </div>
           </Dialog>
         </div>
@@ -461,4 +461,4 @@ class registerPage extends React.Component {
 
 }
 
-export const Register = registerPage;
+export default registerPage;

@@ -3,7 +3,7 @@ import { Field, reduxForm } from 'redux-form';
 // import { Button, Intent } from '@blueprintjs/core';
 
 // Decorate the form component
-const loginForm = (props) => (
+const loginForm = props => (
   <form onSubmit={props.handleSubmit}>
     <div>
       <label
@@ -17,7 +17,7 @@ const loginForm = (props) => (
           </div> : ''
         }
         <div className="pt-input-group">
-          <span className="pt-icon pt-icon-envelope"></span>
+          <span className="pt-icon pt-icon-envelope" />
           <Field
             name="email"
             component="input"
@@ -43,7 +43,7 @@ const loginForm = (props) => (
           </div> : ''
         }
         <div className="pt-input-group">
-          <span className="pt-icon pt-icon-lock"></span>
+          <span className="pt-icon pt-icon-lock" />
           <Field
             name="password"
             component="input"
@@ -61,11 +61,11 @@ const loginForm = (props) => (
             <path
               className="pt-spinner-track"
               d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"
-            ></path>
+            />
             <path
               className="pt-spinner-head"
               d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"
-            ></path>
+            />
           </svg>
         </div>
       </div> :
@@ -86,6 +86,14 @@ loginForm.propTypes = {
   submissionError: React.PropTypes.bool,
   emailError: React.PropTypes.string,
   pwError: React.PropTypes.string,
+};
+
+loginForm.defaultProps = {
+  userEmail: '',
+  isWaiting: false,
+  submissionError: false,
+  emailError: false,
+  pwError: false,
 };
 
 export default reduxForm({

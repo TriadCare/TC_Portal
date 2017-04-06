@@ -29,7 +29,7 @@ BaseLayout.propTypes = {
 };
 
 BaseLayout.defaultProps = {
-  navigationComponent: {},
+  navigationComponent: null,
   onLogin: () => {},
   onLogout: () => {},
   children: {},

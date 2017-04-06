@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import { setJWT } from 'js/utilREST';
-import { validation, validateEmail, loginUser } from '../util.js';
+import { validation, validateEmail, loginUser } from '../util';
 
 const fields = [
   {
@@ -58,7 +58,7 @@ class loginPage extends React.Component {
           errorMessage: '',
           type: d.type,
         },
-      }))
+      })),
     );
   }
 
@@ -69,7 +69,7 @@ class loginPage extends React.Component {
         showPassword: !this.state.password.showPassword,
         type: !this.state.password.showPassword ? 'text' : 'password',
       },
-    }
+    },
   );
 
   loginSuccess = (data) => {
@@ -143,9 +143,9 @@ class loginPage extends React.Component {
     });
 
     const valid = fields
-                  .map((field) => field.name)       // For each field
-                  .map((k) => this.state[k].valid)  // check if valid
-                  .every((test) => test);           // only pass if all are valid
+                  .map(field => field.name)       // For each field
+                  .map(k => this.state[k].valid)  // check if valid
+                  .every(test => test);           // only pass if all are valid
 
     if (valid) {
       loginUser({
@@ -156,7 +156,7 @@ class loginPage extends React.Component {
   }
 
   handleChange = (e) => {
-    const [isValid, message] = fields.filter((obj) => obj.name === e.target.name)[0]
+    const [isValid, message] = fields.filter(obj => obj.name === e.target.name)[0]
       .validationFunction(e.target.value);
     this.setState({
       [e.target.name]: {
@@ -171,20 +171,20 @@ class loginPage extends React.Component {
     });
   }
 
-  renderFieldError = (errorMessage) => (
+  renderFieldError = errorMessage => (
     <div className="fieldError">
       <span>{errorMessage}</span>
     </div>
   )
 
-  renderField = (fieldProps) => (
+  renderField = fieldProps => (
     <label htmlFor={fieldProps.name} key={fieldProps.name} className="form__label">
       {fieldProps.label}
       {(this.state.formSubmitted &&
         this.state[fieldProps.name].errorMessage !== ''
         && this.renderFieldError(this.state[fieldProps.name].errorMessage))}
       <div className="pt-input-group">
-        <span className={`pt-icon pt-icon-${fieldProps.icon}`}></span>
+        <span className={`pt-icon pt-icon-${fieldProps.icon}`} />
         <input
           className={`pt-input
             ${this.state.formSubmitted && this.state[fieldProps.name].fieldStatus !== undefined &&
@@ -199,20 +199,24 @@ class loginPage extends React.Component {
           value={this.state[fieldProps.name].value}
         />
         {(fieldProps.name === 'password') &&
-          (<span
+          (<button
             className={
               `pt-icon pt-icon-${this.state.password.showPassword ?
                 'eye-off' : 'eye-open'}
                 ${(this.state.formSubmitted &&
-                  this.state.password.errorMessage !== '') ? ' fieldError' : ''}`
+                  this.state.password.errorMessage !== '') ? ' fieldError' : ''}
+                password-view`
             }
-            onClick={this.togglePasswordVisibility}
-          ></span>)
+            onClick={(e) => {
+              e.preventDefault();
+              this.togglePasswordVisibility();
+            }}
+          />)
         }
         {(fieldProps.name !== 'password' &&
           this.state.formSubmitted &&
           this.state[fieldProps.name].errorMessage !== '' &&
-          <span className="pt-icon pt-icon-error fieldError"></span>)}
+          <span className="pt-icon pt-icon-error fieldError" />)}
       </div>
     </label>
   )
@@ -251,4 +255,4 @@ class loginPage extends React.Component {
 
 }
 
-export const Login = loginPage;
+export default loginPage;

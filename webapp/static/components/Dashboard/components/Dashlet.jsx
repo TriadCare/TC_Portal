@@ -4,7 +4,7 @@ import React from 'react';
 import DashChart from './DashChart';
 
 const renderCard = (config, handleClick) => (
-  <div
+  <button
     className={
       `pt-card pt-elevation-0
       ${config.dataType !== 'trend' ? 'pt-interactive' : ''}
@@ -33,7 +33,7 @@ const renderCard = (config, handleClick) => (
       isFetching={config.reportData === undefined || config.reportData.length === 0}
     />
 
-  </div>
+  </button>
 );
 
 const Dashlet = props => renderCard(props.config, props.handleClick);

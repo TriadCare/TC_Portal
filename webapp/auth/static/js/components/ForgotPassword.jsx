@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog } from '@blueprintjs/core';
 
-import { validation, validateEmail, submitForgotPassword } from '../util.js';
+import { validation, validateEmail, submitForgotPassword } from '../util';
 
 const TOKEN_EXPIRATION_SECONDS = 1800;
 
@@ -102,7 +102,7 @@ class forgotPassword extends React.Component {
               </div> : ''
             }
             <div className="pt-input-group">
-              <span className={'pt-icon pt-icon-envelope'}></span>
+              <span className={'pt-icon pt-icon-envelope'} />
               <input
                 className={`pt-input
                   ${this.state.formSubmitted &&
@@ -119,7 +119,7 @@ class forgotPassword extends React.Component {
               />
               {(this.state.formSubmitted &&
                 this.state.errorMessage !== '' &&
-                <span className="pt-icon pt-icon-error fieldError"></span>)}
+                <span className="pt-icon pt-icon-error fieldError" />)}
             </div>
           </label>
           <button
@@ -131,7 +131,7 @@ class forgotPassword extends React.Component {
         </form>
         <div className="form__footer">
           <p className="form__description">
-            We'll email you instructions for setting a new password.
+            {"We'll email you instructions for setting a new password."}
           </p>
         </div>
         <div>
@@ -157,4 +157,4 @@ class forgotPassword extends React.Component {
 
 }
 
-export const ForgotPassword = forgotPassword;
+export default forgotPassword;

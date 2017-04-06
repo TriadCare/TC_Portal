@@ -10,14 +10,14 @@ export const validation = {
 
 export const validateEmail = (email) => {
   /* eslint-disable max-len */
-  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   /* eslint-enable */
   return re.test(email);
 };
 
 export const validatePassword = (pw) => {
   /* eslint-disable max-len */
-  const re = new RegExp(/^(?=.{8,128})(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+\\|{}\[\];:'"<>,.?/]).*$/);
+  const re = new RegExp(/^(?=.{8,128})(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+\\|{}[\];:'"<>,.?/]).*$/);
   /* eslint-enable */
   return re.test(pw);
 };
@@ -27,7 +27,7 @@ export const loginUser = (userData, successCallback, errorCallback, failureCallb
   const request = new Request(
     '/token/', {
       method: 'POST',
-    }
+    },
   );
 
   submitRequest(
@@ -35,7 +35,7 @@ export const loginUser = (userData, successCallback, errorCallback, failureCallb
     `${userData.email}:${userData.password}`,
     successCallback,
     errorCallback,
-    failureCallback
+    failureCallback,
   );
 };
 
@@ -50,7 +50,7 @@ export const registerNewUser = (userData, successCallback, errorCallback, failur
     undefined,
     successCallback,
     errorCallback,
-    failureCallback
+    failureCallback,
   );
 };
 
@@ -65,7 +65,7 @@ export const submitForgotPassword = (email, successCallback, errorCallback, fail
     undefined,
     successCallback,
     errorCallback,
-    failureCallback
+    failureCallback,
   );
 };
 
@@ -82,7 +82,7 @@ export const submitSetPassword = (pw, token, successCallback, errorCallback, fai
     token,
     successCallback,
     errorCallback,
-    failureCallback
+    failureCallback,
   );
 };
 
@@ -97,6 +97,6 @@ export const submitHelpRequest = (helpData, successCallback, errorCallback, fail
     undefined,
     successCallback,
     errorCallback,
-    failureCallback
+    failureCallback,
   );
 };

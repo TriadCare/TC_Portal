@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-const AuthBase = (props) => (
+const AuthBase = props => (
   <div>
 
     <nav className="pt-navbar pt-fixed-top" role="menubar">
       <div className="pt-navbar-group pt-align-left">
-        <div className="titleBar__logo"></div>
+        <div className="titleBar__logo" />
       </div>
       <div className="pt-navbar-group pt-align-right">
         <Link
@@ -25,7 +25,7 @@ const AuthBase = (props) => (
         >
           Register
         </Link>
-        <span className="pt-navbar-divider nav-divider"></span>
+        <span className="pt-navbar-divider nav-divider" />
         <Link
           to="/help"
           role="menuitem"
@@ -43,7 +43,9 @@ const AuthBase = (props) => (
 );
 
 AuthBase.propTypes = {
-  children: React.PropTypes.object,
+  children: React.PropTypes.shape(),
 };
+
+AuthBase.defaultProps = { children: null };
 
 export default AuthBase;
