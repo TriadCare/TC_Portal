@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 require('./css/Profile');
 
 const Profile = () => (
-  <div className="spaceComponent profileComponent"></div>
+  <div className="spaceComponent profileComponent" />
 );
 
-const mapStateToProps = (store) => ({
+const mapStateToProps = store => ({
   config: store.appState.profileConfiguration,
 });
 

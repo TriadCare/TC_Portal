@@ -2,7 +2,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 
 import { jwtPayload } from 'js/utilREST';
-import { dashboardComponent as Dashboard } from 'components/Dashboard';
+import Dashboard from 'components/Dashboard';
 
 import { refreshData, viewData } from '../PatientActions';
 import dashboardConfiguration from '../default_card_config.json'; // user pref doc
@@ -35,19 +35,27 @@ const buildDashboardCards = (state) => {
             ...state.datasources[card.datasource].items
               .sort(sortOptions[card.datasource])
               .map(
-                item => populateCard(
-                    { ...card, ...{ data: [item.meta[card.dataKey]] } },
-                    state.datasources[card.datasource].items,
-                    sortOptions[card.datasource],
-                  ),
+                (item, index) => populateCard(
+                  {
+                    ...card,
+                    ...{ id: `${card.id}_${index}` },
+                    ...{ data: [item.meta[card.dataKey]] },
+                  },
+                  state.datasources[card.datasource].items,
+                  sortOptions[card.datasource],
+                ),
               ),
           );
           return;
         }
         // if data IDs are specified, only use those.
-        dashlets.push(...card.data.map(data =>
+        dashlets.push(...card.data.map((data, index) =>
           populateCard(
-            { ...card, ...{ data: [data] } },
+            {
+              ...card,
+              ...{ id: `card.id_${index}` },
+              ...{ data: [data] },
+            },
             state.datasources[card.datasource].items
               .sort(sortOptions[card.datasource]),
             sortOptions[card.datasource],
@@ -76,6 +84,7 @@ const buildDashboardCards = (state) => {
         )
       , true)) {
         dashlets.splice(1, 0, {
+          id: 0,
           cardSize: 'medium',
           datasource: 'HRA',
           title: 'New HRA',

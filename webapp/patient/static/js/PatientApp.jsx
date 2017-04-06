@@ -13,7 +13,7 @@ import {
 
 import PatientDashboard from './components/PatientDashboard';
 import PatientHRASurvey from './components/PatientHRASurvey';
-import { profileComponent } from 'components/Profile';
+import ProfileComponent from 'components/Profile';
 
 ReactDOM.render(
   <Provider store={PatientReduxStore}>
@@ -23,7 +23,7 @@ ReactDOM.render(
         <Route component={SpaceContainer}>
           <Route path="dashboard" component={PatientDashboard} />
           <Route path="hra" component={PatientHRASurvey} />
-          <Route path="profile" component={profileComponent} />
+          <Route path="profile" component={ProfileComponent} />
         </Route>
       </Route>
     </Router>

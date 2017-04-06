@@ -62,7 +62,7 @@ TitleBar.propTypes = {
 
 TitleBar.defaultProps = {
   titleBarText: '',
-  navigationComponent: undefined,
+  navigationComponent: null,
 };
 
 const mapStateToProps = store => ({

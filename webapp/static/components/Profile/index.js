@@ -1,3 +1,3 @@
 import Profile from './Profile';
 
-export const profileComponent = Profile;
+export default Profile;

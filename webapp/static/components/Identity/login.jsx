@@ -9,10 +9,10 @@ import LoginForm from './forms/login';
 const loginSubmit = (values, dispatch, onLogin) => fetchJWT(
   values.email,
   values.password,
-  onLogin
+  onLogin,
 )(dispatch);
 
-const LoginComponent = (props) => (
+const LoginComponent = props => (
   <div>
     <Dialog
       iconName="user"
@@ -40,7 +40,7 @@ const LoginComponent = (props) => (
 );
 
 LoginComponent.propTypes = {
-  user: React.PropTypes.object,
+  user: React.PropTypes.shape(),
   isOpen: React.PropTypes.bool.isRequired,
   isWaiting: React.PropTypes.bool.isRequired,
   submissionError: React.PropTypes.bool.isRequired,
@@ -49,7 +49,9 @@ LoginComponent.propTypes = {
   onLogin: React.PropTypes.func,
 };
 
-const mapStateToProps = (reduxStore) => ({
+LoginComponent.defaultProps = { user: undefined, onLogin: () => {} };
+
+const mapStateToProps = reduxStore => ({
   userEmail: reduxStore.identity.user ? reduxStore.identity.user.email : undefined,
   isOpen: reduxStore.identity.needAuth,
   isWaiting: reduxStore.identity.requestedAuth,

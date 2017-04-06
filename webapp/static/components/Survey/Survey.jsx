@@ -273,6 +273,7 @@ const renderQuestion = (questionNumber, configQuestion,
             </tbody></table>
             {configQuestion.rows.filter(row => row.type === 'GRID_TEXT').map((q, idx) =>
               <label
+                htmlFor={q.qid}
                 key={idx}
                 className={`pt-label specify-label ${completed ? 'pt-disabled' : ''}`}
               >
@@ -280,6 +281,7 @@ const renderQuestion = (questionNumber, configQuestion,
                 <input
                   ref={`qid_${q.qid}`}
                   name={q.qid}
+                  id={q.qid}
                   value={(responseQuestion[q.qid] || '')}
                   disabled={completed ? 'disabled' : ''}
                   className="pt-input"

@@ -4,11 +4,11 @@ import { Router, Route, IndexRedirect, browserHistory } from 'react-router';
 
 import AuthBase from './components/AuthBase';
 
-import { Login } from './components/Login';
-import { Register } from './components/Register';
-import { ForgotPassword } from './components/ForgotPassword';
-import { SetPassword } from './components/SetPassword';
-import { GetHelp } from './components/GetHelp';
+import Login from './components/Login';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import SetPassword from './components/SetPassword';
+import GetHelp from './components/GetHelp';
 
 
 ReactDOM.render(
@@ -22,5 +22,5 @@ ReactDOM.render(
       <Route path="help" component={GetHelp} />
     </Route>
   </Router>,
-  document.getElementById('app')
+  document.getElementById('app'),
 );

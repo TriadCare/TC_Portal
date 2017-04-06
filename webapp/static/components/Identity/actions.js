@@ -127,7 +127,7 @@ export function updateJWT() {
       jwt,
       json => dispatch(receiveJWT(json)),
       json => dispatch(receiveJWT(json)),
-      json => dispatch(receiveJWT(json))
+      json => dispatch(receiveJWT(json)),
     );
   };
 }
@@ -139,14 +139,14 @@ export function fetchJWT(email, password, onLogin) {
     submitRequest(
       request,
       `${email}:${password}`,
-      json => {
+      (json) => {
         dispatch(receiveJWT(json));
         if (typeof onLogin === 'function') {
           dispatch(onLogin());
         }
       },
       json => dispatch(receiveJWT(json)),
-      json => dispatch(receiveJWT(json))
+      json => dispatch(receiveJWT(json)),
     );
   };
 }
@@ -178,7 +178,7 @@ export function fetchData(dataName, request, force = false) {
         jwt,
         json => dispatch(receiveData(dataName, json)),
         json => dispatch(requestError(dataName, json)),
-        () => dispatch(requestFailure(dataName))
+        () => dispatch(requestFailure(dataName)),
       );
     }
     return Promise.resolve();
@@ -195,14 +195,14 @@ export function submitData(dataName, request, onSuccess) {
     submitRequest(
       request,
       jwt,
-      json => {
+      (json) => {
         dispatch(postResult(dataName, json));
         if (typeof onSuccess === 'function') {
           dispatch(onSuccess());
         }
       },
       json => dispatch(postError(dataName, json)),
-      () => dispatch(postFailure(dataName))
+      () => dispatch(postFailure(dataName)),
     );
     return Promise.resolve();
   };

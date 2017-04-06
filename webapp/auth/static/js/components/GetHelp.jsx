@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Position, Dialog } from '@blueprintjs/core';
 import { DateInput } from '@blueprintjs/datetime';
 
-import { validation, validateEmail, submitHelpRequest } from '../util.js';
+import { validation, validateEmail, submitHelpRequest } from '../util';
 
 
 const fields = [
@@ -11,10 +11,10 @@ const fields = [
     name: 'full_name',
     label: 'Full Name',
     type: 'text',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'Your Name is required.'),
+      (value ? '' : 'Your Name is required.'),
     ],
   },
   {
@@ -40,41 +40,41 @@ const fields = [
     name: 'phone',
     label: 'Phone',
     type: 'text',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'Your Phone Number is required.'),
+      (value ? '' : 'Your Phone Number is required.'),
     ],
   },
   {
     name: 'dob',
     label: 'Date of Birth',
     type: 'date',
-    validationFunction: (value) =>
+    validationFunction: value =>
       [
         (value ? moment(value).format('YYYY-MM-DD') : ''),
         !!value,
-        (!!value ? '' : 'Your Date of Birth is required.'),
+        (value ? '' : 'Your Date of Birth is required.'),
       ],
   },
   {
     name: 'employer',
     label: 'Employer',
     type: 'text',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'The Name of your Employer is required.'),
+      (value ? '' : 'The Name of your Employer is required.'),
     ],
   },
   {
     name: 'comment',
     label: 'Comment',
     type: 'textarea',
-    validationFunction: (value) => [
+    validationFunction: value => [
       value,
       !!value,
-      (!!value ? '' : 'A description is required.'),
+      (value ? '' : 'A description is required.'),
     ],
   },
 ];
@@ -97,7 +97,7 @@ class helpForm extends React.Component {
       })));
   }
 
-  onDateError = (date) => (
+  onDateError = date => (
     date || moment().format('YYYY-MM-DD')
   )
 
@@ -163,7 +163,7 @@ class helpForm extends React.Component {
         submitHelpRequest(Object.assign({},
           ...fields.map(field => ({
             [field.name]: this.state[field.name].value,
-          }))
+          })),
         ), this.submissionSuccess, this.submissionFailure);
       }
     });
@@ -204,7 +204,7 @@ class helpForm extends React.Component {
     });
   }
 
-  renderFieldError = (errorMessage) => (
+  renderFieldError = errorMessage => (
     <div className="fieldError">
       <span>{errorMessage}</span>
     </div>
@@ -254,7 +254,7 @@ class helpForm extends React.Component {
               this.state[fieldProps.name].errorMessage !== ''
               && this.renderFieldError(this.state[fieldProps.name].errorMessage))}
             <div className="pt-input-group">
-              {(fieldProps.icon && <span className={`pt-icon pt-icon-${fieldProps.icon}`}></span>)}
+              {(fieldProps.icon && <span className={`pt-icon pt-icon-${fieldProps.icon}`} />)}
               <textarea
                 className={
                   `pt-input pt-fill
@@ -282,7 +282,7 @@ class helpForm extends React.Component {
               this.state[fieldProps.name].errorMessage !== ''
               && this.renderFieldError(this.state[fieldProps.name].errorMessage))}
             <div className="pt-input-group">
-              {(fieldProps.icon && <span className={`pt-icon pt-icon-${fieldProps.icon}`}></span>)}
+              {(fieldProps.icon && <span className={`pt-icon pt-icon-${fieldProps.icon}`} />)}
               <input
                 className={
                   `pt-input
@@ -299,9 +299,9 @@ class helpForm extends React.Component {
               />
               {(this.state.formSubmitted &&
                 this.state[fieldProps.name].errorMessage !== '' &&
-                <span className="pt-icon pt-icon-error fieldError"></span>)}
+                <span className="pt-icon pt-icon-error fieldError" />)}
               {(this.state[fieldProps.name].fieldStatus === validation.SUCCESS &&
-                <span className="pt-icon pt-icon-tick fieldSuccess"></span>)}
+                <span className="pt-icon pt-icon-tick fieldSuccess" />)}
             </div>
           </label>
         );
@@ -332,8 +332,9 @@ class helpForm extends React.Component {
             <div className="pt-dialog-body">
               <p>Your Help Request has successfully been submitted.</p>
               <p>Check your email for a request ticket.</p>
-              <p>If you don't get one after a while, you might want to give
-              us a call. (866) 885-7931</p>
+              <p>
+                {"If you don't get one after a while, you might want to give us a call. (866) 885-7931"}
+              </p>
               <p><a href="/login">Go back to Log In.</a></p>
             </div>
           </Dialog>
@@ -344,4 +345,4 @@ class helpForm extends React.Component {
 
 }
 
-export const GetHelp = helpForm;
+export default helpForm;

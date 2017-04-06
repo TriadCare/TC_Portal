@@ -103,3 +103,9 @@ body {
   color: #db3737; /*$pt-intent-danger;*/
   float: right;
 }
+
+.password-view {
+  padding: 0;
+  background: none;
+  border: none;
+}
