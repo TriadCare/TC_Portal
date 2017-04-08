@@ -3,6 +3,7 @@ import moment from 'moment';
 import Chartist from 'chartist';
 import ChartistGraph from 'react-chartist';
 
+
 const scrollTo = (element, to, duration) => {
   if (duration <= 0) return;
   const difference = to - element.scrollTop;
@@ -22,11 +23,11 @@ const pie = (chartType, data, classNames) => (
       series: [
         {
           value: data[0].score.Overall,
-          className: 'chart-series-a chart__donut-overall',
+          className: 'chart-series-a chart__donut chart__donut-overall',
         },
         {
           value: (4 - data[0].score.Overall),
-          className: 'chart-series-b chart__donut-remainder',
+          className: 'chart-series-b chart__donut chart__donut-remainder',
         },
       ],
     }}

@@ -8,7 +8,7 @@ import {
 
 const getLoadingComponent = () => (
   <NonIdealState
-    title="Processing Data"
+    title="Loading Data"
     description={'Shouldn\'t take much longer...'}
     action={<Spinner />}
   />

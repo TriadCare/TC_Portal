@@ -230,18 +230,18 @@ class ReportContainer extends React.Component {
           chartConfig={this.state.report}
           isFetching={
             this.props.isFetching ||
-            this.state.report.reportData === undefined ||
-            this.state.report.reportData.length === 0
+            this.state.report.data === undefined ||
+            this.state.report.data.length === 0
           }
         />
         <ReportTable
           isFetching={this.props.isFetching}
-          data={this.state.report.reportData || []}
+          data={this.state.report.data || []}
           columnDef={this.state.report.columnDef || []}
         />
         {this.state.shouldRenderCSVDownload &&
           <DownloadCSV
-            data={this.state.report.reportData}
+            data={this.state.report.data}
             callback={() => this.setState({ shouldRenderCSVDownload: false })}
           />
         }
