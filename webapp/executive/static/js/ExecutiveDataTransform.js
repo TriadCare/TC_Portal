@@ -389,7 +389,7 @@ export function buildReport(datasources, controlObject) {
     };
   }
 
-  reportConfig.reportData = data.reportData;
+  reportConfig.data = (data.reportData || []);
   reportConfig.columnDef = data.columnDef;
   return reportConfig;
 }

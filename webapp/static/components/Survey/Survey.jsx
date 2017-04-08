@@ -68,416 +68,6 @@ const scrollTo = (element, to, duration) => {
   }, 10);
 };
 
-// const convertToPDF = (htmlData, filename, callback) => {
-//   const xhr = new XMLHttpRequest();
-//   xhr.onload = (e) => {
-//     const arraybuffer = xhr.response; // not responseText
-//
-//     const blob = new Blob([arraybuffer], { type: 'application/pdf' });
-//     const url = window.URL.createObjectURL(blob);
-//
-//     const a = document.createElement('a');
-//     document.body.appendChild(a);
-//     a.style = 'display: none';
-//     a.class = 'blobLink';
-//     a.href = url;
-//     a.download = filename;
-//     a.click();
-//     window.URL.revokeObjectURL(url);
-//
-//     document.body.removeChild(a);
-//
-//     callback(e);
-//   };
-//
-//   xhr.open('POST', '/pdf/');
-//   xhr.responseType = 'arraybuffer';
-//   xhr.send(JSON.stringify(htmlData));
-// };
-//
-// const requestPDF = () => {
-//   const data = { html: document.documentElement.innerHTML };
-//   const filename = 'hra.pdf';
-//   convertToPDF(data, filename, () => console.log('all done.'));
-// };
-
-const renderQuestion = (questionNumber, configQuestion,
-  responseQuestion, activeQuestion, error, completed, handleAnswer) => {
-  switch (configQuestion.type) {
-    case 'INTEGER':
-      return (
-        <div
-          key={questionNumber}
-          ref={(c) => { this[`qid_${configQuestion.qid}`] = c; }}
-          className={'panel panel-default response__question'}
-        >
-          <div className="panel-heading response__question-label">
-            {configQuestion.text}
-          </div>
-          <div className="panel-body response__question-answer">
-            <input
-              type="number"
-              name={configQuestion.qid}
-              value={(responseQuestion.aid || '')}
-              onChange={e => handleAnswer(configQuestion.qid, e.target.value)}
-              disabled={completed ? 'disabled' : ''}
-              autoFocus={configQuestion.qid === activeQuestion}
-            />
-          </div>
-          {(completed && configQuestion.blurb) ?
-            <div className="panel-footer response_question-blurb">
-              {configQuestion.blurb}
-            </div> :
-            ''
-          }
-        </div>
-      );
-    case 'MULTIPLE_CHOICE':
-      return (
-        <div
-          key={questionNumber}
-          ref={(c) => { this[`qid_${configQuestion.qid}`] = c; }}
-          className={oneLineTrim`panel panel-default response__question ${
-              configQuestion.qid === activeQuestion ? `${/* 'question-active'*/''}` : ''
-            }`
-          }
-        >
-          <div className="panel-heading response__question-label">
-            {configQuestion.text}
-          </div>
-          <div className="panel-body response__question-answers">
-            {configQuestion.answers.map(answer =>
-              <div key={answer.aid} className="response__question-answer">
-                <Radio
-                  className="response__question-answer-multichoice"
-                  name={configQuestion.qid}
-                  value={answer.aid}
-                  label={answer.text}
-                  checked={answer.aid === responseQuestion.aid}
-                  disabled={completed ? 'disabled' : ''}
-                  onChange={() => handleAnswer(configQuestion.qid, answer.aid)}
-                  autoFocus={configQuestion.qid === activeQuestion}
-                />
-              </div>,
-            )}
-          </div>
-          {(completed && configQuestion.blurb) ?
-            <div className="panel-footer response__question-blurb">
-              {configQuestion.blurb}
-            </div> :
-            ''
-          }
-        </div>
-      );
-    case 'GRID':
-      return (
-        <div key={questionNumber} className="panel panel-default response__question">
-          <div className="panel-heading response__question-label">
-            {configQuestion.text}
-          </div>
-          <div className="panel-body response__question-answers">
-            <table
-              className={
-                'table table-bordered table-striped table-hover response__question-grid'
-              }
-            ><tbody>
-              <tr>
-                <td />
-                {configQuestion.columns.map((column, key) =>
-                  <td
-                    key={key}
-                    className="grid__column-header"
-                  >{column}</td>,
-                )}
-              </tr>
-              {configQuestion.rows.map((row, key) =>
-                (row.type === 'GRID_TEXT' ? null :
-                <tr
-                  key={key}
-                  ref={(c) => { this[`qid_${row.qid}`] = c; }}
-                >
-                  <td className="grid__row-header">{row.text}</td>
-                  {configQuestion.columns.map((column, idx) => {
-                    switch (row.type) {
-                      case 'GRID_RADIO':
-                      case 'GRID_CHECKBOX':
-                        return (
-                          <td
-                            className="grid__cell"
-                            key={idx}
-                            onClick={(e) => {
-                              if (e.target.localName === 'span') {
-                                return;
-                              }
-                              const answer = row.type === 'GRID_CHECKBOX' ?
-                                reconcileCheckbox(responseQuestion[row.qid], (idx + 1).toString())
-                                : (idx + 1).toString();
-                              handleAnswer(row.qid, answer);
-                            }}
-                          >
-                            <div
-                              className={
-                                `pt-control ${
-                                  row.type === 'GRID_RADIO' ? 'pt-radio' : 'pt-checkbox'
-                                } grid__cell-answer`
-                              }
-                            >
-                              {(row.type === 'GRID_RADIO') ?
-                                <input
-                                  name={row.qid}
-                                  type="radio"
-                                  disabled={completed ? 'disabled' : ''}
-                                  checked={
-                                    (responseQuestion[row.qid] === (idx + 1).toString()) ?
-                                    'checked' : ''
-                                  }
-                                  onChange={() => {
-                                    handleAnswer(row.qid, (idx + 1).toString());
-                                  }}
-                                  autoFocus={(idx === 0 && row.qid === activeQuestion)}
-                                /> :
-                                <input
-                                  name={row.qid}
-                                  type="checkbox"
-                                  disabled={completed ? 'disabled' : ''}
-                                  checked={
-                                    (responseQuestion[row.qid] === (idx + 1).toString() ||
-                                    responseQuestion[row.qid] === '3') ? 'checked' : ''
-                                  }
-                                  onChange={() => {}}
-                                  autoFocus={(idx === 0 && row.qid === activeQuestion)}
-                                />
-                              }
-                              <span
-                                className="pt-control-indicator"
-                                onClick={() => {
-                                  const answer = row.type === 'GRID_CHECKBOX' ?
-                                    reconcileCheckbox(
-                                      responseQuestion[row.qid],
-                                      (idx + 1).toString(),
-                                    )
-                                    : (idx + 1).toString();
-                                  handleAnswer(row.qid, answer);
-                                }}
-                              />
-                            </div>
-                          </td>
-                        );
-                      default:
-                        return null;
-                    }
-                  })}
-                </tr>
-                ),
-              )}
-            </tbody></table>
-            {configQuestion.rows.filter(row => row.type === 'GRID_TEXT').map((q, idx) =>
-              <label
-                htmlFor={q.qid}
-                key={idx}
-                className={`pt-label specify-label ${completed ? 'pt-disabled' : ''}`}
-              >
-                {q.text}
-                <input
-                  ref={`qid_${q.qid}`}
-                  name={q.qid}
-                  id={q.qid}
-                  value={(responseQuestion[q.qid] || '')}
-                  disabled={completed ? 'disabled' : ''}
-                  className="pt-input"
-                  type="text"
-                  dir="auto"
-                  onChange={e => handleAnswer(q.qid, e.target.value)}
-                />
-              </label>,
-            )}
-          </div>
-          {(completed && configQuestion.blurb) ?
-            <div className="panel-footer response__question-blurb">
-              {configQuestion.blurb}
-            </div> :
-            ''
-          }
-        </div>
-      );
-    default:
-      return '';
-  }
-};
-
-const renderQuestionnaire = configObj => (
-  <div className="questionnaire">
-    {configObj.config.meta.sections.map((section, index) => (
-      <div
-        key={index}
-        id={`section_${section.id}`}
-        className={
-          oneLineTrim`section__container ${
-            (configObj.activeQuestion === undefined ||
-            section.qids.includes(configObj.activeQuestion)) ?
-            'section-active' : 'section-inactive'}`
-        }
-      >
-        <div className="response__section-label">
-          {!configObj.completed &&
-            <div className="section__label-item section__label-count">
-              {`Section ${section.id} out of ${configObj.config.meta.sections.length}`}
-            </div>
-          }
-          <div className="section__label-item section__label-text">
-            {`${section.label}${(section.graded && configObj.completed) ?
-              ` | Your Section GPA is ${configObj.score[section.group].toFixed(1)}` :
-              ''
-            }`}
-          </div>
-          {!configObj.completed &&
-            <div className="section__label-item section__button-container section__button-save">
-              <Button
-                onClick={() => configObj.handleSave(configObj.answers)}
-                text={`${configObj.isPosting ? 'Saving' : 'Save'}`}
-                className="pt-intent-primary section__button"
-                disabled={configObj.isPosting}
-              />
-            </div>
-          }
-        </div>
-        <div
-          ref={`section_${section.id}`}
-          id={`section_${section.id}`}
-          className="response__section"
-        >
-          {section.question_numbers.map((questionNumber) => {
-            const configQuestion = configObj.config.questions.find(
-              qObj => qObj.question_number === questionNumber,
-            );
-            const responseQuestion = (configQuestion.type === 'GRID') ?
-              configQuestion.rows.reduce(
-                (responseQs, row) => ({
-                  ...responseQs,
-                  ...{ [row.qid]: configObj.answers[row.qid] },
-                }), {},
-              ) :
-              { aid: configObj.answers[configQuestion.qid] };
-
-            return renderQuestion(
-              questionNumber,
-              configQuestion,
-              responseQuestion,
-              configObj.activeQuestion,
-              configObj.error,
-              configObj.completed,
-              configObj.handleAnswer,
-            );
-          })}
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-const renderViewer = (config, answers, response, tcScores) => (
-  <div className="response__viewer">
-    {/*
-      <div
-        className="pt-button pt-intent-primary button-print"
-        onClick={requestPDF}></div>Export PDF
-      </div>
-      */}
-    <span
-      id="top-link-block"
-      ref={(c) => { this.topBlock = c; }}
-      className="hidden well well-sm topBlock"
-      onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
-    >
-      <i className="glyphicon glyphicon-chevron-up" /> Back to Top
-    </span>
-    <div className="response__overall">
-      <div className="response__overall-date">
-        {moment(response.meta.DATE_CREATED).format('ddd MMM Do, YYYY')}
-      </div>
-      <div className="response__overall-label">
-        Your Overall Score is a {gradeLetter(pointToPercent(response.score.Overall))}
-      </div>
-      {renderChart('point', 'Pie', [response], 'ct-chart response__chart response__chart-donut')}
-    </div>
-    <div className="response__section-breakdown">
-      <div className="response__section-breakdown-label">Section Breakdown</div>
-      <div className="response__chart-bar-key">
-        <span className="key__item key__item-blue">Your Score</span>
-        <span className="key__item key__item-gray">Average Score</span>
-      </div>
-      {renderChart(
-        'point', 'Bar', [response, tcScores],
-        'ct-chart response__chart response__chart-bar',
-      )}
-    </div>
-    <div className="response__questionnaire-breakdown">
-      <div className="response__questionnaire-breakdown-label">Questionnaire Breakdown</div>
-      {renderQuestionnaire({
-        config,
-        answers,
-        score: response.score,
-        completed: (response.meta.completed === 1),
-      })}
-    </div>
-  </div>
-);
-
-const renderSurvey = (config, answers, activeQuestion,
-  error, errorMessage,
-  handleAnswer, handleSectionChange,
-  handleSave, handleSubmit, surveyCompleted, isPosting) => (
-    <div className="survey__viewer">
-      {renderQuestionnaire({
-        config,
-        answers,
-        activeQuestion,
-        error,
-        handleAnswer,
-        handleSave,
-        isPosting,
-      })}
-      <div className="questionnaire-footer">
-        <div className="section__button-container section__button-back">
-          <Button
-            onClick={() => handleSectionChange(-1)}
-            text="Back"
-            className="pt-intent-primary section__button"
-            disabled={config.meta.sections.find(s => s.qids.includes(activeQuestion)).id === 1}
-          />
-        </div>
-        {error &&
-          <div className="section__button-container section__label-error">
-            {errorMessage}
-          </div>
-        }
-        <div className="section__button-container section__button-next">
-          <Button
-            onClick={() => handleSectionChange(1)}
-            text={`${config.meta.sections.find(
-                    s => s.qids.includes(activeQuestion),
-                  ).id === config.meta.sections.length ? 'Submit' : 'Next'}`}
-            className={
-              `${
-                config.meta.sections.find(
-                  s => s.qids.includes(activeQuestion),
-                ).id === config.meta.sections.length ?
-                `pt-intent-${surveyCompleted ? 'success submit__button ' : 'primary'}` :
-                'pt-intent-primary'
-              }`
-            }
-            disabled={config.meta.sections.find(
-              s => s.qids.includes(activeQuestion),
-            ).id === config.meta.sections.length ?
-              isPosting :
-              false
-            }
-          />
-        </div>
-      </div>
-    </div>
-);
-
 const buildSurveyAnswers = (config, response, existingAnswers) => ({
   ...config.meta.sections.reduce((answers, section) => (
     {
@@ -575,6 +165,39 @@ const updateState = (props, surveyAnswers) => {
     activeQuestion,
   };
 };
+
+// const convertToPDF = (htmlData, filename, callback) => {
+//   const xhr = new XMLHttpRequest();
+//   xhr.onload = (e) => {
+//     const arraybuffer = xhr.response; // not responseText
+//
+//     const blob = new Blob([arraybuffer], { type: 'application/pdf' });
+//     const url = window.URL.createObjectURL(blob);
+//
+//     const a = document.createElement('a');
+//     document.body.appendChild(a);
+//     a.style = 'display: none';
+//     a.class = 'blobLink';
+//     a.href = url;
+//     a.download = filename;
+//     a.click();
+//     window.URL.revokeObjectURL(url);
+//
+//     document.body.removeChild(a);
+//
+//     callback(e);
+//   };
+//
+//   xhr.open('POST', '/pdf/');
+//   xhr.responseType = 'arraybuffer';
+//   xhr.send(JSON.stringify(htmlData));
+// };
+//
+// const requestPDF = () => {
+//   const data = { html: document.documentElement.innerHTML };
+//   const filename = 'hra.pdf';
+//   convertToPDF(data, filename, () => console.log('all done.'));
+// };
 
 class Survey extends React.Component {
   constructor(props) {
@@ -724,6 +347,382 @@ class Survey extends React.Component {
     return (incomplete === undefined);
   }
 
+  renderQuestion = (questionNumber, configQuestion,
+    responseQuestion, activeQuestion, error, completed, handleAnswer) => {
+    switch (configQuestion.type) {
+      case 'INTEGER':
+        return (
+          <div
+            key={questionNumber}
+            ref={(c) => { this[`qid_${configQuestion.qid}`] = c; }}
+            className={'panel panel-default response__question'}
+          >
+            <div className="panel-heading response__question-label">
+              {configQuestion.text}
+            </div>
+            <div className="panel-body response__question-answer">
+              <input
+                type="number"
+                name={configQuestion.qid}
+                value={(responseQuestion.aid || '')}
+                onChange={e => handleAnswer(configQuestion.qid, e.target.value)}
+                disabled={completed ? 'disabled' : ''}
+                autoFocus={configQuestion.qid === activeQuestion}
+              />
+            </div>
+            {(completed && configQuestion.blurb) ?
+              <div className="panel-footer response_question-blurb">
+                {configQuestion.blurb}
+              </div> :
+              ''
+            }
+          </div>
+        );
+      case 'MULTIPLE_CHOICE':
+        return (
+          <div
+            key={questionNumber}
+            ref={(c) => { this[`qid_${configQuestion.qid}`] = c; }}
+            className={oneLineTrim`panel panel-default response__question ${
+                configQuestion.qid === activeQuestion ? `${/* 'question-active'*/''}` : ''
+              }`
+            }
+          >
+            <div className="panel-heading response__question-label">
+              {configQuestion.text}
+            </div>
+            <div className="panel-body response__question-answers">
+              {configQuestion.answers.map(answer =>
+                <div key={answer.aid} className="response__question-answer">
+                  <Radio
+                    className="response__question-answer-multichoice"
+                    name={configQuestion.qid}
+                    value={answer.aid}
+                    label={answer.text}
+                    checked={answer.aid === responseQuestion.aid}
+                    disabled={completed ? 'disabled' : ''}
+                    onChange={() => handleAnswer(configQuestion.qid, answer.aid)}
+                    autoFocus={configQuestion.qid === activeQuestion}
+                  />
+                </div>,
+              )}
+            </div>
+            {(completed && configQuestion.blurb) ?
+              <div className="panel-footer response__question-blurb">
+                {configQuestion.blurb}
+              </div> :
+              ''
+            }
+          </div>
+        );
+      case 'GRID':
+        return (
+          <div key={questionNumber} className="panel panel-default response__question">
+            <div className="panel-heading response__question-label">
+              {configQuestion.text}
+            </div>
+            <div className="panel-body response__question-answers">
+              <table
+                className={
+                  'table table-bordered table-striped table-hover response__question-grid'
+                }
+              ><tbody>
+                <tr>
+                  <td />
+                  {configQuestion.columns.map((column, idx) =>
+                    <td
+                      key={idx}  // eslint-disable-line react/no-array-index-key
+                      className="grid__column-header"
+                    >{column}</td>,
+                  )}
+                </tr>
+                {configQuestion.rows.map(row =>
+                  (row.type === 'GRID_TEXT' ? null :
+                  <tr
+                    key={row.qid}
+                    ref={(c) => { this[`qid_${row.qid}`] = c; }}
+                  >
+                    <td className="grid__row-header">{row.text}</td>
+                    {configQuestion.columns.map((column, idx) => {
+                      switch (row.type) {
+                        case 'GRID_RADIO':
+                        case 'GRID_CHECKBOX':
+                          return (
+                            <td  // eslint-disable-line jsx-a11y/no-static-element-interactions
+                              className="grid__cell"
+                              key={idx}  // eslint-disable-line react/no-array-index-key
+                              onClick={(e) => {
+                                if (e.target.localName === 'span') {
+                                  return;
+                                }
+                                const answer = row.type === 'GRID_CHECKBOX' ?
+                                  reconcileCheckbox(responseQuestion[row.qid], (idx + 1).toString())
+                                  : (idx + 1).toString();
+                                handleAnswer(row.qid, answer);
+                              }}
+                            >
+                              <div
+                                className={
+                                  `pt-control ${
+                                    row.type === 'GRID_RADIO' ? 'pt-radio' : 'pt-checkbox'
+                                  } grid__cell-answer`
+                                }
+                              >
+                                {(row.type === 'GRID_RADIO') ?
+                                  <input
+                                    name={row.qid}
+                                    type="radio"
+                                    disabled={completed ? 'disabled' : ''}
+                                    checked={
+                                      (responseQuestion[row.qid] === (idx + 1).toString()) ?
+                                      'checked' : ''
+                                    }
+                                    onChange={() => {
+                                      handleAnswer(row.qid, (idx + 1).toString());
+                                    }}
+                                    autoFocus={(idx === 0 && row.qid === activeQuestion)}
+                                  /> :
+                                  <input
+                                    name={row.qid}
+                                    type="checkbox"
+                                    disabled={completed ? 'disabled' : ''}
+                                    checked={
+                                      (responseQuestion[row.qid] === (idx + 1).toString() ||
+                                      responseQuestion[row.qid] === '3') ? 'checked' : ''
+                                    }
+                                    onChange={() => {}}
+                                    autoFocus={(idx === 0 && row.qid === activeQuestion)}
+                                  />
+                                }
+                                <button
+                                  className="pt-control-indicator"
+                                  onClick={() => {
+                                    const answer = row.type === 'GRID_CHECKBOX' ?
+                                      reconcileCheckbox(
+                                        responseQuestion[row.qid],
+                                        (idx + 1).toString(),
+                                      )
+                                      : (idx + 1).toString();
+                                    handleAnswer(row.qid, answer);
+                                  }}
+                                />
+                              </div>
+                            </td>
+                          );
+                        default:
+                          return null;
+                      }
+                    })}
+                  </tr>
+                  ),
+                )}
+              </tbody></table>
+              {configQuestion.rows.filter(row => row.type === 'GRID_TEXT').map(q =>
+                <label
+                  htmlFor={q.qid}
+                  key={q.qid}
+                  className={`pt-label specify-label ${completed ? 'pt-disabled' : ''}`}
+                >
+                  {q.text}
+                  <input
+                    ref={(c) => { this[`qid_${q.qid}`] = c; }}
+                    name={q.qid}
+                    id={q.qid}
+                    value={(responseQuestion[q.qid] || '')}
+                    disabled={completed ? 'disabled' : ''}
+                    className="pt-input"
+                    type="text"
+                    dir="auto"
+                    onChange={e => handleAnswer(q.qid, e.target.value)}
+                  />
+                </label>,
+              )}
+            </div>
+            {(completed && configQuestion.blurb) ?
+              <div className="panel-footer response__question-blurb">
+                {configQuestion.blurb}
+              </div> :
+              ''
+            }
+          </div>
+        );
+      default:
+        return '';
+    }
+  };
+
+  renderQuestionnaire = configObj => (
+    <div className="questionnaire">
+      {configObj.config.meta.sections.map(section => (
+        <div
+          key={section.id}
+          id={`section_${section.id}`}
+          className={
+            oneLineTrim`section__container ${
+              (configObj.activeQuestion === undefined ||
+              section.qids.includes(configObj.activeQuestion)) ?
+              'section-active' : 'section-inactive'}`
+          }
+        >
+          <div className="response__section-label">
+            {!configObj.completed &&
+              <div className="section__label-item section__label-count">
+                {`Section ${section.id} out of ${configObj.config.meta.sections.length}`}
+              </div>
+            }
+            <div className="section__label-item section__label-text">
+              {`${section.label}${(section.graded && configObj.completed) ?
+                ` | Your Section GPA is ${configObj.score[section.group].toFixed(1)}` :
+                ''
+              }`}
+            </div>
+            {!configObj.completed &&
+              <div className="section__label-item section__button-container section__button-save">
+                <Button
+                  onClick={() => configObj.handleSave(configObj.answers)}
+                  text={`${configObj.isPosting ? 'Saving' : 'Save'}`}
+                  className="pt-intent-primary section__button"
+                  disabled={configObj.isPosting}
+                />
+              </div>
+            }
+          </div>
+          <div
+            ref={(c) => { this[`section_${section.id}`] = c; }}
+            id={`section_${section.id}`}
+            className="response__section"
+          >
+            {section.question_numbers.map((questionNumber) => {
+              const configQuestion = configObj.config.questions.find(
+                qObj => qObj.question_number === questionNumber,
+              );
+              const responseQuestion = (configQuestion.type === 'GRID') ?
+                configQuestion.rows.reduce(
+                  (responseQs, row) => ({
+                    ...responseQs,
+                    ...{ [row.qid]: configObj.answers[row.qid] },
+                  }), {},
+                ) :
+                { aid: configObj.answers[configQuestion.qid] };
+
+              return this.renderQuestion(
+                questionNumber,
+                configQuestion,
+                responseQuestion,
+                configObj.activeQuestion,
+                configObj.error,
+                configObj.completed,
+                configObj.handleAnswer,
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  renderViewer = (config, answers, response, tcScores) => (
+    <div className="response__viewer">
+      {/*
+        <div
+          className="pt-button pt-intent-primary button-print"
+          onClick={requestPDF}></div>Export PDF
+        </div>
+        */}
+      <button
+        id="top-link-block"
+        ref={(c) => { this.topBlock = c; }}
+        className="hidden well well-sm topBlock"
+        onClick={() => scrollTo(document.getElementsByClassName('surveyComponent')[0], 0, 500)}
+      >
+        <i className="glyphicon glyphicon-chevron-up" /> Back to Top
+      </button>
+      <div className="response__overall">
+        <div className="response__overall-date">
+          {moment(response.meta.DATE_CREATED).format('ddd MMM Do, YYYY')}
+        </div>
+        <div className="response__overall-label">
+          Your Overall Score is a {gradeLetter(pointToPercent(response.score.Overall))}
+        </div>
+        {renderChart('point', 'Pie', [response], 'ct-chart response__chart response__chart-donut')}
+      </div>
+      <div className="response__section-breakdown">
+        <div className="response__section-breakdown-label">Section Breakdown</div>
+        <div className="response__chart-bar-key">
+          <span className="key__item key__item-blue">Your Score</span>
+          <span className="key__item key__item-gray">Average Score</span>
+        </div>
+        {renderChart(
+          'point', 'Bar', [response, tcScores],
+          'ct-chart response__chart response__chart-bar',
+        )}
+      </div>
+      <div className="response__questionnaire-breakdown">
+        <div className="response__questionnaire-breakdown-label">Questionnaire Breakdown</div>
+        {this.renderQuestionnaire({
+          config,
+          answers,
+          score: response.score,
+          completed: (response.meta.completed === 1),
+        })}
+      </div>
+    </div>
+  );
+
+  renderSurvey = (config, answers, activeQuestion,
+    error, errorMessage,
+    handleAnswer, handleSectionChange,
+    handleSave, handleSubmit, surveyCompleted, isPosting) => (
+      <div className="survey__viewer">
+        {this.renderQuestionnaire({
+          config,
+          answers,
+          activeQuestion,
+          error,
+          handleAnswer,
+          handleSave,
+          isPosting,
+        })}
+        <div className="questionnaire-footer">
+          <div className="section__button-container section__button-back">
+            <Button
+              onClick={() => handleSectionChange(-1)}
+              text="Back"
+              className="pt-intent-primary section__button"
+              disabled={config.meta.sections.find(s => s.qids.includes(activeQuestion)).id === 1}
+            />
+          </div>
+          {error &&
+            <div className="section__button-container section__label-error">
+              {errorMessage}
+            </div>
+          }
+          <div className="section__button-container section__button-next">
+            <Button
+              onClick={() => handleSectionChange(1)}
+              text={`${config.meta.sections.find(
+                      s => s.qids.includes(activeQuestion),
+                    ).id === config.meta.sections.length ? 'Submit' : 'Next'}`}
+              className={
+                `${
+                  config.meta.sections.find(
+                    s => s.qids.includes(activeQuestion),
+                  ).id === config.meta.sections.length ?
+                  `pt-intent-${surveyCompleted ? 'success submit__button ' : 'primary'}` :
+                  'pt-intent-primary'
+                }`
+              }
+              disabled={config.meta.sections.find(
+                s => s.qids.includes(activeQuestion),
+              ).id === config.meta.sections.length ?
+                isPosting :
+                false
+              }
+            />
+          </div>
+        </div>
+      </div>
+  );
   renderComponent(config, response, TCAvgHRA, handleSave,
     handleSubmit, goBackToDashboard) {
     if (response.isFetching || config === undefined) {
@@ -736,14 +735,14 @@ class Survey extends React.Component {
       return renderEmptyComponent(goBackToDashboard);
     }
     if (response.items[0].meta.completed) {
-      return renderViewer(
+      return this.renderViewer(
         config,
         this.state.surveyAnswers,
         response.items[0],
         TCAvgHRA.items[0],
       );
     }
-    return renderSurvey(
+    return this.renderSurvey(
       config,
       this.state.surveyAnswers,
       this.state.activeQuestion,

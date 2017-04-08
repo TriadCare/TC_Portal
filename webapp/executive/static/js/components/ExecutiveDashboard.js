@@ -40,9 +40,9 @@ const buildDashboardCards = (state) => {
   const dashlets = [];
   dashboardConfiguration.forEach((card) => {
     const { cardDefinition, ...rest } = card;
-    const dataItems = state.datasources[card.datasource].items;
+    const dataSource = state.datasources[card.datasource];
     // no data for this card, leave it out.
-    if (dataItems.length === 0) { return; }
+    if (!dataSource.isFetching && dataSource.items.length === 0) { return; }
 
     switch (card.cardType) {
       case 'fold':

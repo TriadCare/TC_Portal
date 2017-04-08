@@ -1,7 +1,21 @@
 import React from 'react';
-// import moment from 'moment';
+import moment from 'moment';
 
 import DashChart from './DashChart';
+import renderChart from 'components/Charting';
+
+const renderDashChart = (config) => {
+  if (config.chartist) {
+    return renderChart(config.dataType, config.chartType, config.data);
+  }
+
+  return (
+    <DashChart
+      chartConfig={config}
+      isFetching={config.data.length === 0}
+    />
+  );
+};
 
 const renderCard = (config, handleClick) => (
   <button
@@ -17,21 +31,20 @@ const renderCard = (config, handleClick) => (
       <div className="dashlet__card-title">
         {config.title}
       </div>
-      { /*
       <div className="dashlet__card-date">
-        {moment(config.data[0].meta.DATE_CREATED).format('MMM Do, YYYY')}
+        {config.data !== undefined &&
+           config.data[0] !== undefined &&
+            config.data[0].meta !== undefined &&
+          moment(config.data[0].meta.DATE_CREATED).format('MMM Do, YYYY')}
       </div>
-      */ }
-    </div>
-    { /* body */ }
-    <div className="dashlet__card-description">
-      {config.description}
+      <div className="dashlet__card-description">
+        {config.description}
+      </div>
     </div>
     { /* chart */ }
-    <DashChart
-      chartConfig={config}
-      isFetching={config.reportData === undefined || config.reportData.length === 0}
-    />
+    {config.data !== undefined &&
+      renderDashChart(config)
+      }
 
   </button>
 );
