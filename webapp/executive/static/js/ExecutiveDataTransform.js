@@ -131,7 +131,7 @@ const metaMapper = {
 
 const pieDataDefs = {
   HRA: ['Completed', 'Started', 'Not Started'],
-  Biometric: ['Verified', 'Pending', 'Not Verified'],
+  Biometric: ['Completed', 'Pending', 'Not Started'],
   Visit: ['Completed', 'Scheduled', 'Missed', 'Not Completed'],
 };
 
@@ -200,7 +200,8 @@ const valueExchanges = {
     email: v => v,
     Dt: v => (v !== undefined ? moment(v).format('MM/DD/YYYY') : ''),
     Verified: (v) => {
-      if (Number.isInteger(Number(v))) { return (v === '1' ? 'Verified' : 'Pending'); }
+      if (Number.isInteger(Number(v))) { return (v === '1' ? 'Completed' : 'Pending'); }
+      if (v === 'Not Verified') { return 'Not Started'; }
       return v;
     },
   },
@@ -223,7 +224,7 @@ const valueExchanges = {
 
 const nullStatus = {
   HRA: 'Not Started',
-  Biometric: 'Not Verified',
+  Biometric: 'Not Started',
   Visit: 'Not Completed',
 };
 
@@ -235,7 +236,7 @@ const nullRecord = {
 
 const statusExchange = {
   HRA: hra => (hra.meta.completed === 1 ? 'Completed' : 'Started'),
-  Biometric: bio => (bio.Verified === '1' ? 'Verified' : 'Pending'),
+  Biometric: bio => (bio.Verified === '1' ? 'Completed' : 'Pending'),
   Visit: (visit) => { // All other misc. statuses should be included in 'Scheduled'
     let visitStatus = visit.VisitStatus === 'Pt Missed Appointment' ? 'Missed' : visit.VisitStatus;
     visitStatus = pieDataDefs.Visit.includes(visitStatus) ? visitStatus : 'Scheduled';

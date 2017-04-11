@@ -9,7 +9,7 @@
     "data": [],
     "cardDefinition": {
       "title": "Trending Health Assessment Overall Score",
-      "description": "Your Health Scores over time.",
+      "description": "",
       "cardSize": "large",
       "dataType": "trend",
       "chartType": "Line"

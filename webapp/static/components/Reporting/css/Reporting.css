@@ -70,9 +70,6 @@
 .reportToolbar {
   margin-left: auto;
 }
-.exportTooltipWrapper > .reportToolbar__button::before {
-  font-size: 1.5em;
-}
 
 .configPanel {
   display: flex;
