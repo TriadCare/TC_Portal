@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import { Spinner, Button, Tooltip, Popover,
+import { Spinner, Button, Popover,
   Position, Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 import { DateRangeInput } from '@blueprintjs/datetime';
 
@@ -23,7 +23,6 @@ class ReportContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      shouldRenderCSVDownload: false,
       processing: false,
       report: props.report,
       baseControls: props.controls.Base,
@@ -203,18 +202,12 @@ class ReportContainer extends React.Component {
           </Popover> }
       </div>
       <div className="reportToolbar">
-        <Tooltip
-          content="Export CSV"
-          position={Position.LEFT}
-          hoverOpenDelay={1000}
-          className="exportTooltipWrapper"
-        >
-          <Button
-            iconName="download"
-            className="pt-large pt-minimal reportToolbar__button"
-            onClick={() => this.setState({ shouldRenderCSVDownload: true })}
+        {this.state.report.data.length !== 0 && (
+          <DownloadCSV
+            data={this.state.report.data}
+            headers={this.state.report.columnDef.map(col => col.label)}
           />
-        </Tooltip>
+        )}
       </div>
     </div>
   )
@@ -239,12 +232,6 @@ class ReportContainer extends React.Component {
           data={this.state.report.data || []}
           columnDef={this.state.report.columnDef || []}
         />
-        {this.state.shouldRenderCSVDownload &&
-          <DownloadCSV
-            data={this.state.report.data}
-            callback={() => this.setState({ shouldRenderCSVDownload: false })}
-          />
-        }
       </div>
     );
   }

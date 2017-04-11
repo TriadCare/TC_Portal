@@ -1,0 +1,13 @@
+
+.exportTooltip > .exportButton::before {
+  font-size: 1.5em;
+}
+
+.downloadBox {
+  padding: 10px 20px;
+}
+
+.downloadBox > .pt-label {
+  font-weight: inherit;
+  margin: 0;
+}

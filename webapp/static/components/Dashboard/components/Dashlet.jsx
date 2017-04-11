@@ -6,7 +6,7 @@ import renderChart from 'components/Charting';
 
 const renderDashChart = (config) => {
   if (config.chartist) {
-    return renderChart(config.dataType, config.chartType, config.data);
+    return renderChart(config.dataType, config.chartType, config.data, 'dashlet__chart');
   }
 
   return (
@@ -30,12 +30,12 @@ const renderCard = (config, handleClick) => (
     <div className="dashlet__card-header">
       <div className="dashlet__card-title">
         {config.title}
-      </div>
-      <div className="dashlet__card-date">
-        {config.data !== undefined &&
-           config.data[0] !== undefined &&
-            config.data[0].meta !== undefined &&
-          moment(config.data[0].meta.DATE_CREATED).format('MMM Do, YYYY')}
+        <div className="dashlet__card-date">
+          {config.data !== undefined &&
+             config.data[0] !== undefined &&
+              config.data[0].meta !== undefined &&
+            moment(config.data[0].meta.DATE_CREATED).format('MMM Do, YYYY')}
+        </div>
       </div>
       <div className="dashlet__card-description">
         {config.description}

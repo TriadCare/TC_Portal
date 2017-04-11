@@ -8,7 +8,7 @@ import { refreshData, viewData } from '../PatientActions';
 import dashboardConfiguration from '../default_card_config.json'; // user pref doc
 
 const compareHRAs = (hraOne, hraTwo) =>
-  -moment(hraOne.meta.DATE_CREATED).diff(moment(hraTwo.meta.DATE_CREATED));
+  moment(hraOne.meta.DATE_CREATED).diff(moment(hraTwo.meta.DATE_CREATED));
 
 const populateCard = (card, dataItems, sortFunc) => {
   const { cardDefinition, ...rest } = card;
@@ -33,7 +33,7 @@ const buildDashboardCards = (state) => {
         if (card.data.length === 0) {  // Use every datapoint
           dashlets.push(
             ...state.datasources[card.datasource].items
-              .sort(sortOptions[card.datasource])
+              .sort((...args) => -sortOptions[card.datasource](...args))
               .map(
                 (item, index) => populateCard(
                   {
