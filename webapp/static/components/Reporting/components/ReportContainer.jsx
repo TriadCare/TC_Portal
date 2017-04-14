@@ -2,7 +2,7 @@ import moment from 'moment';
 import React from 'react';
 import { Spinner, Button, Popover,
   Position, Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
-import { DateRangeInput } from '@blueprintjs/datetime';
+import { DatePicker } from '@blueprintjs/datetime';
 
 import ReportChart from './ReportChart';
 import ReportTable from './ReportTable';
@@ -17,6 +17,17 @@ const getSelectedOptionID = (controlSet) => {
   const option = getSelectedOption(controlSet);
   if (option === undefined) { return undefined; }
   return option.id;
+};
+
+const getDateRange = (oldMin, oldMax, newMin, newMax) => {
+  if (newMin === null) {
+    return moment(newMax).isBefore(oldMin) ?
+      [moment(newMax), moment(newMax)] :
+      [moment(oldMin), moment(newMax)];
+  }
+  return moment(newMin).isAfter(oldMax) ?
+    [moment(newMin), moment(newMin)] :
+    [moment(newMin), moment(oldMax)];
 };
 
 class ReportContainer extends React.Component {
@@ -137,22 +148,61 @@ class ReportContainer extends React.Component {
         );
       case 'date':
         return (
-          <DateRangeInput
-            value={[
-              (controlSet.min_date === null ?
-                null : moment(controlSet.min_date).format('MM/D/YYYY')),
-              (controlSet.max_date === null ?
-                null : moment(controlSet.max_date).format('MM/D/YYYY')),
-            ]}
-            onChange={(dateRange) => {
-              this.state.handleControlChange(controlSetName, controlName, dateRange);
-            }}
-            format={'MM/D/YYYY'}
-            closeOnSelection
-            className={`dateRange__container ${classNames}`}
-            endInputProps={{ className: 'form-control-container' }}
-            startInputProps={{ className: 'form-control-container' }}
-          />
+          <div className="dateInputGroup">
+            <Popover
+              position={Position.BOTTOM_LEFT}
+              content={
+                <DatePicker
+                  value={(controlSet.min_date === null ? null :
+                    moment(controlSet.min_date).toDate())}
+                  onChange={(date, dayWasPicked) => {
+                    if (dayWasPicked) {
+                      this.state.handleControlChange(
+                        controlSetName, controlName, getDateRange(
+                          this.state.baseControls.date_range.min_date,
+                          this.state.baseControls.date_range.max_date,
+                          date, null,
+                        ),
+                      );
+                    }
+                  }}
+                />
+              }
+            >
+              <Button
+                className="pt-minimal pt-intent-primary dateButton"
+                text={(controlSet.min_date === null ? null :
+                  moment(controlSet.min_date).format('MMM Do, YYYY'))}
+              />
+            </Popover>
+            <span className="pt-icon-standard pt-icon-arrow-right" />
+            <Popover
+              position={Position.BOTTOM_LEFT}
+              content={
+                <DatePicker
+                  value={(controlSet.max_date === null ? null :
+                    moment(controlSet.max_date).toDate())}
+                  onChange={(date, dayWasPicked) => {
+                    if (dayWasPicked) {
+                      this.state.handleControlChange(
+                        controlSetName, controlName, getDateRange(
+                          this.state.baseControls.date_range.min_date,
+                          this.state.baseControls.date_range.max_date,
+                          null, date,
+                        ),
+                      );
+                    }
+                  }}
+                />
+              }
+            >
+              <Button
+                className="pt-minimal pt-intent-primary dateButton"
+                text={(controlSet.max_date === null ? null :
+                  moment(controlSet.max_date).format('MMM Do, YYYY'))}
+              />
+            </Popover>
+          </div>
         );
       default:
         return '';
