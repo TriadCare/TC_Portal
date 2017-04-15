@@ -35,6 +35,7 @@ class FM_Visit_API(MethodView):
         patientIds = [
             user.get_patientID()
             for user in User.query(accountID=authorized_accounts, find=True)
+            if user.in_case_management()
         ]
         query_URL = (FM_VISIT_URL + '.json?RFMmax=0')
         r = requests.get(query_URL, auth=FM_AUTH).json()
