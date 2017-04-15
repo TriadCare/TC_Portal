@@ -57,8 +57,8 @@ def getFMField(field):
 class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
-        'dob', 'gender', 'hraEligible', 'patientID', 'tcid', 'email',
-        'accountID', 'visit_locationID', 'work_locationID'
+        'dob', 'gender', 'hraEligible', 'case_management', 'patientID',
+        'tcid', 'email', 'accountID', 'visit_locationID', 'work_locationID'
     ]
 
     __fm_fields__ = {
@@ -75,6 +75,7 @@ class FM_User():
         'Gender': 'gender',
         'HraEligible': 'hraEligible',
         'HraEnrolled': 'hraEnrolled',
+        'CurrentCaseManagement': 'case_management',
         'AccountId': 'accountID',
         # 'Account::Name': 'account',
         'EmployeeId': 'employeeID',
@@ -148,6 +149,7 @@ class FM_User():
         self.gender = str(data['gender'])
         self.hraEligible = str(data['hraEligible'])
         self.hraEnrolled = str(data['hraEnrolled'])
+        self.case_management = str(data['case_management'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
         self.visit_locationID = str(data['visit_locationID'])
@@ -219,6 +221,9 @@ class FM_User():
 
     def enrolledInHRA(self):
         return self.hraEnrolled == '1'
+
+    def in_case_management(self):
+        return self.case_management == 'Case Management'
 
     # Returns a User from File Maker based on the search criteria
     @staticmethod

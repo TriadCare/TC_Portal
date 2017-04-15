@@ -5,7 +5,7 @@ import { Popover, Position, InputGroup, Button } from '@blueprintjs/core';
 
 import './css/DownloadCSV.css';
 
-const defaultFilename = 'download.csv';
+const defaultFilename = 'download';
 
 class DownloadCSV extends React.Component {
   constructor(props) {
@@ -49,7 +49,7 @@ class DownloadCSV extends React.Component {
             <CSVLink
               data={this.state.data}
               headers={this.state.headers}
-              filename={this.state.filename || defaultFilename}
+              filename={`${(this.state.filename || defaultFilename)}.csv`}
             >
               <Button
                 ref={(c) => { this.downloadButton = c; }}

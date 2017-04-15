@@ -198,7 +198,7 @@ const valueExchanges = {
     first_name: v => v,
     last_name: v => v,
     email: v => v,
-    Dt: v => (v !== undefined ? moment(v).format('MM/DD/YYYY') : ''),
+    Dt: v => (v !== undefined ? moment(v, 'MM/DD/YYYY').format('MM/DD/YYYY') : ''),
     Verified: (v) => {
       if (Number.isInteger(Number(v))) { return (v === '1' ? 'Completed' : 'Pending'); }
       if (v === 'Not Verified') { return 'Not Started'; }
@@ -209,7 +209,7 @@ const valueExchanges = {
     first_name: v => v,
     last_name: v => v,
     email: v => v,
-    VisitDate: v => (v !== undefined ? moment(v).format('MM/DD/YYYY') : ''),
+    VisitDate: v => (v !== undefined ? moment(v, 'MM/DD/YYYY').format('MM/DD/YYYY') : ''),
     VisitStatus: (v) => {
       if (v === 'Pt Missed Appointment') {
         return 'Missed';
@@ -268,7 +268,12 @@ export function buildChartData(datasources, controlObject) {
 
   const dataItems = datasourceName !== undefined ?
     datasources[datasourceName].items : [];
-  const users = datasources.User.items;
+  let users = datasources.User.items;
+  // Hardcoded filter for the Visit Datasource.
+  // TODO: Remove this ASAP
+  if (datasourceName === 'Visit') {
+    users = users.filter(user => user.case_management === 'Case Management');
+  }
   // return if no data
   if (dataItems.length === 0 || users.length === 0) { return { [chartType]: [] }; }
   // Accumulate the options for each datafilter control.

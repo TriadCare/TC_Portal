@@ -141,6 +141,10 @@
   flex: 1 1 100%;
 }
 
+.reportChart__container > svg {
+  overflow: visible;
+}
+
 .reportTable {
   padding: 10px 10px 0 10px;
 }
