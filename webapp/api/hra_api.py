@@ -85,10 +85,6 @@ def get_hras(tcid, expand=False, aggregate=False):
             make_public(hra.to_dict(expand, aggregate))
             for hra in HRA.query.filter(HRA.tcid.in_(tcids))
         ]
-    return [
-        make_public(hra.to_dict(expand, aggregate))
-        for hra in HRA.query.filter_by(tcid=tcid)
-    ]
 
 
 class HRA_API(MethodView):
