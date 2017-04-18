@@ -74,12 +74,22 @@ def get_hra(tcid, response_id, expand=False):
 def get_hras(tcid, expand=False, aggregate=False):
     if aggregate:
         permissions = Permission.query.filter_by(tcid=tcid)
-        authorized_accounts = [p.accountID for p in permissions]
-        if len(authorized_accounts) == 0:
+        authorized_accounts = []
+        authorized_locations = []
+        for p in permissions:
+            if p.groupType == 'ACCOUNT':
+                authorized_accounts.append(p.groupID)
+            elif p.groupType == 'LOCATION':
+                authorized_locations.append(p.groupID)
+
+        if len(authorized_accounts) == 0 and len(authorized_locations) == 0:
             return []
         tcids = [
-            user.get_tcid()
-            for user in User.query(accountID=authorized_accounts, find=True)
+            user.get_tcid() for user in User.query(
+                accountID=authorized_accounts,
+                visit_locationID=authorized_locations,
+                find=True
+            )
         ]
         return [
             make_public(hra.to_dict(expand, aggregate))

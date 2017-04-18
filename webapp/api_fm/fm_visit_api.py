@@ -29,12 +29,22 @@ class FM_Visit_API(MethodView):
 
     def get(self, record_id=None):
         permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
-        authorized_accounts = [p.accountID for p in permissions]
-        if len(authorized_accounts) == 0:
+        authorized_accounts = []
+        authorized_locations = []
+        for p in permissions:
+            if p.groupType == 'ACCOUNT':
+                authorized_accounts.append(p.groupID)
+            elif p.groupType == 'LOCATION':
+                authorized_locations.append(p.groupID)
+
+        if len(authorized_accounts) == 0 and len(authorized_locations) == 0:
             return jsonify([])
         patientIds = [
-            user.get_patientID()
-            for user in User.query(accountID=authorized_accounts, find=True)
+            user.get_patientID() for user in User.query(
+                accountID=authorized_accounts,
+                visit_locationID=authorized_locations,
+                find=True
+            )
             if user.in_case_management()
         ]
         query_URL = (FM_VISIT_URL + '.json?RFMmax=0')

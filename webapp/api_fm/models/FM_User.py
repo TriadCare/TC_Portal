@@ -207,6 +207,9 @@ class FM_User():
     def get_accountID(self):
         return unicode(self.accountID)  # python 2
 
+    def get_locationID(self):
+        return unicode(self.visit_locationID)  # python 2
+
     def get_email(self):
         return self.email
 

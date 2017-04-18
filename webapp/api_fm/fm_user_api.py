@@ -21,11 +21,21 @@ class FM_User_API(MethodView):
         # To get users, you must be logged in
         user = load_user_from_request(request, throws=True)
         permissions = Permission.query.filter_by(tcid=user.get_tcid())
-        authorized_accounts = [p.accountID for p in permissions]
+        authorized_accounts = []
+        authorized_locations = []
+        for p in permissions:
+            if p.groupType == 'ACCOUNT':
+                authorized_accounts.append(p.groupID)
+            elif p.groupType == 'LOCATION':
+                authorized_locations.append(p.groupID)
+
         if record_id is None:
             return jsonify([
                 u.to_json()
-                for u in User.query(accountID=authorized_accounts, find=True)
+                for u in User.query(
+                    accountID=authorized_accounts,
+                    visit_locationID=authorized_locations,
+                    find=True)
             ])
         else:
             found_user = User.query(recordID=record_id, first=True)
@@ -35,7 +45,8 @@ class FM_User_API(MethodView):
             # authorized to access this user, return error
             if (
                 user != found_user and
-                found_user.get_accountID() not in authorized_accounts
+                (found_user.get_accountID() not in authorized_accounts or
+                 found_user.get_locationID() not in authorized_locations)
             ):
                 api_error(ValueError, "Unauthorized to access this User.", 403)
             return jsonify(found_user.to_json())

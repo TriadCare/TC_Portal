@@ -28,7 +28,9 @@ class FM_Account_API(MethodView):
 
     def get(self, record_id=None):
         permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
-        authorized_accounts = [p.accountID for p in permissions]
+        authorized_accounts = [
+            p.groupID for p in permissions if p.groupType == 'ACCOUNT'
+        ]
         if len(authorized_accounts) == 0:
             return jsonify([])
 

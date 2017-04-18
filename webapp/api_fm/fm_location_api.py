@@ -33,14 +33,23 @@ class FM_Location_API(MethodView):
 
     def get(self, record_id=None):
         permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
-        authorized_accounts = [p.accountID for p in permissions]
-        if len(authorized_accounts) == 0:
+        authorized_accounts = []
+        authorized_locations = []
+        for p in permissions:
+            if p.groupType == 'ACCOUNT':
+                authorized_accounts.append(p.groupID)
+            elif p.groupType == 'LOCATION':
+                authorized_locations.append(p.groupID)
+
+        if len(authorized_accounts) == 0 and len(authorized_locations) == 0:
             return jsonify([])
 
         query_URL = (FM_LOCATION_URL + ".json?RFMfind=SELECT " +
                      ",".join(FM_Location_API.__fm_fields__) + " WHERE ")
         for accountID in authorized_accounts:
             query_URL += "AccountId%3D" + accountID + " OR "
+        for locationID in authorized_locations:
+            query_URL += "AccountLocationId%3D" + locationID + " OR "
         query_URL = query_URL[:-len(" OR ")] + '&RFMmax=0'
         r = requests.get(query_URL, auth=FM_AUTH).json()
         if len(r) == 0 or 'data' not in r:
