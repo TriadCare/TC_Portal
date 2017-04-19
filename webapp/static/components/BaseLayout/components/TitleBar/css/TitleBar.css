@@ -1,4 +1,8 @@
 
+.titleBar {
+  padding: 0 20px;
+}
+
 .titleBar__logo {
   width: 160px;
   height: 40px;
@@ -25,12 +29,10 @@
   margin: 0 5px;
 }
 
-.titleBar__log-out {
-  margin-left: auto;
-  padding: 10px;
+.userMenuButton {
   font-size: 1.25em;
 }
 
-.titleBar__log-out > .log-out__icon:before {
-  font-size: 1.7em;
+.titleBar__nav > .pt-popover-target > .userMenuButton:before {
+  font-size: 1.2em;
 }

@@ -11,6 +11,7 @@ const BaseLayout = props => (
     <TitleBar
       onLogout={props.onLogout}
       navigationComponent={props.navigationComponent}
+      currentPathname={props.location.pathname}
     />
     <div className="mainContainer">
       <SpaceExplorer />
@@ -26,6 +27,9 @@ BaseLayout.propTypes = {
   onLogin: React.PropTypes.func,
   onLogout: React.PropTypes.func,
   children: React.PropTypes.shape(),
+  location: React.PropTypes.shape({
+    pathname: React.PropTypes.string,
+  }).isRequired,
 };
 
 BaseLayout.defaultProps = {

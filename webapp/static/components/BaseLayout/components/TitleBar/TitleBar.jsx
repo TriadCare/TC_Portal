@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Tooltip, Position, Button } from '@blueprintjs/core';
+import {
+  Button, Position, Popover,
+  Menu, MenuItem, MenuDivider,
+} from '@blueprintjs/core';
 
+import { jwtPayload } from 'js/utilREST';
 import ConfirmationDialog from 'components/ConfirmationDialog';
 
 require('./css/TitleBar');
@@ -13,6 +17,36 @@ class TitleBar extends React.Component {
     this.state = { confirmationNeeded: false };
   }
 
+  renderUserMenu = () => {
+    const jwtUser = jwtPayload();
+    return (
+      <Menu>
+        { jwtUser !== undefined &&
+          jwtPayload().roles.filter(role =>
+            this.props.currentPathname.split('/')[1] !== role.toLowerCase(),
+          ).map(role => (
+            <MenuItem
+              key={role}
+              iconName="log-out"
+              text={
+                `${role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()} Portal`
+              }
+              onClick={() => {
+                location.pathname = `/${role.toLowerCase()}/`;
+              }}
+            />
+          ))
+        }
+        {jwtUser !== undefined && jwtUser.roles.length > 1 && <MenuDivider />}
+        <MenuItem
+          iconName="power"
+          text="Log Out"
+          onClick={() => this.setState({ confirmationNeeded: true })}
+        />
+      </Menu>
+    );
+  }
+
   render() {
     return (
       <div className="pt-navbar pt-fixed-top titleBar">
@@ -22,20 +56,17 @@ class TitleBar extends React.Component {
             <span className="titleBar__text">{this.props.titleBarText}</span>
           </div>
         </div>
-        <div className="pt-navbar-group pt-align-right">
+        <div className="pt-navbar-group pt-align-right titleBar__nav">
           {this.props.navigationComponent}
           <span className="pt-navbar-divider" />
-          <Tooltip
-            content="Log Out"
-            position={Position.LEFT}
-            hoverOpenDelay={1000}
-            className="titleBar__log-out"
+          <Popover
+            position={Position.BOTTOM_RIGHT}
+            content={this.renderUserMenu()}
           >
             <Button
-              className="pt-button pt-minimal pt-icon-power log-out__icon"
-              onClick={() => this.setState({ confirmationNeeded: true })}
+              className="pt-button pt-minimal pt-icon-user userMenuButton"
             />
-          </Tooltip>
+          </Popover>
           <ConfirmationDialog
             autoFocus
             isOpen={this.state.confirmationNeeded}
@@ -58,11 +89,13 @@ TitleBar.propTypes = {
   ),
   navigationComponent: React.PropTypes.element,
   onLogout: React.PropTypes.func.isRequired,
+  currentPathname: React.PropTypes.string.isRequired,
 };
 
 TitleBar.defaultProps = {
   titleBarText: '',
   navigationComponent: null,
+  currentPathname: {},
 };
 
 const mapStateToProps = store => ({

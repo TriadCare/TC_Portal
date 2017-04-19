@@ -96,6 +96,7 @@ def load_user_from_request(request, token_type='API', throws=False):
     # try to login using the Token in Basic Auth Headers
     auth_token = request.headers.get('Authorization')
     user = None
+    jwtUser = None
     if auth_token:
         auth_token = base64_decode(auth_token.replace('Basic ', '', 1))
         # Check if the Auth Header is like (username:password)
@@ -106,21 +107,27 @@ def load_user_from_request(request, token_type='API', throws=False):
                 user = User.query(email=username, first=True)
                 if not user.authenticate(password):
                     api_error(ValueError, "Authentication Failed.", 401)
+                else:
+                    user.get_authorized()
             else:
-                auth_token = username  # Most likely a token
+                jwtUser = verify_jwt(username, token_type)
+                # Most likely a token
+                user = User.query(
+                    recordID=jwtUser['recordID'],
+                    first=True
+                )
         else:
+            jwtUser = verify_jwt(auth_token, token_type)
             user = User.query(
-                recordID=verify_jwt(auth_token, token_type)['recordID'],
+                recordID=jwtUser['recordID'],
                 first=True
             )
         if user:
+            if 'roles' not in user.__dict__.keys() or len(user.roles) == 0:
+                # Copying over authorizations from provided Auth Token
+                user.roles = jwtUser['roles']
+                user.permissions = jwtUser['permissions']
             login_user(user)
-            user['permissions'] = user.get_permissions()
-            if (len(user['permissions']['authorized_accounts']) > 0 or
-               len(user['permissions']['authorized_locations']) > 0):
-                user['roles'] = ["EXECUTIVE", "PATIENT"]
-            else:
-                user['roles'] = ["PATIENT"]
             return user
         else:
             api_error(ValueError, "Authorization denied.", 401)
@@ -173,10 +180,8 @@ class Auth_API(MethodView):
                         404
                     )
                 if user.authenticate(pw):
-                    return jsonify(jwt=generate_jwt(
-                        user.to_json(),
-                        jwt_type)
-                    )
+                    user.get_authorized()
+                    return jsonify(jwt=generate_jwt(user.to_json(), jwt_type))
                 return api_error(
                     ValueError,
                     "Could not authenticate User.",

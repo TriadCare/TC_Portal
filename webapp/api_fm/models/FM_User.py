@@ -157,6 +157,10 @@ class FM_User():
         self.visit_locationID = str(data['visit_locationID'])
         self.billing_locationID = str(data['billing_locationID'])
         self.work_locationID = str(data['work_locationID'])
+        self.permissions = (
+            data['permissions'] if 'permissions' in data.keys() else {}
+        )
+        self.roles = data['roles'] if 'roles' in data.keys() else []
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -364,7 +368,7 @@ class FM_User():
 
         return return_dict
 
-    def get_permissions(self):
+    def get_authorized(self):
         permissions = Permission.query.filter_by(tcid=self.get_tcid())
         authorized_accounts = []
         authorized_locations = []
@@ -373,10 +377,16 @@ class FM_User():
                 authorized_accounts.append(p.groupID)
             elif p.groupType == 'LOCATION':
                 authorized_locations.append(p.groupID)
-        return {
+        self.permissions = {
             'authorized_accounts': authorized_accounts,
             'authorized_locations': authorized_locations
         }
+        if (len(self.permissions['authorized_accounts']) > 0 or
+           len(self.permissions['authorized_locations']) > 0):
+            self.roles = ["EXECUTIVE", "PATIENT"]
+        else:
+            self.roles = ["PATIENT"]
+        return True
 
     # Validates user data from request
     @staticmethod
