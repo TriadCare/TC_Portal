@@ -9,7 +9,6 @@ import requests
 from webapp import app
 from webapp import csrf
 from webapp.api.auth_api import authorize
-from webapp.api.models.Permission import Permission
 from webapp.server.util import api_error, get_request_data
 
 FM_AUTH = (
@@ -27,11 +26,8 @@ class FM_Account_API(MethodView):
     decorators = [csrf.exempt, authorize('PATIENT')]
 
     def get(self, record_id=None):
-        permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
-        authorized_accounts = [
-            p.groupID for p in permissions if p.groupType == 'ACCOUNT'
-        ]
-        if len(authorized_accounts) == 0:
+        authed_accounts = current_user['permissions']['authorized_accounts']
+        if len(authed_accounts) == 0:
             return jsonify([])
 
         query_URL = FM_ACCOUNT_URL + '.json?RFMmax=0'
@@ -42,7 +38,7 @@ class FM_Account_API(MethodView):
         for index, d in enumerate(r['data']):
             account = d
             account[u'recordID'] = r['meta'][index]['recordID']
-            if account[u'AccountId'] in authorized_accounts:
+            if account[u'AccountId'] in authed_accounts:
                 data.append(account)
 
         return jsonify(data)

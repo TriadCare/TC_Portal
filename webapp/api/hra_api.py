@@ -10,7 +10,6 @@ from sqlalchemy.sql import func
 from webapp import csrf
 from webapp.server.util import api_error, get_request_data
 from ..api.auth_api import authorize
-from .models.Permission import Permission
 from .models.HRA import HRA
 from webapp.api_fm.models.FM_User import FM_User as User
 
@@ -71,23 +70,17 @@ def get_hra(tcid, response_id, expand=False):
 
 
 # TODO: Need Executive authorization here for aggregate access
-def get_hras(tcid, expand=False, aggregate=False):
+def get_hras(expand=False, aggregate=False):
     if aggregate:
-        permissions = Permission.query.filter_by(tcid=tcid)
-        authorized_accounts = []
-        authorized_locations = []
-        for p in permissions:
-            if p.groupType == 'ACCOUNT':
-                authorized_accounts.append(p.groupID)
-            elif p.groupType == 'LOCATION':
-                authorized_locations.append(p.groupID)
-
-        if len(authorized_accounts) == 0 and len(authorized_locations) == 0:
+        authed_accounts = current_user['permissions']['authorized_accounts']
+        authed_locations = current_user['permissions']['authorized_locations']
+        if (len(authed_accounts) == 0
+           and len(authed_locations) == 0):
             return []
         tcids = [
             user.get_tcid() for user in User.query(
-                accountID=authorized_accounts,
-                visit_locationID=authorized_locations,
+                accountID=authed_accounts,
+                visit_locationID=authed_locations,
                 find=True
             )
         ]
@@ -97,7 +90,7 @@ def get_hras(tcid, expand=False, aggregate=False):
         ]
     return [
         make_public(hra.to_dict(expand, aggregate))
-        for hra in HRA.query.filter_by(tcid=tcid)
+        for hra in HRA.query.filter_by(tcid=current_user.get_tcid())
     ]
 
 
@@ -117,7 +110,7 @@ class HRA_API(MethodView):
             aggregate = (request.args.get('aggregate', 'false') != 'false')
 
         if response_id is None:
-            return jsonify(get_hras(tcid, expand, aggregate))
+            return jsonify(get_hras(expand, aggregate))
         elif response_id == '-1':
             return jsonify(get_tc_avg_hra())
         else:

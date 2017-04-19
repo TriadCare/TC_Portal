@@ -12,6 +12,7 @@ from flask.views import MethodView
 from webapp import app, csrf, db
 from webapp.server.util import api_error
 
+from webapp.api.models.Permission import Permission
 from webapp.api_fm.models.FM_User import FM_User as User
 
 # init Flask Login manager
@@ -114,6 +115,12 @@ def load_user_from_request(request, token_type='API', throws=False):
             )
         if user:
             login_user(user)
+            user['permissions'] = user.get_permissions()
+            if (len(user['permissions']['authorized_accounts']) > 0 or
+               len(user['permissions']['authorized_locations']) > 0):
+                user['roles'] = ["EXECUTIVE", "PATIENT"]
+            else:
+                user['roles'] = ["PATIENT"]
             return user
         else:
             api_error(ValueError, "Authorization denied.", 401)
@@ -166,7 +173,10 @@ class Auth_API(MethodView):
                         404
                     )
                 if user.authenticate(pw):
-                    return jsonify(jwt=generate_jwt(user.to_json(), jwt_type))
+                    return jsonify(jwt=generate_jwt(
+                        user.to_json(),
+                        jwt_type)
+                    )
                 return api_error(
                     ValueError,
                     "Could not authenticate User.",

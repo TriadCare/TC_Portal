@@ -6,6 +6,7 @@ from datetime import datetime
 import requests
 
 from webapp import app
+from webapp.api.models.Permission import Permission
 from webapp.api.models.Email import isValidEmail
 from webapp.server.util import api_error
 
@@ -58,7 +59,8 @@ class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
         'dob', 'gender', 'hraEligible', 'case_management', 'patientID',
-        'tcid', 'email', 'accountID', 'visit_locationID', 'work_locationID'
+        'tcid', 'email', 'accountID', 'visit_locationID', 'work_locationID',
+        'permissions', 'roles'
     ]
 
     __fm_fields__ = {
@@ -355,12 +357,26 @@ class FM_User():
             if k == "dob":
                 try:
                     return_dict[k] = v.strftime("%m/%d/%Y")
-                except:
+                except Exception:
                     return_dict[k] = v  # None
             else:
                 return_dict[k] = v
 
         return return_dict
+
+    def get_permissions(self):
+        permissions = Permission.query.filter_by(tcid=self.get_tcid())
+        authorized_accounts = []
+        authorized_locations = []
+        for p in permissions:
+            if p.groupType == 'ACCOUNT':
+                authorized_accounts.append(p.groupID)
+            elif p.groupType == 'LOCATION':
+                authorized_locations.append(p.groupID)
+        return {
+            'authorized_accounts': authorized_accounts,
+            'authorized_locations': authorized_locations
+        }
 
     # Validates user data from request
     @staticmethod

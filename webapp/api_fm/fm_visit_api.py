@@ -9,7 +9,6 @@ import requests
 from webapp import app
 from webapp import csrf
 from webapp.api.auth_api import authorize
-from webapp.api.models.Permission import Permission
 from webapp.server.util import api_error, get_request_data
 from .models.FM_User import FM_User as User
 
@@ -28,21 +27,15 @@ class FM_Visit_API(MethodView):
     decorators = [csrf.exempt, authorize('PATIENT')]
 
     def get(self, record_id=None):
-        permissions = Permission.query.filter_by(tcid=current_user.get_tcid())
-        authorized_accounts = []
-        authorized_locations = []
-        for p in permissions:
-            if p.groupType == 'ACCOUNT':
-                authorized_accounts.append(p.groupID)
-            elif p.groupType == 'LOCATION':
-                authorized_locations.append(p.groupID)
+        authed_accounts = current_user['permissions']['authorized_accounts']
+        authed_locations = current_user['permissions']['authorized_locations']
 
-        if len(authorized_accounts) == 0 and len(authorized_locations) == 0:
+        if len(authed_accounts) == 0 and len(authed_locations) == 0:
             return jsonify([])
         patientIds = [
             user.get_patientID() for user in User.query(
-                accountID=authorized_accounts,
-                visit_locationID=authorized_locations,
+                accountID=authed_accounts,
+                visit_locationID=authed_locations,
                 find=True
             )
             if user.in_case_management()

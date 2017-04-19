@@ -6,7 +6,6 @@ from datetime import datetime
 from webapp import csrf
 from webapp.api.auth_api import load_user_from_request
 from webapp.server.util import api_error, get_request_data
-from webapp.api.models.Permission import Permission
 from .models.FM_User import FM_User as User
 
 
@@ -20,14 +19,8 @@ class FM_User_API(MethodView):
     def get(self, record_id=None):
         # To get users, you must be logged in
         user = load_user_from_request(request, throws=True)
-        permissions = Permission.query.filter_by(tcid=user.get_tcid())
-        authorized_accounts = []
-        authorized_locations = []
-        for p in permissions:
-            if p.groupType == 'ACCOUNT':
-                authorized_accounts.append(p.groupID)
-            elif p.groupType == 'LOCATION':
-                authorized_locations.append(p.groupID)
+        authorized_accounts = user['permissions']['authorized_accounts']
+        authorized_locations = user['permissions']['authorized_locations']
 
         if record_id is None:
             return jsonify([
