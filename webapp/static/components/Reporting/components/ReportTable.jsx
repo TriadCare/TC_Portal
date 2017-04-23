@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import { Menu, MenuItem } from '@blueprintjs/core';
+import { Menu, MenuItem, Button, InputGroup } from '@blueprintjs/core';
 import {
   Table, Column, ColumnHeaderCell, CopyCellsMenuItem,
   Cell, RowHeaderCell, TableLoadingOption,
@@ -8,6 +8,8 @@ import {
 import Pagination from 'react-bootstrap/es/Pagination';
 
 import { oneLine } from 'common-tags';
+
+import DownloadCSV from 'components/DownloadCSV';
 
 const compareDates = (dateOne, dateTwo) => {
   if (dateOne === '') { return -1; }
@@ -19,6 +21,7 @@ class ReportTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      searchText: '',
       pageOptions: { page: 1, numRecords: 50, pagerMaxButtons: 5 },
       data: props.data,
       columnDef: props.columnDef,
@@ -37,15 +40,19 @@ class ReportTable extends React.Component {
   getLoadingOptions = () => {
     const loadingOptions = [];
     if (this.props.isFetching || this.props.data.length === 0) {
-      loadingOptions.push(...Object.values(TableLoadingOption));
+      loadingOptions.push(
+        ...Object.values(TableLoadingOption).filter(v => v !== 'column-header'),
+      );
     }
     return loadingOptions;
   };
 
-  getLoadingColumns = () =>
-    [...Array(5).keys()].map(
-      k => <Column key={k} name={k} />,
-    )
+  getLoadingColumns = () => {
+    const columnArr = this.props.columnDef.map(
+      col => <Column key={col.label} name={col.label} />,
+    );
+    return columnArr;
+  }
 
   getDataStart = () =>
     (this.state.pageOptions.page - 1) * this.state.pageOptions.numRecords;
@@ -99,6 +106,20 @@ class ReportTable extends React.Component {
 
     return (
       <Menu>
+        {colDef.discrete &&
+          <MenuItem iconName="filter" text="Filter">
+            {colDef.values.map(v =>
+              <MenuItem
+                key={v}
+                className={colDef.excluded.includes(v) ? '' : 'pt-intent-primary'}
+                shouldDismissPopover={false}
+                iconName={colDef.excluded.includes(v) ? 'blank' : 'tick'}
+                text={v}
+                onClick={() => this.handleFilterToggle(colDef.label, v)}
+              />,
+            )}
+          </MenuItem>
+        }
         <MenuItem
           iconName={ascIconName}
           text="Sort Asc"
@@ -128,6 +149,51 @@ class ReportTable extends React.Component {
     this.setState({ data: sortedData });
   }
 
+  // This function the data that is filtered.
+  searchData = (searchText = this.state.searchText) =>
+    this.filterData().filter(d => Object.values(d).reduce(
+      (pass, value) => (value.includes(searchText) || pass), false,
+    ));
+
+  // This function filters all of the data based on the currently selected filters in the columnDef
+  filterData = (newColumnDef = this.state.columnDef) =>
+    this.props.data.filter(d =>
+      // filter the columnDef to just discrete columns
+      newColumnDef.filter(c => c.discrete).reduce((pass, col) =>
+        // reduce the discrete columns dependng on if this data passes or fails
+        (!col.excluded.includes(d[col.label]) && pass), true,
+      ),
+    );
+
+  handleFilterToggle = (colName, value) => {
+    const colIndex = this.state.columnDef.findIndex(c => c.label === colName);
+    // clone the existing columnDef so that we can update the deep excluded list
+    const newColumnDef = this.state.columnDef.map((col, index) => {
+      if (col.discrete) {
+        return {
+          ...this.state.columnDef[index],
+          ...{
+            excluded: [...this.state.columnDef[index].excluded],
+            values: [...this.state.columnDef[index].values],
+          },
+        };
+      }
+      return { ...col };
+    });
+
+    // update the column excluded list
+    if (newColumnDef[colIndex].excluded.includes(value)) {
+      newColumnDef[colIndex].excluded = newColumnDef[colIndex].excluded.filter(v => v !== value);
+    } else {
+      newColumnDef[colIndex].excluded.push(value);
+    }
+
+    this.setState({
+      columnDef: newColumnDef,
+      data: this.filterData(newColumnDef),
+    });
+  }
+
   handlePageSelect = (selectedPage) => {
     this.setState({
       pageOptions: {
@@ -140,6 +206,48 @@ class ReportTable extends React.Component {
   render() {
     return (
       <div className="reportElement reportTable">
+        <div className="reportTable__controlPanel reportTable__header">
+          <InputGroup
+            className="pt-round"
+            value={this.state.searchText}
+            placeholder="Search..."
+            leftIconName="search"
+            onChange={e => this.setState({
+              searchText: e.target.value,
+              data: this.searchData(e.target.value),
+              pageOptions: {
+                ...this.state.pageOptions,
+                ...{
+                  page: 1,
+                },
+              },
+            })}
+            rightElement={
+              this.state.searchText.length > 0 ?
+                <Button
+                  iconName="small-cross"
+                  className="pt-minimal"
+                  onClick={() => this.setState({
+                    searchText: '',
+                    data: this.searchData(''),
+                    pageOptions: {
+                      ...this.state.pageOptions,
+                      ...{
+                        page: 1,
+                      },
+                    },
+                  })}
+                /> :
+                <Button iconName="blank" className="pt-minimal pt-disabled hiddenButton" />
+            }
+          />
+          <DownloadCSV
+            icon
+            text={false}
+            data={this.state.data}
+            headers={this.state.columnDef.map(col => col.label)}
+          />
+        </div>
         <Table
           numRows={this.state.data.length === 0 ?
             this.state.pageOptions.numRecords :
@@ -154,9 +262,9 @@ class ReportTable extends React.Component {
           renderBodyContextMenu={this.getBodyContextMenu}
           getCellClipboardData={this.getCellValue}
         >
-          { this.state.data.length === 0 ?
-            this.getLoadingColumns() :
-            this.getColumns() }
+          { this.props.data.length === 0 ?
+          this.getLoadingColumns() :
+          this.getColumns() }
         </Table>
         <div className="reportTable__controlPanel reportTable__footer">
           <div className="recordLabel">

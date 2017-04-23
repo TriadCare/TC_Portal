@@ -256,6 +256,7 @@ class ReportContainer extends React.Component {
           <DownloadCSV
             data={this.state.report.data}
             headers={this.state.report.columnDef.map(col => col.label)}
+            classNames="pt-large"
           />
         )}
       </div>

@@ -79,8 +79,11 @@ class DownloadCSV extends React.Component {
       }}
     >
       <Button
-        text="Export"
-        className="pt-large pt-minimal pt-intent-primary exportButton"
+        text={this.props.text ? 'Export' : null}
+        iconName={this.props.icon ? 'download' : ''}
+        className={
+          `pt-minimal pt-intent-primary exportButton ${this.props.classNames}`
+        }
         onClick={() => this.setState({ isOpen: true })}
       />
     </Popover>
@@ -90,8 +93,17 @@ class DownloadCSV extends React.Component {
 DownloadCSV.propTypes = {
   data: React.PropTypes.arrayOf(React.PropTypes.shape()),
   headers: React.PropTypes.arrayOf(React.PropTypes.string),
+  text: React.PropTypes.bool,
+  icon: React.PropTypes.bool,
+  classNames: React.PropTypes.string,
 };
 
-DownloadCSV.defaultProps = { data: [], headers: undefined };
+DownloadCSV.defaultProps = {
+  data: [],
+  headers: undefined,
+  text: true,
+  icon: false,
+  classNames: '',
+};
 
 export default DownloadCSV;

@@ -140,21 +140,41 @@ const columnDefs = {
     { label: 'First Name', type: 'text' },
     { label: 'Last Name', type: 'text' },
     { label: 'Email', type: 'text' },
-    { label: 'Status', type: 'text' },
+    {
+      label: 'Status',
+      type: 'text',
+      discrete: true,
+      values: ['Complete', 'Started', 'Not Started'],
+      excluded: [],
+    },
     { label: 'Date', type: 'date' },
   ],
   Biometric: [
     { label: 'First Name', type: 'text' },
     { label: 'Last Name', type: 'text' },
     { label: 'Email', type: 'text' },
-    { label: 'Status', type: 'text' },
+    {
+      label: 'Status',
+      type: 'text',
+      discrete: true,
+      values: ['Completed', 'Pending', 'Not Started'],
+      excluded: [],
+    },
     { label: 'Date', type: 'date' },
   ],
   Visit: [
     { label: 'First Name', type: 'text' },
     { label: 'Last Name', type: 'text' },
     { label: 'Email', type: 'text' },
-    { label: 'Status', type: 'text' },
+    {
+      label: 'Status',
+      type: 'text',
+      discrete: true,
+      values: [
+        'Completed', 'Scheduled', 'Missed', 'Not Completed',
+      ],
+      excluded: [],
+    },
     { label: 'Date', type: 'date' },
   ],
 };
@@ -275,7 +295,12 @@ export function buildChartData(datasources, controlObject) {
     users = users.filter(user => user.case_management === 'Case Management');
   }
   // return if no data
-  if (dataItems.length === 0 || users.length === 0) { return { [chartType]: [] }; }
+  if (dataItems.length === 0 || users.length === 0) {
+    return {
+      [chartType]: [],
+      columnDef: columnDefs[datasourceName],
+    };
+  }
   // Accumulate the options for each datafilter control.
   const filteredUsers = filterUsers(datasources, controlObject, users);
 

@@ -25,7 +25,6 @@
 
 .reportTitle__label {
   font-size: 1.5em;
-  margin-bottom: 5px;
 }
 
 .baseControlSet {
@@ -146,22 +145,21 @@
 }
 
 .reportTable {
-  padding: 10px 10px 0 10px;
+  padding: 0 10px;
 }
 .reportTable > .bp-table-container {
   flex: 1 1 100%;
 }
-.reportTable__header {
-  margin: 5px;
-  flex: none;
+
+.reportTable__header > .pt-input-group > .pt-input-action > .hiddenButton {
+  cursor: default;
 }
-.reportTable__footer {
-  padding: 5px;
-  flex: none;
-}
+
 .reportTable__controlPanel {
   display: flex;
   justify-content: space-between;
+  padding: 5px 0;
+  flex: none;
 }
 .reportTable__footer > .pagination {
   margin: 0;
