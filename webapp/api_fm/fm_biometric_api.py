@@ -26,6 +26,11 @@ class FM_Biometric_API(MethodView):
     # Decorator list here (auth hook)
     decorators = [csrf.exempt, authorize('PATIENT')]
 
+    __fm_fields__ = [
+        "PtBiometricId", "PatientId", "Dt", "Verified",
+        "Patient::AccountId", "Patient::AccountLocationIdVisitLocation"
+    ]
+
     def get(self, record_id=None):
         authed_accounts = current_user['permissions']['authorized_accounts']
         authed_locations = current_user['permissions']['authorized_locations']
@@ -40,7 +45,14 @@ class FM_Biometric_API(MethodView):
                 find=True
             )
         ]
-        query_URL = FM_BIOMETRIC_URL + '.json?RFMmax=0'
+        query_URL = (FM_BIOMETRIC_URL + ".json?RFMfind=SELECT " +
+                     ",".join(FM_Biometric_API.__fm_fields__) + " WHERE ")
+        for accountID in authed_accounts:
+            query_URL += "Patient::AccountId%3D" + accountID + " OR "
+        for locationID in authed_locations:
+            query_URL += ("Patient::AccountLocationIdVisitLocation%3D" +
+                          locationID + " OR ")
+        query_URL = query_URL[:-len(" OR ")] + '&RFMmax=0'
         r = requests.get(query_URL, auth=FM_AUTH).json()
         if len(r) == 0 or 'data' not in r:
             api_error(ValueError, "Biometric not found.", 404)

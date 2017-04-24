@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React from 'react';
-import { Menu, MenuItem, Button, InputGroup } from '@blueprintjs/core';
+import { Menu, MenuItem, Button,
+  InputGroup, Tooltip, Position } from '@blueprintjs/core';
 import {
   Table, Column, ColumnHeaderCell, CopyCellsMenuItem,
   Cell, RowHeaderCell, TableLoadingOption,
@@ -241,12 +242,14 @@ class ReportTable extends React.Component {
                 <Button iconName="blank" className="pt-minimal pt-disabled hiddenButton" />
             }
           />
-          <DownloadCSV
-            icon
-            text={false}
-            data={this.state.data}
-            headers={this.state.columnDef.map(col => col.label)}
-          />
+          <Tooltip content="Export Table Data to CSV" position={Position.LEFT}>
+            <DownloadCSV
+              icon
+              text={false}
+              data={this.state.data}
+              headers={this.state.columnDef.map(col => col.label)}
+            />
+          </Tooltip>
         </div>
         <Table
           numRows={this.state.data.length === 0 ?

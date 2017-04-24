@@ -199,7 +199,7 @@ class loginPage extends React.Component {
           value={this.state[fieldProps.name].value}
         />
         {(fieldProps.name === 'password') &&
-          (<button
+          (<span
             className={
               `pt-icon pt-icon-${this.state.password.showPassword ?
                 'eye-off' : 'eye-open'}
