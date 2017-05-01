@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import { Spinner, Button, Popover,
+import { Spinner, Button, Popover, Tooltip,
   Position, Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 import { DatePicker } from '@blueprintjs/datetime';
 
@@ -222,34 +222,36 @@ class ReportContainer extends React.Component {
           { this.state.baseControls.data_set.label }
           { this.state.processing && <Spinner className="pt-small" />}
           { this.renderControlSet('Base', 'data_set', this.state.baseControls.data_set) }
+          { this.doesHaveDataFilters() &&
+            <Popover
+              position={Position.RIGHT_TOP}
+              content={
+                <Menu>
+                  {Object.entries(this.state.dataControls).filter(([key, control]) =>
+                    (key !== undefined &&
+                      control.options !== undefined &&
+                      control.options.length > 1),
+                  ).map(([key, control], i) =>
+                    <div key={key} className="filterMenuGroup">
+                      <MenuDivider
+                        title={control.label}
+                        className={i === 0 ? 'firstMenuDivider' : ''}
+                      />
+                      {this.renderControlSet('Data', key, control)}
+                    </div>,
+                  )}
+                </Menu>
+              }
+              className="filterButton"
+            >
+              <Tooltip content="Filter this Data Set" position={Position.LEFT}>
+                <Button
+                  className="pt-minimal pt-intent-primary"
+                  iconName="filter"
+                />
+              </Tooltip>
+            </Popover> }
         </label>
-        { this.doesHaveDataFilters() &&
-          <Popover
-            position={Position.RIGHT_TOP}
-            content={
-              <Menu>
-                {Object.entries(this.state.dataControls).filter(([key, control]) =>
-                  (key !== undefined &&
-                    control.options !== undefined &&
-                    control.options.length > 1),
-                ).map(([key, control], i) =>
-                  <div key={key} className="filterMenuGroup">
-                    <MenuDivider
-                      title={control.label}
-                      className={i === 0 ? 'firstMenuDivider' : ''}
-                    />
-                    {this.renderControlSet('Data', key, control)}
-                  </div>,
-                )}
-              </Menu>
-            }
-            className="filterButton"
-          >
-            <Button
-              className="pt-minimal pt-intent-primary"
-              iconName="filter"
-            />
-          </Popover> }
       </div>
       <div className="reportToolbar">
         {this.state.report.data.length !== 0 && (
