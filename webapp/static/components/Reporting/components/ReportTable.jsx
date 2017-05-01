@@ -18,6 +18,24 @@ const compareDates = (dateOne, dateTwo) => {
   return moment(dateOne).diff(dateTwo);
 };
 
+const columnIconNameExchange = {
+  date: { asc: 'sort-numerical', desc: 'sort-numerical-desc' },
+  number: { asc: 'sort-numerical', desc: 'sort-numerical-desc' },
+  text: { asc: 'sort-alphabetical', desc: 'sort-alphabetical-desc' },
+};
+
+const columnSortFuncExchange = {
+  date: {
+    asc: (a, b) => compareDates(a, b),
+    desc: (a, b) => -compareDates(a, b),
+  },
+  number: { asc: (a, b) => a - b, desc: (a, b) => b - a },
+  text: {
+    asc: (a, b) => a.toString().localeCompare(b),
+    desc: (a, b) => -a.toString().localeCompare(b),
+  },
+};
+
 class ReportTable extends React.Component {
   constructor(props) {
     super(props);
@@ -95,45 +113,40 @@ class ReportTable extends React.Component {
     ),
   )
 
-  getColumnMenu = (colDef) => {
-    const ascIconName = colDef.type === 'date' ? 'sort-numerical' : 'sort-alphabetical';
-    const descIconName = colDef.type === 'date' ? 'sort-numerical-desc' : 'sort-alphabetical-desc';
-    const sortAsc = colDef.type === 'date' ?
-      (a, b) => compareDates(a, b) :
-      (a, b) => a.toString().localeCompare(b);
-    const sortDesc = colDef.type === 'date' ?
-      (a, b) => -compareDates(a, b) :
-      (a, b) => -a.toString().localeCompare(b);
-
-    return (
-      <Menu>
-        {colDef.discrete &&
-          <MenuItem iconName="filter" text="Filter">
-            {colDef.values.map(v =>
-              <MenuItem
-                key={v}
-                className={colDef.excluded.includes(v) ? '' : 'pt-intent-primary'}
-                shouldDismissPopover={false}
-                iconName={colDef.excluded.includes(v) ? 'blank' : 'tick'}
-                text={v}
-                onClick={() => this.handleFilterToggle(colDef.label, v)}
-              />,
-            )}
-          </MenuItem>
-        }
-        <MenuItem
-          iconName={ascIconName}
-          text="Sort Asc"
-          onClick={() => this.sortColumn(colDef.label, sortAsc)}
-        />
-        <MenuItem
-          iconName={descIconName}
-          text="Sort Desc"
-          onClick={() => this.sortColumn(colDef.label, sortDesc)}
-        />
-      </Menu>
-    );
-  }
+  getColumnMenu = colDef => (
+    <Menu>
+      {colDef.discrete &&
+        <MenuItem iconName="filter" text="Filter">
+          {colDef.values.map(v =>
+            <MenuItem
+              key={v}
+              className={colDef.excluded.includes(v) ? '' : 'pt-intent-primary'}
+              shouldDismissPopover={false}
+              iconName={colDef.excluded.includes(v) ? 'blank' : 'tick'}
+              text={v}
+              onClick={() => this.handleFilterToggle(colDef.label, v)}
+            />,
+          )}
+        </MenuItem>
+      }
+      <MenuItem
+        iconName={columnIconNameExchange[colDef.type].asc}
+        text="Sort Asc"
+        onClick={() => this.sortColumn(
+          colDef.label,
+          columnSortFuncExchange[colDef.type].asc,
+        )}
+      />
+      <MenuItem
+        iconName={columnIconNameExchange[colDef.type].desc}
+        text="Sort Desc"
+        onClick={() => this.sortColumn(
+          colDef.label,
+          columnSortFuncExchange[colDef.type].desc,
+        )}
+      />
+    </Menu>
+  );
 
   getBodyContextMenu = context =>
     <Menu>
@@ -274,7 +287,7 @@ class ReportTable extends React.Component {
             {oneLine`
               Showing ${this.getDataStart() + 1}
                to ${Math.min(this.getDataStart() + this.state.pageOptions.numRecords, this.state.data.length)}
-               of ${this.state.data.length}`}
+               of ${this.state.data.length} Users`}
           </div>
           <Pagination
             prev

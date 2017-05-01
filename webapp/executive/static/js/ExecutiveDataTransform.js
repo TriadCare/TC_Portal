@@ -166,16 +166,10 @@ const columnDefs = {
     { label: 'First Name', type: 'text' },
     { label: 'Last Name', type: 'text' },
     { label: 'Email', type: 'text' },
-    {
-      label: 'Status',
-      type: 'text',
-      discrete: true,
-      values: [
-        'Completed', 'Scheduled', 'Missed', 'Not Completed',
-      ],
-      excluded: [],
-    },
-    { label: 'Date', type: 'date' },
+    { label: 'Completed', type: 'number' },
+    { label: 'Scheduled', type: 'number' },
+    { label: 'Missed', type: 'number' },
+    { label: 'Not Completed', type: 'number' },
   ],
 };
 
@@ -198,8 +192,10 @@ const keyExchanges = {
     first_name: 'First Name',
     last_name: 'Last Name',
     email: 'Email',
-    VisitDate: 'Date',
-    VisitStatus: 'Status',
+    Completed: 'Completed',
+    Scheduled: 'Scheduled',
+    Missed: 'Missed',
+    'Not Completed': 'Not Completed',
   },
 };
 
@@ -239,6 +235,10 @@ const valueExchanges = {
         'Completed', 'Scheduled', 'Missed', 'Not Completed',
       ].includes(v) ? v : 'Scheduled';
     },
+    Completed: v => `${v}`,
+    Scheduled: v => `${v}`,
+    Missed: v => `${v}`,
+    'Not Completed': v => `${v}`,
   },
 };
 
@@ -251,7 +251,7 @@ const nullStatus = {
 const nullRecord = {
   HRA: { DATE_CREATED: undefined, completed: nullStatus.HRA },
   Biometric: { Dt: undefined, Verified: nullStatus.Biometric },
-  Visit: { Dt: undefined, VisitStatus: nullStatus.Visit },
+  Visit: { Completed: 0, Scheduled: 0, Missed: 0, 'Not Completed': 0 },
 };
 
 const statusExchange = {
@@ -321,22 +321,51 @@ export function buildChartData(datasources, controlObject) {
     const userRecords = recordsInDate.filter(
       record => findUserRecords[datasourceName](record, user),
     ).sort(recordDateSort[datasourceName]);
+
+    let recordData = {};
+    let recordStatus = '';
+    // Add a null record for this user if no records found
     if (userRecords.length === 0) {
-      pieData[nullStatus[datasourceName]] += 1;
-      reportData.push(
-        formatRecord(
-          { ...nullRecord[datasourceName], ...user },
-          datasourceName,
-        ),
+      recordStatus = nullStatus[datasourceName];
+      recordData = formatRecord(
+        { ...nullRecord[datasourceName], ...user },
+        datasourceName,
       );
     } else {
-      pieData[statusExchange[datasourceName](userRecords[0])] += 1;
-      reportData.push(formatRecord(
-          { ...metaMapper[datasourceName](userRecords[0]), ...user },
-          datasourceName,
-        ),
-      );
+      let userRecord = {};
+      if (datasourceName === 'Visit') {
+        // For the Visit Data Set, we want to aggregate all visit data
+        userRecord = userRecords.reduce((acc, record) => ({
+          ...acc,
+          ...{
+            ...{
+              [valueExchanges.Visit.VisitStatus(
+                metaMapper[datasourceName](record).VisitStatus,
+              )]: (
+                acc[valueExchanges.Visit.VisitStatus(
+                  metaMapper[datasourceName](record).VisitStatus,
+                )] + 1
+              ),
+            },
+            ...user,
+          },
+        }), {
+          Completed: 0,
+          Scheduled: 0,
+          Missed: 0,
+          'Not Completed': 0,
+        });
+      } else {
+        // Otherwise, just want the user's most recent record
+        userRecord = { ...metaMapper[datasourceName](userRecords[0]), ...user };
+      }
+      recordStatus = statusExchange[datasourceName](userRecords[0]);
+      recordData = formatRecord(userRecord, datasourceName);
     }
+    // increment the status count for this record
+    pieData[recordStatus] += 1;
+    // add the record
+    reportData.push(recordData);
   });
   Object.entries(pieData).forEach(([k, v]) => chartData.push({ x: k, y: v }));
 
