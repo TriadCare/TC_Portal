@@ -153,7 +153,7 @@ class ReportTable extends React.Component {
   // This function the data that is filtered.
   searchData = (searchText = this.state.searchText) =>
     this.filterData().filter(d => Object.values(d).reduce(
-      (pass, value) => (value.includes(searchText) || pass), false,
+      (pass, value) => (value.toLowerCase().includes(searchText.toLowerCase()) || pass), false,
     ));
 
   // This function filters all of the data based on the currently selected filters in the columnDef

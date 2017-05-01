@@ -80,7 +80,7 @@ def get_hras(expand=False, aggregate=False):
         tcids = [
             user.get_tcid() for user in User.query(
                 accountID=authed_accounts,
-                visit_locationID=authed_locations,
+                work_locationID=authed_locations,
                 find=True
             )
         ]

@@ -29,7 +29,7 @@ class FM_Visit_API(MethodView):
     __fm_fields__ = [
         "PtVisitId", "PatientId", "VisitDate", "VisitTime", "VisitStatus",
         "ProviderUserName", "VisitType",
-        "Patient::AccountId", "Patient::AccountLocationIdVisitLocation"
+        "Patient::AccountId", "Patient::AccountLocationIdWorkLocation"
     ]
 
     def get(self, record_id=None):
@@ -51,7 +51,7 @@ class FM_Visit_API(MethodView):
         for accountID in authed_accounts:
             query_URL += "Patient::AccountId%3D" + accountID + " OR "
         for locationID in authed_locations:
-            query_URL += ("Patient::AccountLocationIdVisitLocation%3D" +
+            query_URL += ("Patient::AccountLocationIdWorkLocation%3D" +
                           locationID + " OR ")
         query_URL = query_URL[:-len(" OR ")] + '&RFMmax=0'
         r = requests.get(query_URL, auth=FM_AUTH).json()

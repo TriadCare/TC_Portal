@@ -11,7 +11,7 @@
       "cardSize": "medium"
     },
     "selectedControls": {
-      "chart_type": {"selectedValue": 2},
+      "chart_type": {"selectedValue": 1},
       "data_set": {"selectedValue": 3},
       "date_range": {
         "min_date": ["2016"],
@@ -31,7 +31,7 @@
       "cardSize": "medium"
     },
     "selectedControls": {
-      "chart_type": {"selectedValue": 2},
+      "chart_type": {"selectedValue": 1},
       "data_set": {"selectedValue": 1},
       "date_range": {
         "min_date": ["2016"],
@@ -51,7 +51,7 @@
       "cardSize": "medium"
     },
     "selectedControls": {
-      "chart_type": {"selectedValue": 2},
+      "chart_type": {"selectedValue": 1},
       "data_set": {"selectedValue": 2},
       "date_range": {
         "min_date": ["2016"],
