@@ -153,19 +153,16 @@ class ReportContainer extends React.Component {
               position={Position.BOTTOM_LEFT}
               content={
                 <DatePicker
+                  canClearSelection={false}
                   value={(controlSet.min_date === null ? null :
                     moment(controlSet.min_date).toDate())}
-                  onChange={(date, dayWasPicked) => {
-                    if (dayWasPicked) {
-                      this.state.handleControlChange(
-                        controlSetName, controlName, getDateRange(
-                          this.state.baseControls.date_range.min_date,
-                          this.state.baseControls.date_range.max_date,
-                          date, null,
-                        ),
-                      );
-                    }
-                  }}
+                  onChange={date => this.state.handleControlChange(
+                    controlSetName, controlName, getDateRange(
+                      this.state.baseControls.date_range.min_date,
+                      this.state.baseControls.date_range.max_date,
+                      date, null,
+                    ))
+                  }
                 />
               }
             >
@@ -180,19 +177,16 @@ class ReportContainer extends React.Component {
               position={Position.BOTTOM_LEFT}
               content={
                 <DatePicker
+                  canClearSelection={false}
                   value={(controlSet.max_date === null ? null :
                     moment(controlSet.max_date).toDate())}
-                  onChange={(date, dayWasPicked) => {
-                    if (dayWasPicked) {
-                      this.state.handleControlChange(
-                        controlSetName, controlName, getDateRange(
-                          this.state.baseControls.date_range.min_date,
-                          this.state.baseControls.date_range.max_date,
-                          null, date,
-                        ),
-                      );
-                    }
-                  }}
+                  onChange={date => this.state.handleControlChange(
+                    controlSetName, controlName, getDateRange(
+                      this.state.baseControls.date_range.min_date,
+                      this.state.baseControls.date_range.max_date,
+                      null, date,
+                    ))
+                  }
                 />
               }
             >

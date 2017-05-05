@@ -56,6 +56,7 @@ module.exports = {
     compress: true,
     hot: true,
     stats: 'errors-only',
+    headers: { 'Access-Control-Allow-Origin': '*' },
   },
   module: {
     rules: [
