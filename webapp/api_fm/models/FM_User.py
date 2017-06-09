@@ -59,8 +59,8 @@ class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
         'dob', 'gender', 'hraEligible', 'case_management', 'patientID',
-        'tcid', 'email', 'accountID', 'visit_locationID', 'work_locationID',
-        'permissions', 'roles'
+        'tcid', 'email', 'accountID', 'account', 'visit_locationID',
+        'work_locationID', 'permissions', 'roles'
     ]
 
     __fm_fields__ = {
@@ -79,7 +79,7 @@ class FM_User():
         'HraEnrolled': 'hraEnrolled',
         'CurrentCaseManagement': 'case_management',
         'AccountId': 'accountID',
-        # 'Account::Name': 'account',
+        'Account::Name': 'account',
         'EmployeeId': 'employeeID',
         'AccountLocationIdVisitLocation': 'visit_locationID',
         'AccountLocationIdCostCenter': 'billing_locationID',
@@ -154,6 +154,7 @@ class FM_User():
         self.case_management = str(data['case_management'])
         self.email = str(data['email'])
         self.accountID = str(data['accountID'])
+        self.account = str(data['account'])
         self.visit_locationID = str(data['visit_locationID'])
         self.billing_locationID = str(data['billing_locationID'])
         self.work_locationID = str(data['work_locationID'])
