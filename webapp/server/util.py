@@ -1,5 +1,7 @@
 import json
 from threading import Thread
+import traceback
+import sys
 
 
 def async(f):
@@ -45,6 +47,15 @@ def get_request_data(request):
 
 
 def logError(e, request):
+    if e.code == 500:
+        try:
+            exc_info = sys.exc_info()
+        finally:
+            # Display the *original* exception
+            print("Printing error")
+            traceback.print_exception(*exc_info)
+            del exc_info
+
     print("\n !!! Error received: " + str(type(e)) + str(e))
     print(" !!! Error code: " + str(e.code))
     print(" !!! User Agent: " + request.user_agent.string)
