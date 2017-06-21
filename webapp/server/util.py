@@ -46,7 +46,7 @@ def get_request_data(request):
 
 
 def logError(e, request):
-    if e.code == 401:
+    if e.code == 500:
         # Display the *original* exception
         print("Printing error")
         print(traceback.format_exc())
