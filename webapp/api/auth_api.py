@@ -165,7 +165,8 @@ class Auth_API(MethodView):
             user_creds = request.headers.get('Authorization')
             if user_creds:
                 user_creds = base64_decode(user_creds.replace('Basic ', '', 1))
-                email, pw = user_creds.split(':')
+                # split with a max split of one to allow ':' character in pw
+                email, pw = user_creds.split(':', 1)
                 if email is None or email is '' or pw is None or pw is '':
                     api_error(
                         ValueError,
