@@ -168,6 +168,7 @@ class Email_API(MethodView):
             request_data['subject'] = 'Your Help Request has been Received'
             request_data['recipients'] = request_data['email']
             request_data['cc'] = 'customercare@triadcare.com'
+            request_data['bcc'] = 'jwhite@triadcare.com'
             request_data['html'] = render_template(
                 'emails/get_help/get_help.html',
                 help_data=request_data
