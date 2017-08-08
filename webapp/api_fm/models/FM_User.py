@@ -3,24 +3,15 @@ import re
 import json
 from datetime import datetime
 
-import requests
-
-from webapp import app
 from webapp.api.models.Permission import Permission
 from webapp.api.models.Email import isValidEmail
 from webapp.server.util import api_error
+from ..fm_request_util import (
+    make_fm_find_request, make_fm_get_record, make_fm_update_request
+)
 
 MIN_PASSWORD_LENGTH = "8"
 MAX_PASSWORD_LENGTH = "128"
-
-FM_USER_AUTH = (
-    app.config['FM_AUTH_NAME'],
-    app.config['FM_AUTH_PW']
-)
-FM_USER_URL = (
-    app.config['FM_URL'] +
-    app.config['FM_USER_LAYOUT']
-)
 
 
 # Helper function to strip out non-ascii characters
@@ -43,10 +34,6 @@ def validate_password(password):
     return True
 
 
-def getFMColumnString():
-    return ",".join(FM_User.__fm_fields__.keys())
-
-
 def getFMField(field):
     for k, v in FM_User.__fm_fields__.iteritems():
         if field == v:
@@ -58,13 +45,13 @@ def getFMField(field):
 class FM_User():
     __public_fields__ = [
         'recordID', 'first_name', 'last_name', 'preferred_first_name',
-        'dob', 'gender', 'hraEligible', 'case_management', 'patientID',
-        'tcid', 'email', 'accountID', 'account', 'visit_locationID',
-        'work_locationID', 'permissions', 'roles'
+        'dob', 'gender', 'hraEligible', 'case_management', 'status',
+        'patientID', 'tcid', 'email', 'accountID', 'account',
+        'visit_locationID', 'work_locationID', 'permissions', 'roles'
     ]
 
     __fm_fields__ = {
-        'recordID': 'recordID',
+        'recordId': 'recordID',
         'PatientId': 'patientID',
         'TcId': 'tcid',
         'Status': 'status',
@@ -238,81 +225,69 @@ class FM_User():
     # Returns a User from File Maker based on the search criteria
     @staticmethod
     def query(**kwargs):
-        # decide if user wants first record from query, or all (default)
-        first = False
-        recordLimit = '0'
-        if 'first' in kwargs.keys():
-            recordLimit = '1'
-            first = kwargs['first']
-            del kwargs['first']
-        # If this is a Find query, the query uses a SQL statement
-        find = False
-        if 'find' in kwargs.keys():
-            find = kwargs['find']
-            del kwargs['find']
-        # build the request URL from the provided query parameters
         if 'recordID' in kwargs.keys():
             # If we have recordID, short circuit search
-            r = requests.get(
-                (FM_USER_URL + "/" + kwargs['recordID'] + ".json"),
-                auth=FM_USER_AUTH
-            ).json()
-        else:
-            if find:
-                query_URL = (
-                    FM_USER_URL + '.json?RFMfind=SELECT ' +
-                    getFMColumnString() +
-                    ' WHERE '
-                )
-                for arg in kwargs.keys():
-                    key = getFMField(str(arg))
-                    value = (
-                        [kwargs[arg]]
-                        if isinstance(kwargs[arg], str)
-                        else kwargs[arg]
-                    )
-                    for v in value:
-                        query_URL += (key + '%3D' + v + ' OR ')
-                query_URL = (
-                    query_URL[:-(len('OR '))] + 'OMIT HraEnrolled%3D0&'
-                )
-            else:
-                query_URL = FM_USER_URL + '.json?RFMsF1=HraEnrolled&RFMsV1=1&'
-                if len(kwargs) > 0:
-                    param_iterator = 2
-                    for arg in kwargs.keys():
-                        key = str(arg)
-                        value = str(kwargs[arg])
-                        query_URL += (
-                            "RFMsF" + str(param_iterator) + "=" +
-                            getFMField(key) + "&" +
-                            "RFMsV" + str(param_iterator) + "=%3D%3D" +
-                            value + "&"
-                        )
-            query_URL = query_URL + "RFMmax=" + recordLimit
-            r = requests.get(query_URL, auth=FM_USER_AUTH).json()
-        if len(r) == 0 or 'data' not in r:
-            api_error(ValueError, "User not found.", 404)
-        if first:
-            user_data = r['data'][0]
-            user_data['recordID'] = r['meta'][0]['recordID']
-
+            user_data = make_fm_get_record('user', kwargs['recordID'])[0]
             return FM_User({
                 FM_User.__fm_fields__[key]: user_data[key]
-                for key in user_data if key in FM_User.__fm_fields__
+                for key in user_data.keys() if key in FM_User.__fm_fields__
             })
-        else:
-            data = []
-            for index, d in enumerate(r['data']):
-                user = d
-                user[u'recordID'] = r['meta'][index]['recordID']
-                data.append(user)
-            return [FM_User({
-                FM_User.__fm_fields__[key]: user_data[key]
-                for key in user_data if key in FM_User.__fm_fields__
-            }) for user_data in data]
 
-        return None
+        record_range = None
+        if 'record_range' in kwargs.keys():
+            record_range = kwargs['record_range']
+            del kwargs['record_range']
+
+        record_offset = None
+        if 'record_offset' in kwargs.keys():
+            record_offset = kwargs['record_offset']
+            del kwargs['record_offset']
+
+        sort = None
+        if 'sort' in kwargs.keys():
+            sort = kwargs['sort']
+            del kwargs['sort']
+
+        user_objects = []
+        # if there are more arguments, we need to POST a Find Request
+        if len(kwargs.keys()) > 0:
+            query = []
+            for arg in kwargs.keys():
+                # get FM string of field
+                key = getFMField(str(arg))
+                # make sure we have a list of string values
+                value = kwargs[arg]
+                value = (
+                    [str(item) for item in value]
+                    if isinstance(value, list) else [str(value)]
+                )
+                for v in value:
+                    query.append({key: "==" + str(v)})
+            user_objects = make_fm_find_request(
+                'user',
+                query,
+                record_range=record_range,
+                record_offset=record_offset,
+                sort=sort
+            )
+        # if a simple request, make a GET request
+        else:
+            user_objects = make_fm_get_request(
+                'user',
+                record_range=record_range,
+                record_offset=record_offset,
+                sort=sort
+            )
+
+        users = [FM_User({
+            FM_User.__fm_fields__[key]: user_data[key]
+            for key in user_data.keys() if key in FM_User.__fm_fields__
+        }) for user_data in user_objects]
+
+        # Other code depends on a single obj returned, not a list.
+        if record_offset == 1 or len(users) == 1:
+            return users[0]
+        return users
 
     # No return, just updates self with provided data and commits change to DB
     def update(self, data):
@@ -330,14 +305,7 @@ class FM_User():
                 self['dob'].strftime("%m/%d/%Y")
             )
         # Submit new user data to File Maker
-        update_URL = FM_USER_URL + '/' + self.recordID + '.json'
-        put_data = {"data": [new_data]}
-        response = requests.put(update_URL, json=put_data, auth=FM_USER_AUTH)
-
-        if response.status_code == 200:
-            if response.json()['info']['X-RESTfm-Status'] == 200:
-                return
-        api_error(ValueError, 'User Update Failed.', 500)
+        return make_fm_update_request('user', self.recordID, new_data)
 
     # function to call to verify the user's creds.
     # Provides sanitization via other functions in this file.

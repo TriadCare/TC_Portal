@@ -83,7 +83,7 @@ def authorize(*roles):
 @login_manager.user_loader
 def load_user(userid):
     try:
-        user = User.query(tcid=userid, first=True)
+        user = User.query(tcid=userid, record_range=1)
         return user
     except ValueError:
         return None
@@ -104,7 +104,9 @@ def load_user_from_request(request, token_type='API', throws=False):
             username = auth_token.split(":")[0]
             password = auth_token.split(":")[1]
             if password != '':  # username:password
-                user = User.query(email=username, first=True)
+                user = User.query(
+                    email=username,
+                    record_range=1)
                 if not user.authenticate(password):
                     api_error(ValueError, "Authentication Failed.", 401)
                 else:
@@ -112,16 +114,10 @@ def load_user_from_request(request, token_type='API', throws=False):
             else:
                 jwtUser = verify_jwt(username, token_type)
                 # Most likely a token
-                user = User.query(
-                    recordID=jwtUser['recordID'],
-                    first=True
-                )
+                user = User.query(recordID=jwtUser['recordID'], record_range=1)
         else:
             jwtUser = verify_jwt(auth_token, token_type)
-            user = User.query(
-                recordID=jwtUser['recordID'],
-                first=True
-            )
+            user = User.query(recordID=jwtUser['recordID'], record_range=1)
         if user:
             if 'roles' not in user.__dict__.keys() or len(user.roles) == 0:
                 # Copying over authorizations from provided Auth Token
@@ -173,7 +169,7 @@ class Auth_API(MethodView):
                         "Authorization values are missing.",
                         400
                     )
-                user = User.query(email=email, first=True)
+                user = User.query(email=email, record_range=1)
                 if user is None:
                     api_error(
                         ValueError,

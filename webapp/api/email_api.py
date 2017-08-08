@@ -15,7 +15,7 @@ def email_forgot_password(email_address):
     if not isValidEmail(email_address):
         api_error(ValueError, "Invalid Email Address.", 400)
 
-    user = User.query(email=email_address, first=True)
+    user = User.query(email=email_address, record_range=1)
     if user is None:
         api_error(
             AttributeError,
@@ -57,7 +57,7 @@ def email_registration(email_address):
     if not isValidEmail(email_address):
         api_error(ValueError, "Invalid Email Address.", 400)
 
-    user = User.query(email=email_address, first=True)
+    user = User.query(email=email_address, record_range=1)
     if user is None:
         api_error(
             AttributeError,
@@ -98,7 +98,7 @@ def email_hra_reminder(email_address):
     if not isValidEmail(email_address):
         api_error(ValueError, "Invalid Email Address.", 400)
 
-    user = User.query(email=email_address, first=True)
+    user = User.query(email=email_address, record_range=1)
     if user is None:
         api_error(
             AttributeError,

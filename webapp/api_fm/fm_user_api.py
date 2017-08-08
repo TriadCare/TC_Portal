@@ -1,8 +1,7 @@
 import json
-import datetime
 from flask import jsonify, request
 from flask.views import MethodView
-from datetime import datetime
+
 from webapp import csrf
 from webapp.api.auth_api import load_user_from_request
 from webapp.server.util import api_error, get_request_data
@@ -27,11 +26,12 @@ class FM_User_API(MethodView):
                 u.to_json()
                 for u in User.query(
                     accountID=authorized_accounts,
-                    visit_locationID=authorized_locations,
-                    find=True)
+                    visit_locationID=authorized_locations
+                )
+                if u.in_case_management() and u.is_active()
             ])
         else:
-            found_user = User.query(recordID=record_id, first=True)
+            found_user = User.query(recordID=record_id, record_range=1)
             if found_user is None:
                 api_error(ValueError, "User ID not found.", 404)
             # If this user is not the current user and the current user is not
@@ -95,7 +95,7 @@ class FM_User_API(MethodView):
             preloaded_user = users_with_eID[0]
         else:
             preloaded_user = (
-                User.query(tcid=new_user_data['tcid'], first=True)
+                User.query(tcid=new_user_data['tcid'], record_range=1)
             )
             if preloaded_user is None:
                 api_error(ValueError, "Provided ID not found.", 404)
@@ -136,7 +136,7 @@ class FM_User_API(MethodView):
             try:
                 user_with_email = User.query(
                     email=new_user_data['email'],
-                    first=True
+                    record_range=1
                 )
                 if user_with_email is not None:
                     api_error(
@@ -183,5 +183,5 @@ class FM_User_API(MethodView):
             api_error(ValueError, "Unauthorized update.", 403)
 
         user.update(user_data)
-        # db.session.commit()
+
         return jsonify(error=False)
