@@ -23,7 +23,7 @@ FM_FIND_URL = (
     app.config['FM_URL'] + '/find/' + app.config['FM_SOLUTION'] + '/'
 )
 
-MAX_RECORD_RANGE = 500
+MAX_RECORD_RANGE = 250
 
 
 # Generator that breaks down a request according to the MAX_RECORD_RANGE
