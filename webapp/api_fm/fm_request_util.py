@@ -93,7 +93,8 @@ def prepare_data_for_fm(obj):
 def send_fm_request(request):
     data = []
     with Session() as session:
-        prepped_request = session.prepare_request(request).json()
+        prepped_request = session.prepare_request(request)
+        response = session.send(prepped_request).json()
 
         if 'errorCode' in response.keys() and response['errorCode'] != "0":
             api_error(
