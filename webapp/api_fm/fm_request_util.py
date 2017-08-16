@@ -93,8 +93,7 @@ def prepare_data_for_fm(obj):
 def send_fm_request(request):
     data = []
     with Session() as session:
-        prepped_request = session.prepare_request(request)
-        response = session.send(prepped_request).json()
+        prepped_request = session.prepare_request(request).json()
 
         if 'errorCode' in response.keys() and response['errorCode'] != "0":
             api_error(
@@ -202,5 +201,6 @@ def make_fm_update_request(endpoint, record_id, data):
     return send_fm_request(Request(
         'PUT',
         FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
-        json=prepare_data_for_fm(data)
+        headers={'FM-Data-token': get_request_token()},
+        json=prepare_data_for_fm({'data': data})
     ))
