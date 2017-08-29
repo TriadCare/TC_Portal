@@ -202,5 +202,6 @@ def make_fm_update_request(endpoint, record_id, data):
     return send_fm_request(Request(
         'PUT',
         FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
-        json=prepare_data_for_fm(data)
+        headers={'FM-Data-token': get_request_token()},
+        json=prepare_data_for_fm({'data': data})
     ))
