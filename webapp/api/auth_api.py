@@ -144,7 +144,7 @@ class Auth_API(MethodView):
     def get(self):
         api_error(AttributeError, "Unsupported HTTP Method: GET", 405)
 
-    # Accessed by '/token', can specify TOKEN_TYPE (defaults to API TOKEN)
+    # Accessed by '/token/', can specify TOKEN_TYPE (defaults to API TOKEN)
     def post(self):
         request_data = request.data
         jwt_type = 'API'

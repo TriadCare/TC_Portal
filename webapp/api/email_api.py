@@ -53,6 +53,45 @@ def email_forgot_password(email_address):
     )
 
 
+# Sends a custom email to one recipient.
+# The recipient must be a user in our system.
+def email_custom(email_data):
+    email_address = str(email_data['email'])
+    if not isValidEmail(email_address):
+        api_error(ValueError, "Invalid Email Address.", 400)
+
+    user = User.query(email=email_address, record_range=1)
+    if user is None:
+        api_error(
+            AttributeError,
+            "The provided email address could not be found.",
+            404
+        )
+
+    email = {
+        'subject': (
+            email_data['subject']
+            if 'subject' in email_data else
+            "Message from Triad Care, Inc."
+        ),
+        'recipients': email_address,
+        'body': email_data['body'],
+    }
+
+    if 'html' in email_data:
+        email['html'] = (render_template('emails/snippets/header_image.html') +
+                         email_data['html'])
+
+    Email(email).send()
+
+    return jsonify(
+        error=False,
+        message=(
+            'Custom Email has been sent to %s.' % email_address
+        )
+    )
+
+
 def email_registration(email_address):
     if not isValidEmail(email_address):
         api_error(ValueError, "Invalid Email Address.", 400)
@@ -164,6 +203,8 @@ class Email_API(MethodView):
             return email_registration(request_data['email'])
         if email_type == "hra_reminder":
             return email_hra_reminder(request_data['email'])
+        if email_type == 'custom':
+            return email_custom(request_data)
         if email_type == "get_help":
             request_data['subject'] = 'Your Help Request has been Received'
             request_data['recipients'] = request_data['email']
