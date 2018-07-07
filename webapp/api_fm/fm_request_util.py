@@ -1,6 +1,7 @@
 import random
 import json
 from requests import Session, Request
+from requests.auth import HTTPBasicAuth
 
 from webapp import app
 from webapp.server.util import api_error
@@ -121,12 +122,10 @@ def get_request_token():
     return send_fm_request(Request(
         'POST',
         FM_AUTH_URL,
-        headers={'CONTENT-TYPE': 'application/json'},
-        json=prepare_data_for_fm({
-            "user": FM_USERNAME,
-            "password": FM_PW,
-            "layout": ENDPOINT_EXCHANGE['user']
-        })
+        headers={
+            'CONTENT-TYPE': 'application/json',
+            'Authorization': HTTPBasicAuth(FM_USERNAME, FM_PW)
+        }
     ))['token']
 
 
@@ -139,7 +138,7 @@ def make_fm_find_request(endpoint, query,
         FM_FIND_URL + ENDPOINT_EXCHANGE[endpoint],
         headers={
             'content-type': 'application/json',
-            'FM-Data-token': str(get_request_token())
+            'Authorization': ("Bearer %s" % get_request_token())
         },
         json={
             'query': query,
@@ -169,7 +168,7 @@ def make_fm_get_record(endpoint, record_id):
     return send_fm_request(Request(
         'GET',
         FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
-        headers={'FM-Data-token': get_request_token()}
+        headers={'Authorization': ("Bearer %s" % get_request_token()) }
     ))
 
 
@@ -180,7 +179,7 @@ def make_fm_get_request(endpoint,
     request_gen = gen_next_query(
         'GET',
         FM_URL + ENDPOINT_EXCHANGE[endpoint],
-        headers={'FM-Data-token': get_request_token()},
+        headers={'Authorization': ("Bearer %s" % get_request_token()) },
         params={'offset': record_offset, 'range': record_range, 'sort': sort}
     )
     data = []
@@ -202,6 +201,6 @@ def make_fm_update_request(endpoint, record_id, data):
     return send_fm_request(Request(
         'PUT',
         FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
-        headers={'FM-Data-token': get_request_token()},
+        headers={'Authorization': ("Bearer %s" % get_request_token()) },
         json=prepare_data_for_fm({'data': data})
     ))
