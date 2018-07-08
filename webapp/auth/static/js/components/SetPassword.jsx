@@ -156,7 +156,7 @@ class setPassword extends React.Component {
                 value={this.state.password}
               />
               {
-                <button
+                <span
                   className={
                     `pt-icon pt-icon-${this.state.showPassword ?
                       'eye-off' : 'eye-open'}

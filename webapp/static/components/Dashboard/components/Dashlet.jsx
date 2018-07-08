@@ -30,7 +30,7 @@ const renderCard = (config, handleClick) => (
     <div className="dashlet__card-header">
       <div className="dashlet__card-title">
         {(config.data !== undefined && config.data[0].meta !== undefined && config.data[0].meta.completed === 1) ?
-          config.title : "Incomplete" }
+          config.title : (config.data !== undefined && "Incomplete") }
         <div className="dashlet__card-date">
           {config.data !== undefined &&
              config.data[0] !== undefined &&
@@ -44,7 +44,7 @@ const renderCard = (config, handleClick) => (
     </div>
     { /* chart */ }
     {(config.data !== undefined && config.data[0].meta !== undefined && config.data[0].meta.completed === 1) ?
-      renderDashChart(config) : "Click to Continue" }
+      renderDashChart(config) : (config.data !== undefined && "Click to Continue") }
   </button>
 );
 

@@ -199,8 +199,8 @@ def make_fm_get_request(endpoint,
 
 def make_fm_update_request(endpoint, record_id, data):
     return send_fm_request(Request(
-        'PUT',
-        FM_URL + '/' + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
+        'PATCH',
+        FM_URL + '/' + ENDPOINT_EXCHANGE[endpoint] + '/records/' + str(record_id),
         headers={'Authorization': ("Bearer %s" % get_request_token()) },
-        json=prepare_data_for_fm({'data': data})
+        json=prepare_data_for_fm({'fieldData': data})
     ))
