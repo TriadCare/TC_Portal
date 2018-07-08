@@ -96,8 +96,8 @@ def send_fm_request(request):
     with Session() as session:
         prepped_request = session.prepare_request(request)
         result = session.send(prepped_request).json()
-        response = result.response
-        message = result.messages[0]
+        response = result['response']
+        message = result['messages'][0]
 
         if 'code' in message.keys() and message['code'] != "0":
             api_error(
