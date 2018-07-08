@@ -16,12 +16,12 @@ ENDPOINT_EXCHANGE = {
 
 FM_USERNAME = app.config['FM_AUTH_NAME']
 FM_PW = app.config['FM_AUTH_PW']
-FM_AUTH_URL = app.config['FM_URL'] + '/auth/' + app.config['FM_SOLUTION']
+FM_AUTH_URL = app.config['FM_URL'] + '/' + app.config['FM_SOLUTION'] + '/sessions'
 FM_URL = (
-    app.config['FM_URL'] + '/record/' + app.config['FM_SOLUTION'] + '/'
+    app.config['FM_URL'] + '/' + app.config['FM_SOLUTION'] + '/layouts'
 )
 FM_FIND_URL = (
-    app.config['FM_URL'] + '/find/' + app.config['FM_SOLUTION'] + '/'
+    app.config['FM_URL'] + '/' + app.config['FM_SOLUTION'] + '/layouts'
 )
 
 MAX_RECORD_RANGE = 250
@@ -95,15 +95,17 @@ def send_fm_request(request):
     data = []
     with Session() as session:
         prepped_request = session.prepare_request(request)
-        response = session.send(prepped_request).json()
+        result = session.send(prepped_request).json()
+        response = result.response
+        message = result.messages[0]
 
-        if 'errorCode' in response.keys() and response['errorCode'] != "0":
+        if 'code' in message.keys() and message['code'] != "0":
             api_error(
                 ValueError,
-                (response['errorMessage']
-                 if 'errorMessage' in response.keys()
+                (message['message']
+                 if 'message' in message.keys()
                  else 'Error from File Maker'),
-                response['errorCode']
+                message['code']
             )
 
         if 'data' in response.keys():
@@ -135,7 +137,7 @@ def make_fm_find_request(endpoint, query,
                          record_range=None, record_offset=None, sort=None):
     request_gen = gen_next_query(
         'POST',
-        FM_FIND_URL + ENDPOINT_EXCHANGE[endpoint],
+        FM_FIND_URL + ENDPOINT_EXCHANGE[endpoint] + '/_find',
         headers={
             'content-type': 'application/json',
             'Authorization': ("Bearer %s" % get_request_token())
@@ -143,7 +145,7 @@ def make_fm_find_request(endpoint, query,
         json={
             'query': query,
             'offset': record_offset,
-            'range': record_range,
+            'limit': record_range,
             'sort': sort
         }
     )
@@ -167,7 +169,7 @@ def make_fm_find_request(endpoint, query,
 def make_fm_get_record(endpoint, record_id):
     return send_fm_request(Request(
         'GET',
-        FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
+        FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/records/' + str(record_id),
         headers={'Authorization': ("Bearer %s" % get_request_token()) }
     ))
 
@@ -178,9 +180,9 @@ def make_fm_get_request(endpoint,
                         record_range=None, record_offset=None, sort=None):
     request_gen = gen_next_query(
         'GET',
-        FM_URL + ENDPOINT_EXCHANGE[endpoint],
+        FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/records/',
         headers={'Authorization': ("Bearer %s" % get_request_token()) },
-        params={'offset': record_offset, 'range': record_range, 'sort': sort}
+        params={'_offset': record_offset, '_limit': record_range, '_sort': sort}
     )
     data = []
     for request in request_gen:
