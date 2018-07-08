@@ -49,11 +49,11 @@ def gen_next_query(method, url, headers, params=None, json=None):
         if json is None:
             if query_offset != 0:
                 params['offset'] = query_offset
-            params['range'] = query_range
+            params['_limit'] = query_range
         else:
             if query_offset != 0:
                 json['offset'] = query_offset
-            json['range'] = query_range
+            json['limit'] = query_range
         # return the completed Request
         yield Request(
             method,
@@ -135,7 +135,7 @@ def make_fm_find_request(endpoint, query,
                          record_range=None, record_offset=None, sort=None):
     request_gen = gen_next_query(
         'POST',
-        FM_FIND_URL + ENDPOINT_EXCHANGE[endpoint] + '/_find',
+        FM_FIND_URL + '/' + ENDPOINT_EXCHANGE[endpoint] + '/_find',
         headers={
             'content-type': 'application/json',
             'Authorization': ("Bearer %s" % get_request_token())
@@ -167,7 +167,7 @@ def make_fm_find_request(endpoint, query,
 def make_fm_get_record(endpoint, record_id):
     return send_fm_request(Request(
         'GET',
-        FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/records/' + str(record_id),
+        FM_URL + '/' + ENDPOINT_EXCHANGE[endpoint] + '/records/' + str(record_id),
         headers={'Authorization': ("Bearer %s" % get_request_token()) }
     ))
 
@@ -178,7 +178,7 @@ def make_fm_get_request(endpoint,
                         record_range=None, record_offset=None, sort=None):
     request_gen = gen_next_query(
         'GET',
-        FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/records/',
+        FM_URL + '/' + ENDPOINT_EXCHANGE[endpoint] + '/records/',
         headers={'Authorization': ("Bearer %s" % get_request_token()) },
         params={'_offset': record_offset, '_limit': record_range, '_sort': sort}
     )
@@ -200,7 +200,7 @@ def make_fm_get_request(endpoint,
 def make_fm_update_request(endpoint, record_id, data):
     return send_fm_request(Request(
         'PUT',
-        FM_URL + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
+        FM_URL + '/' + ENDPOINT_EXCHANGE[endpoint] + '/' + str(record_id),
         headers={'Authorization': ("Bearer %s" % get_request_token()) },
         json=prepare_data_for_fm({'data': data})
     ))
