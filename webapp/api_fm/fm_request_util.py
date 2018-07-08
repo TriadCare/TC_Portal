@@ -124,10 +124,8 @@ def get_request_token():
     return send_fm_request(Request(
         'POST',
         FM_AUTH_URL,
-        headers={
-            'CONTENT-TYPE': 'application/json',
-            'Authorization': HTTPBasicAuth(FM_USERNAME, FM_PW)
-        }
+        auth=HTTPBasicAuth(FM_USERNAME, FM_PW),
+        headers={'CONTENT-TYPE': 'application/json'}
     ))['token']
 
 
