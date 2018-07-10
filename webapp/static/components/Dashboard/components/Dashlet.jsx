@@ -29,7 +29,7 @@ const renderCard = (config, handleClick) => (
     { /* header */ }
     <div className="dashlet__card-header">
       <div className="dashlet__card-title">
-        {(config.data !== undefined && config.data[0].meta !== undefined && config.data[0].meta.completed === 1) ?
+        {(config.data !== undefined && config.data.length !== 0 && config.data[0].meta !== undefined && config.data[0].meta.completed === 1) ?
           config.title : (config.data !== undefined && "Incomplete") }
         <div className="dashlet__card-date">
           {config.data !== undefined &&
