@@ -43,7 +43,7 @@ const renderCard = (config, handleClick) => (
       </div>
     </div>
     { /* chart */ }
-    {(config.data !== undefined && config.data[0].meta !== undefined && config.data[0].meta.completed === 1) ?
+    {(config.data !== undefined && config.data.length !== 0 && config.data[0].meta !== undefined && config.data[0].meta.completed === 1) ?
       renderDashChart(config) : (config.data !== undefined && "Click to Continue") }
   </button>
 );
