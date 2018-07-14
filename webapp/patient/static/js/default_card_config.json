@@ -3,22 +3,6 @@
     "id": 1,
     "DATE_CREATED": "06/09/2015",
     "chartist": true,
-    "cardType": "map",
-    "datasource": "HRA",
-    "dataKey": "responseID",
-    "data": [],
-    "cardDefinition": {
-      "title": "Trending Health Assessment Overall Score",
-      "description": "",
-      "cardSize": "large",
-      "dataType": "trend",
-      "chartType": "Line"
-    }
-  },
-  {
-    "id": 2,
-    "DATE_CREATED": "06/09/2015",
-    "chartist": true,
     "cardType": "unfold",
     "datasource": "HRA",
     "dataKey": "responseID",
