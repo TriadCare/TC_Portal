@@ -44,6 +44,8 @@ from .api_fm import fm_account_view as account_view
 from .api_fm import fm_location_view as location_view
 from .api_fm import fm_biometric_view as biometric_view
 from .api_fm import fm_visit_view as visit_view
+from .api_fm import fm_risk_view as risk_view
+from .api_fm import fm_measure_view as measure_view
 # from .api import user_view
 from .api import auth_view, email_view, hra_view, pdf_view
 from .auth import auth as auth_app
@@ -65,6 +67,8 @@ app.add_url_rule('/accounts/', view_func=account_view,)
 app.add_url_rule('/locations/', view_func=location_view,)
 app.add_url_rule('/biometrics/', view_func=biometric_view,)
 app.add_url_rule('/visits/', view_func=visit_view,)
+app.add_url_rule('/risk/', view_func=risk_view,)
+app.add_url_rule('/measure/', view_func=measure_view,)
 
 
 @app.errorhandler(Exception)
