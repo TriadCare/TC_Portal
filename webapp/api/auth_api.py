@@ -2,7 +2,7 @@ import base64
 from functools import wraps
 
 # itsdangerous
-from itsdangerous import (TimedJSONWebSignatureSerializer,
+from itsdangerous import (URLSafeTimedSerializer,
                           SignatureExpired, BadSignature, base64_decode)
 
 from flask_login import LoginManager, login_user, logout_user
@@ -21,7 +21,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth.auth_app'
 login_manager.session_protection = "strong"
 
-jwt_tjwss = TimedJSONWebSignatureSerializer(app.config['SECRET_KEY'])
+jwt_tjwss = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 TOKEN_TYPES = {
     'API': {
@@ -67,7 +67,7 @@ def authorize(*roles):
         def wrapped(*args, **kwargs):
             user = load_user_from_request(request, throws=True)
             user_role = user.get_role()
-            if user_role in roles or user_role is "TRIADCARE_ADMIN":
+            if user_role in roles or user_role == "TRIADCARE_ADMIN":
                 return f(*args, **kwargs)
             else:
                 api_error(
@@ -163,7 +163,7 @@ class Auth_API(MethodView):
                 user_creds = base64_decode(user_creds.replace('Basic ', '', 1))
                 # split with a max split of one to allow ':' character in pw
                 email, pw = user_creds.split(':', 1)
-                if email is None or email is '' or pw is None or pw is '':
+                if email is None or email == '' or pw is None or pw == '':
                     api_error(
                         ValueError,
                         "Authorization values are missing.",

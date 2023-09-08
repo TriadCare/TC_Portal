@@ -2,15 +2,15 @@ import re
 from flask import current_app
 
 from webapp import app
-from webapp.server.util import api_error, async
+from webapp.server.util import api_error, _async
 
 # Flask-Mail
 from flask_mail import Mail, Message
 mail = Mail(app)
 
 
-@async
-def send_async_email(app, email_data):
+@_async
+def send__async_email(app, email_data):
     with app.app_context():
         msg = Message(
             subject=email_data['subject'],
@@ -144,7 +144,7 @@ class Email():
             print("\tEMAIL NOTIFICATION:\n \
             \tEmail not sent due to Configuration: TESTING=True")
 
-        send_async_email(app, {
+        send__async_email(app, {
             'subject': self.subject,
             'sender': self.sender,
             'recipients': self.recipients,

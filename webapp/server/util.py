@@ -3,7 +3,7 @@ from threading import Thread
 import traceback
 
 
-def async(f):
+def _async(f):
     def wrapper(*args, **kwargs):
         thr = Thread(target=f, args=args, kwargs=kwargs)
         thr.start()
