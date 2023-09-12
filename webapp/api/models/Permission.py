@@ -6,7 +6,7 @@ class Permission(db.Model):
     __table__ = db.Model.metadata.tables['permissions']
 
     def __init__(self, data):
-        for k, v in data.iteritems():
+        for k, v in data.items():
             self[k] = v
 
     def __getitem__(self, key):

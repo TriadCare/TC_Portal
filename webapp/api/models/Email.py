@@ -27,7 +27,7 @@ def send__async_email(app, email_data):
 def isValidEmail(email):
     if (
         email is None or
-        not (isinstance(email, str) or isinstance(email, unicode))
+        not (isinstance(email, str))
     ):
         return False
     if re.match('^[^@]+@[^@]+\.[^@]+$', email):
@@ -42,7 +42,7 @@ class Email():
             'validationFunction': lambda s: (
                 str(s)
                 if (s is not None and
-                    (isinstance(s, str) or isinstance(s, unicode)))
+                    (isinstance(s, str)))
                 else api_error(
                     ValueError,
                     "Subject is required, but is missing.",
@@ -87,7 +87,7 @@ class Email():
             'validationFunction': lambda s: (
                 str(s)
                 if (s is not None and
-                    (isinstance(s, str) or isinstance(s, unicode)))
+                    (isinstance(s, str)))
                 else api_error(
                     ValueError,
                     ("'Body' field is required, \
@@ -101,7 +101,7 @@ class Email():
             'validationFunction': lambda s: (
                 str(s)
                 if (s is not None and
-                    (isinstance(s, str) or isinstance(s, unicode)))
+                    (isinstance(s, str)))
                 else None
             )
         },

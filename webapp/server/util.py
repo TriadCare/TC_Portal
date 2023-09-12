@@ -57,8 +57,8 @@ def logError(e, request):
     print(" !!! User IP: " + request.remote_addr)
     # print(" !!! Headers: " + str(type(request.headers)))
     print(" !!! URL Requested: " + request.url)
-    if request.method is 'POST':
-        print(" !!! Post data: " + request.data)
+    if request.method == 'POST':
+        print(" !!! Post data: " + str(request.data))
     print(" !!! Referrer: " + str(request.referrer) + "\n")
 
 

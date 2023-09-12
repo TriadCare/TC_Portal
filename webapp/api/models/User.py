@@ -63,7 +63,7 @@ class User(db.Model):
             'required': True,
             'validationFunc': lambda d: (
                 datetime.strptime(d, '%Y-%m-%d').date()
-                if isinstance(d, unicode) else d
+                if isinstance(d, str) else d
             )
         },
         'email': {
@@ -131,13 +131,13 @@ class User(db.Model):
         return self.hash is not None
 
     def get_id(self):
-        return unicode(self.userID)
+        return str(self.userID)
 
     def get_tcid(self):
-        return unicode(self.tcid)  # python 2
+        return str(self.tcid)  # python 2
 
     def get_accountID(self):
-        return unicode(self.accountID)  # python 2
+        return str(self.accountID)  # python 2
 
     def get_email(self):
         return self.email
@@ -152,7 +152,7 @@ class User(db.Model):
     def update(self, data):
         if data is None or not isinstance(data, dict):
             return
-        for k, v in data.iteritems():
+        for k, v in data.items():
             if k in User.__immutable_fields__:
                 continue
             self[k] = v
@@ -172,7 +172,7 @@ class User(db.Model):
 
     def to_json(self):
         return_dict = {}
-        for k, v in self.__dict__.iteritems():
+        for k, v in self.__dict__.items():
             if k not in User.__public_fields__:
                 continue
             if k == "dob":
@@ -198,7 +198,7 @@ class User(db.Model):
         if user_data is None or not isinstance(user_data, dict):
             api_error(AttributeError, "Bad Request", 400)
 
-        for k, field in User.__registration_fields__.iteritems():
+        for k, field in User.__registration_fields__.items():
             if k in user_data:
                 v = user_data[k]
                 # Use the registration field's validation/format function

@@ -79,8 +79,8 @@ def error_handler(e):
             logError(e, request)
     return make_response(jsonify({
         'error': True,
-        'message': e.message,
-        'code': e.code
+        'message': getattr(e, 'message', 'Error'),
+        'code': int(e.code)
     }), e.code)
 
 # This starts the app locally with the built-in Flask web server

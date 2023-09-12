@@ -32,11 +32,11 @@ def gen_next_query(method, url, headers, params=None, json=None):
     # get the range and offset from the provided data (defaults from 0-1000000)
     request_settings = params if json is None else json
     requested_range = (request_settings['range']
-                       if 'range' in request_settings.keys()
+                       if 'range' in list(request_settings.keys())
                        and request_settings['range'] is not None
                        else 1000000)
     query_offset = (request_settings['offset']
-                    if 'offset' in request_settings.keys()
+                    if 'offset' in list(request_settings.keys())
                     and request_settings['offset'] is not None
                     else 0)
     # clip the range to the max
@@ -73,7 +73,7 @@ def prepare_data_for_fm(obj):
     if obj is None:
         return obj
     converted_obj = {}
-    for k, v in obj.iteritems():
+    for k, v in obj.items():
         if isinstance(v, list):
             new_list = []
             for value in v:
@@ -99,16 +99,16 @@ def send_fm_request(request):
         response = result['response']
         message = result['messages'][0]
 
-        if 'code' in message.keys() and message['code'] != "0":
+        if 'code' in list(message.keys()) and message['code'] != "0":
             api_error(
                 ValueError,
                 (message['message']
-                 if 'message' in message.keys()
+                 if 'message' in list(message.keys())
                  else 'Error from File Maker'),
                 message['code']
             )
 
-        if 'data' in response.keys():
+        if 'data' in list(response.keys()):
             # Compress the response into a list of data objects
             for item in response['data']:
                 d = item['fieldData']

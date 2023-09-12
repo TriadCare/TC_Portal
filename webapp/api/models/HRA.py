@@ -36,7 +36,7 @@ class HRA(db.Model):
     }
 
     def __init__(self, data):
-        for k, v in data.iteritems():
+        for k, v in data.items():
             self[k] = v
 
     def __getitem__(self, key):
@@ -46,7 +46,7 @@ class HRA(db.Model):
         setattr(self, key, item)
 
     def update(self, data):
-        for k, v in data.iteritems():
+        for k, v in data.items():
             self[k] = v
 
     def to_dict(self, expand=False, aggregate=False):
@@ -55,7 +55,7 @@ class HRA(db.Model):
         score = {}
         questionnaire = []
 
-        for k, v in self.__dict__.iteritems():
+        for k, v in self.__dict__.items():
             if k in HRA.__private__:
                 continue
             elif k in HRA.__meta_keys__:
@@ -66,7 +66,7 @@ class HRA(db.Model):
                 meta[k] = v
             elif k in HRA.__score_keys__:
                 k = (HRA.__transform__[k] if
-                     k in HRA.__transform__.keys() else k)
+                     k in list(HRA.__transform__.keys()) else k)
                 score[k] = v
             elif k.isdigit():
                 questionnaire.append({"qid": k, "aid": v})
@@ -93,9 +93,9 @@ class HRA(db.Model):
 
         result = {}
         result['surveyID'] = surveyID
-        for k, v in score.iteritems():
+        for k, v in score.items():
             result[k] = v
-        for k, v in response.iteritems():
+        for k, v in response.items():
             result[k] = v
         return result
 
@@ -113,12 +113,12 @@ def get_grade(g, response):
         return None
     if isinstance(g, float):
         return g
-    if 'equal' in g.keys():
+    if 'equal' in list(g.keys()):
         return get_grade(
             g['score'] if response[g['qid']] == g['equal'] else g['else'],
             response
         )
-    if 'greaterThanOrEqual' in g.keys():
+    if 'greaterThanOrEqual' in list(g.keys()):
         return get_grade(
             g['score'] if
             int(response[g['qid']]) >= g['greaterThanOrEqual'] else
@@ -151,7 +151,7 @@ def score_hra(surveyID, response, complete):
                 answer_count = 0
                 section_name = (HRA.__transform__[section['group']]
                                 if section['group'] in
-                                HRA.__transform__.keys()
+                                list(HRA.__transform__.keys())
                                 else section['group'])
                 # iterate through the question numbers (includes grids)
                 for qNum in section['question_numbers']:
@@ -226,7 +226,7 @@ def score_hra(surveyID, response, complete):
                         round((score[section_name] / answer_count), 1)
                     )
         # average the section averages to get the Overall score
-        score['Overall'] = round(sum(score.values()) / len(score.values()), 1)
+        score['Overall'] = round(sum(score.values()) / len(list(score.values())), 1)
         score['completed'] = 1
 
     if 'Overall' not in score:

@@ -7,7 +7,7 @@ from webapp.api.models.Permission import Permission
 from webapp.api.models.Email import isValidEmail
 from webapp.server.util import api_error
 from ..fm_request_util import (
-    make_fm_find_request, make_fm_get_record, make_fm_update_request
+    make_fm_find_request, make_fm_get_record, make_fm_get_request, make_fm_update_request
 )
 
 MIN_PASSWORD_LENGTH = "8"
@@ -35,7 +35,7 @@ def validate_password(password):
 
 
 def getFMField(field):
-    for k, v in FM_User.__fm_fields__.iteritems():
+    for k, v in FM_User.__fm_fields__.items():
         if field == v:
             return k
     return None
@@ -106,7 +106,7 @@ class FM_User():
             'required': True,
             'validationFunc': lambda d: (
                 datetime.strptime(d, '%Y-%m-%d').date()
-                if isinstance(d, unicode) else d
+                if isinstance(d, str) else d
             )
         },
         'email': {
@@ -146,9 +146,9 @@ class FM_User():
         self.billing_locationID = str(data['billing_locationID'])
         self.work_locationID = str(data['work_locationID'])
         self.permissions = (
-            data['permissions'] if 'permissions' in data.keys() else {}
+            data['permissions'] if 'permissions' in list(data.keys()) else {}
         )
-        self.roles = data['roles'] if 'roles' in data.keys() else []
+        self.roles = data['roles'] if 'roles' in list(data.keys()) else []
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -190,19 +190,19 @@ class FM_User():
         return self.hash is not None and self.hash != ''
 
     def get_id(self):
-        return unicode(self.recordID)
+        return str(self.recordID)
 
     def get_tcid(self):
-        return unicode(self.tcid)  # python 2
+        return str(self.tcid)
 
     def get_patientID(self):
-        return unicode(self.patientID)  # python 2
+        return str(self.patientID)
 
     def get_accountID(self):
-        return unicode(self.accountID)  # python 2
+        return str(self.accountID)
 
     def get_locationID(self):
-        return unicode(self.visit_locationID)  # python 2
+        return str(self.visit_locationID)
 
     def get_email(self):
         return self.email
@@ -225,34 +225,34 @@ class FM_User():
     # Returns a User from File Maker based on the search criteria
     @staticmethod
     def query(**kwargs):
-        if 'recordID' in kwargs.keys():
+        if 'recordID' in list(kwargs.keys()):
             # If we have recordID, short circuit search
             user_data = make_fm_get_record('user', kwargs['recordID'])[0]
             return FM_User({
                 FM_User.__fm_fields__[key]: user_data[key]
-                for key in user_data.keys() if key in FM_User.__fm_fields__
+                for key in list(user_data.keys()) if key in FM_User.__fm_fields__
             })
 
         record_range = None
-        if 'record_range' in kwargs.keys():
+        if 'record_range' in list(kwargs.keys()):
             record_range = kwargs['record_range']
             del kwargs['record_range']
 
         record_offset = None
-        if 'record_offset' in kwargs.keys():
+        if 'record_offset' in list(kwargs.keys()):
             record_offset = kwargs['record_offset']
             del kwargs['record_offset']
 
         sort = None
-        if 'sort' in kwargs.keys():
+        if 'sort' in list(kwargs.keys()):
             sort = kwargs['sort']
             del kwargs['sort']
 
         user_objects = []
         # if there are more arguments, we need to POST a Find Request
-        if len(kwargs.keys()) > 0:
+        if len(list(kwargs.keys())) > 0:
             query = []
-            for arg in kwargs.keys():
+            for arg in list(kwargs.keys()):
                 # get FM string of field
                 key = getFMField(str(arg))
                 # make sure we have a list of string values
@@ -278,10 +278,9 @@ class FM_User():
                 record_offset=record_offset,
                 sort=sort
             )
-
         users = [FM_User({
             FM_User.__fm_fields__[key]: user_data[key]
-            for key in user_data.keys() if key in FM_User.__fm_fields__
+            for key in list(user_data.keys()) if key in FM_User.__fm_fields__
         }) for user_data in user_objects]
 
         # Other code depends on a single obj returned, not a list.
@@ -294,7 +293,7 @@ class FM_User():
         if data is None or not isinstance(data, dict):
             return
         new_data = {}
-        for k, v in data.iteritems():
+        for k, v in data.items():
             if k in FM_User.__immutable_fields__:
                 continue
             self[k] = v
@@ -324,7 +323,7 @@ class FM_User():
 
     def to_json(self):
         return_dict = {}
-        for k, v in self.__dict__.iteritems():
+        for k, v in self.__dict__.items():
             if k not in FM_User.__public_fields__:
                 continue
             if k == "dob":
@@ -370,7 +369,7 @@ class FM_User():
         if user_data is None or not isinstance(user_data, dict):
             api_error(AttributeError, "Bad Request", 400)
 
-        for k, field in FM_User.__registration_fields__.iteritems():
+        for k, field in FM_User.__registration_fields__.items():
             if k in user_data:
                 v = user_data[k]
                 # Use the registration field's validation/format function

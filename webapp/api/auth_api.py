@@ -1,9 +1,9 @@
 import base64
+from datetime import datetime, timezone, timedelta
 from functools import wraps
 
 # itsdangerous
-from itsdangerous import (URLSafeTimedSerializer,
-                          SignatureExpired, BadSignature, base64_decode)
+import jwt
 
 from flask_login import LoginManager, login_user, logout_user
 from flask import request, jsonify
@@ -20,8 +20,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.auth_app'
 login_manager.session_protection = "strong"
-
-jwt_tjwss = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 TOKEN_TYPES = {
     'API': {
@@ -41,21 +39,20 @@ TOKEN_TYPES = {
 
 def generate_jwt(payload, token_type='API'):
     token_info = TOKEN_TYPES[token_type]
+    iat = datetime.now(tz=timezone.utc)
+    payload['iat'] = iat
+    payload['exp'] = iat + timedelta(0,token_info['expires_in'])
 
-    jwt_tjwss.salt = token_info['salt']
-    jwt_tjwss.expires_in = token_info['expires_in']
-
-    return jwt_tjwss.dumps(payload)
+    return jwt.encode(payload, app.config['SECRET_KEY'] + token_info['salt'])
 
 
 def verify_jwt(token, token_type='API'):
     try:
         token_info = TOKEN_TYPES[token_type]
-        jwt_tjwss.salt = token_info['salt']
-        payload = jwt_tjwss.loads(token)
-    except SignatureExpired:
+        payload = jwt.decode(token, app.config['SECRET_KEY'] + token_info['salt'], algorithms="HS256", options={"require": ["exp"]})
+    except jwt.ExpiredSignatureError:
         api_error(AttributeError, "This token has expired.", 401)
-    except BadSignature as e:
+    except jwt.InvalidSignatureError as e:
         api_error(ValueError, "Bad Signature was provided.", 400)
     return payload
 
@@ -98,7 +95,7 @@ def load_user_from_request(request, token_type='API', throws=False):
     user = None
     jwtUser = None
     if auth_token:
-        auth_token = base64_decode(auth_token.replace('Basic ', '', 1))
+        auth_token = base64.b64decode(auth_token.replace('Basic ', '', 1)).decode()
         # Check if the Auth Header is like (username:password)
         if ':' in auth_token:
             username = auth_token.split(":")[0]
@@ -119,7 +116,7 @@ def load_user_from_request(request, token_type='API', throws=False):
             jwtUser = verify_jwt(auth_token, token_type)
             user = User.query(recordID=jwtUser['recordID'], record_range=1)
         if user:
-            if 'roles' not in user.__dict__.keys() or len(user.roles) == 0:
+            if 'roles' not in list(user.__dict__.keys()) or len(user.roles) == 0:
                 # Copying over authorizations from provided Auth Token
                 user.roles = jwtUser['roles']
                 user.permissions = jwtUser['permissions']
@@ -149,7 +146,7 @@ class Auth_API(MethodView):
         request_data = request.data
         jwt_type = 'API'
         if hasattr(request_data, 'token_type'):
-            if request_data['token_type'] in TOKEN_TYPES.keys():
+            if request_data['token_type'] in list(TOKEN_TYPES.keys()):
                 jwt_type = request_data['token_type']
             else:
                 api_error(
@@ -160,7 +157,7 @@ class Auth_API(MethodView):
         if jwt_type == 'API':
             user_creds = request.headers.get('Authorization')
             if user_creds:
-                user_creds = base64_decode(user_creds.replace('Basic ', '', 1))
+                user_creds = base64.b64decode(user_creds.replace('Basic ', '', 1)).decode()
                 # split with a max split of one to allow ':' character in pw
                 email, pw = user_creds.split(':', 1)
                 if email is None or email == '' or pw is None or pw == '':
