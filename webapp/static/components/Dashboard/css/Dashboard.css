@@ -41,57 +41,11 @@
   flex-direction: column;
   align-items: stretch;
 }
-.dashTable__row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #ccc;
-  font-size: 0.9em;
-}
-.dashlet__card-tableheader {
-  display: flex;
-  justify-content: space-between;
-  font-size: 1em;
-}
-.dashTable__row > * {
-  flex: 1 1 50px;
-}
-.dashlet__card-info {
-  display: flex;
-  justify-content: space-between;
-}
-.dashTable__row-value {
-  color: black;
-}
-.dashTable__row-risk {
-  flex: 1 1 20px;
-  margin-left: 15px;
-}
-.dashTable__row-spacer{
-  margin-right: 6px;
-}
-
-.dashTable {
-  padding-left: 10px;
-  color: #555;
-}
-
-.unitLabel {
-  font-size: 0.8em;
-}
-
-.grade-A, .grade-B {
-  color: #558E28;
-}
-.grade-C {
-  color: #FDD100;
-}
-.grade-D, .grade-F {
-  color: #A40800;
-}
 
 @media (max-width: 450px) {
-  .dashlet__card {
+  .dashlet__card-title,
+  .dashlet__card-date,
+  .dashlet__card-description {
     font-size: 0.8em;
   }
 }
@@ -107,14 +61,6 @@
 
 .dashlet__card-description {
   text-align: left;
-}
-
-.incomplete-hra-contents {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1 1 auto;
-  color: rgb(0,120,185);
 }
 
 .dashChart {

@@ -12,25 +12,17 @@ const compareHRAs = (hraOne, hraTwo) =>
 
 const populateCard = (card, dataItems, sortFunc) => {
   const { cardDefinition, ...rest } = card;
-
-  let data = [];
-  if(card.data.length === 0) {
-    data = dataItems;
-  } else if (card.data.length === 1) {
-    data = card.data;
-  } else {
-    data = card.data.map(
+  const data = ((card.data.length === 0) ?
+    dataItems :
+    card.data.map(
       key => dataItems.find(item => item.meta[card.dataKey] === key),
-    ).sort(sortFunc);
-  }
-  const newCardDefinition = { ...cardDefinition, ...{ title: cardDefinition.title || data[0].label } };
-
-  return { ...newCardDefinition, ...rest, ...{ data } };
+    ).sort(sortFunc));
+  return { ...cardDefinition, ...rest, ...{ data } };
 };
 
 const buildDashboardCards = (state) => {
   const dashlets = [];
-  const sortOptions = { HRA: compareHRAs, RISK: () => true };
+  const sortOptions = { HRA: compareHRAs };
 
   dashboardConfiguration.forEach((card) => {
     if (state.datasources[card.datasource].items.length === 0) {
@@ -47,7 +39,7 @@ const buildDashboardCards = (state) => {
                   {
                     ...card,
                     ...{ id: `${card.id}_${index}` },
-                    ...{ data: card.dataKey === undefined ? [item] : [item.meta[card.dataKey]] },
+                    ...{ data: [item.meta[card.dataKey]] },
                   },
                   state.datasources[card.datasource].items,
                   sortOptions[card.datasource],

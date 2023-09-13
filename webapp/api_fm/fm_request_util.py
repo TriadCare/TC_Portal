@@ -11,9 +11,7 @@ ENDPOINT_EXCHANGE = {
     'biometric': app.config['FM_BIOMETRIC_LAYOUT'],
     'location': app.config['FM_LOCATION_LAYOUT'],
     'user': app.config['FM_USER_LAYOUT'],
-    'visit': app.config['FM_VISIT_LAYOUT'],
-    'risk': app.config['FM_RISK_LAYOUT'],
-    'measure': app.config['FM_MEASURE_LAYOUT']
+    'visit': app.config['FM_VISIT_LAYOUT']
 }
 
 FM_USERNAME = app.config['FM_AUTH_NAME']
@@ -26,36 +24,36 @@ FM_FIND_URL = (
     app.config['FM_URL'] + '/' + app.config['FM_SOLUTION'] + '/layouts'
 )
 
-MAX_RECORD_LIMIT = 250
+MAX_RECORD_RANGE = 250
 
 
-# Generator that breaks down a request according to the MAX_RECORD_LIMIT
+# Generator that breaks down a request according to the MAX_RECORD_RANGE
 def gen_next_query(method, url, headers, params=None, json=None):
-    # get the limit and offset from the provided data (defaults from 0-1000000)
+    # get the range and offset from the provided data (defaults from 0-1000000)
     request_settings = params if json is None else json
-    requested_limit = (request_settings['limit']
-                       if 'limit' in request_settings.keys()
-                       and request_settings['limit'] is not None
+    requested_range = (request_settings['range']
+                       if 'range' in request_settings.keys()
+                       and request_settings['range'] is not None
                        else 1000000)
     query_offset = (request_settings['offset']
                     if 'offset' in list(request_settings.keys())
                     and request_settings['offset'] is not None
                     else 0)
-    # clip the limit to the max
-    query_limit = MAX_RECORD_LIMIT
-    if requested_limit is not None and requested_limit < MAX_RECORD_LIMIT:
-        query_limit = requested_limit
+    # clip the range to the max
+    query_range = MAX_RECORD_RANGE
+    if requested_range is not None and requested_range < MAX_RECORD_RANGE:
+        query_range = requested_range
 
-    while query_offset < requested_limit:
+    while query_offset < requested_range:
         # update the request settings
         if json is None:
             if query_offset != 0:
                 params['offset'] = query_offset
-            params['_limit'] = query_limit
+            params['_limit'] = query_range
         else:
             if query_offset != 0:
                 json['offset'] = query_offset
-            json['limit'] = query_limit
+            json['limit'] = query_range
         # return the completed Request
         yield Request(
             method,
@@ -65,8 +63,8 @@ def gen_next_query(method, url, headers, params=None, json=None):
             json=prepare_data_for_fm(json)
         )
         # prepare the request settings for the next request
-        query_offset += query_limit
-    # if we have exceeded the requested limit, we're done
+        query_offset += query_range
+    # if we have exceeded the requested range, we're done
     raise StopIteration
 
 
@@ -155,11 +153,12 @@ def make_fm_find_request(endpoint, query,
         if isinstance(response, list):
             data.extend(response)
             # if less than expected data is returned, we hit the end
-            if len(response) < MAX_RECORD_LIMIT:
+            if len(response) < MAX_RECORD_RANGE:
                 break
         # if a list is not returned, then no more data
         else:
             break
+
     return data
 
 
@@ -189,7 +188,7 @@ def make_fm_get_request(endpoint,
         if isinstance(response, list):
             data.extend(response)
             # if less than expected data is returned, we hit the end
-            if len(response) < MAX_RECORD_LIMIT:
+            if len(response) < MAX_RECORD_RANGE:
                 break
         # if the a list is not returned, then no more data
         else:

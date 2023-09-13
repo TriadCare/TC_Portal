@@ -52,22 +52,6 @@ const initialState = {
   titleBarText: 'Patient Portal',
   spaces: [],
   datasources: {
-    RISK: {
-      label: 'RISK',
-      uri: '/risk/',
-      items: [],
-      isFetching: false,
-      isFresh: false,
-      receivedAt: undefined,
-    },
-    MEASURE: {
-      label: 'MEASURE',
-      uri: '/measure/',
-      items: [],
-      isFetching: false,
-      isFresh: false,
-      receivedAt: undefined,
-    },
     HRA: {
       label: 'HRA',
       uri: '/hras/',
