@@ -1,19 +1,6 @@
 [
   {
     "id": 1,
-    "DATE_CREATED": "06/30/2019",
-    "cardType": "unfold",
-    "datasource": "RISK",
-    "data": [],
-    "cardDefinition": {
-      "title": "",
-      "description": "",
-      "cardSize": "medium",
-      "dataType": "table"
-    }
-  },
-  {
-    "id": 2,
     "DATE_CREATED": "06/09/2015",
     "chartist": true,
     "cardType": "unfold",
