@@ -38,7 +38,7 @@ module.exports = {
   },
   output: {
     path: PATHS.dist,  // Build Destination
-    publicPath: 'http://localhost:8080/bundle/',
+    publicPath: "/bundle/",
     filename: '[name].[chunkhash].js',
     chunkFilename: '[id].[chunkhash].js',
   },
